@@ -4,6 +4,9 @@ import { gql, useQuery, useApolloClient } from '@apollo/client';
 import Login from '../Pages/Login';
 import Auth from '../Pages/Auth';
 import Home from '../Pages/Home';
+import Rides from '../Pages/Rides';
+import Profile from '../Pages/Profile';
+import About from '../Pages/About';
 
 /**
  * Requests to verify the user's token on the backend
@@ -22,9 +25,10 @@ const VERIFY_USER = gql`
 /**
  * This simply fetches from our cache whether a recent update has occurred
  */
-const GET_RECENT_UPDATE = gql`
-    query GetRecentUpdate {
+const GET_USER_INFO = gql`
+    query GetUserInfo {
         recentUpdate @client
+        userID @client
     }
 `
 
@@ -32,7 +36,7 @@ const GET_RECENT_UPDATE = gql`
  * Defines a private route - if the user is NOT logged in or has an invalid token, 
  * then we redirect them to the login page.
  */
-const PrivateRoute = ({ children, ...rest }) => {
+const PrivateRoute = ({ component, ...rest }) => {
     let token = localStorage.getItem('token') != null ? localStorage.getItem('token') : '';
 
     let client = useApolloClient();
@@ -58,19 +62,17 @@ const PrivateRoute = ({ children, ...rest }) => {
     }
 
     // Check whether any recent updates have come in
-    let { recentUpdate } = data.verifyUser;
+    let { _id, netid, recentUpdate } = data.verifyUser;
 
     // Upon verification, store the returned information
     client.writeQuery({
-        query: GET_RECENT_UPDATE,
-        data: { recentUpdate: recentUpdate }
+        query: GET_USER_INFO,
+        data: { userID: _id, recentUpdate: recentUpdate }
     });
 
     // Everything looks good! Now let's send the user on their way
     return (
-        <Route {...rest} render={(props) => {
-            return (children);
-        }} />
+        <Route {...rest} component={component} />
     );
 }
 
@@ -91,9 +93,19 @@ const routesArray = [
         privateRoute: true
     },
     {
-        path: "/", // catch all handler, redirect to Home
-        component: Home,
+        path: "/rides",
+        component: Rides,
+        privateRoute: true,
+    },
+    {
+        path: "/profile",
+        component: Profile,
         privateRoute: true
+    },
+    {
+        path: "/about",
+        component: About,
+        privateRoute: false
     }
 ];
 
@@ -123,7 +135,7 @@ export const Routes = ({ }) => {
 
     return (
         <Switch>
-            <Route path={"/login"}>
+            {/* <Route path={"/login"}>
                 <Login />
             </Route>
             <Route path={"/auth"}>
@@ -134,15 +146,15 @@ export const Routes = ({ }) => {
             </PrivateRoute>
             <PrivateRoute path={"/"}>
                 <Home />
-            </PrivateRoute>
-            {/* {routesArray.map(routeObject => {
+            </PrivateRoute> */}
+            {routesArray.map(routeObject => {
                 let { path, component, privateRoute } = routeObject;
                 if (privateRoute) {
-                    return (<PrivateRoute path={path} children={component} />);
+                    return (<PrivateRoute path={path} component={component} />);
                 } else {
-                return (<Route path={path} children={component} />);
+                return (<Route path={path} component={component} />);
                 }
-            })} */}
+            })}
         </Switch>
     )
 }
