@@ -106,7 +106,7 @@ const routesArray = [
         path: "/about",
         component: About,
         privateRoute: false
-    }
+    },
 ];
 
 /**

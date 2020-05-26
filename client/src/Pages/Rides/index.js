@@ -1,7 +1,11 @@
-import React from "react";
+import React, { useState, createContext, useEffect } from "react";
 import styled from "styled-components";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useQuery, useMutation } from "@apollo/client";
 import moment from "moment";
+import Modal from "react-modal";
+import RideCreate from "./RideCreation";
+
+Modal.bind("#app");
 
 const RideCardList = styled.div`
     display: flex;
@@ -57,12 +61,34 @@ const GET_USER_INFO = gql`
     }
 `
 
+const GET_LOCATIONS = gql`
+    query GetLocations {
+        locationMany {
+            _id
+            title
+        }
+    }
+`
+
+/**
+ * Helper Functions
+ */
+
+/**
+ * Check whether a user is already part of the ride.
+ * @param {*} userID 
+ * @param {*} ride 
+ */
 const checkJoined = (userID, ride) => {
-    if (userID == ride.owner._id) return true;
+    if (userID == ride.owner._id) return true; // saves us some computational power from executing the next line
     if (ride.riders.map(rider => rider._id).includes(userID)) return true;
     return false;
 }
 
+/**
+ * Checks whether the ride is full
+ * @param {*} ride 
+ */
 const checkFull = (ride) => {
     if (ride.riders.length == ride.spots) {
         return true;
@@ -117,10 +143,29 @@ const RidesList = ({ }) => {
 }
 
 const Rides = ({ }) => {
+    const [modalOpen, setModalOpen] = useState(false);
+    // Load it up here so we can use it in multiple places later
+    const { data: locationData, 
+        loading: locationLoading, 
+        error: locationError } = useQuery(GET_LOCATIONS);
+
+    if (locationError) return <p>Error.</p>;
+    if (locationLoading) return <p>Loading...</p>;
+    if (!locationData) return <p>No data...</p>;
+
+    const openModal = () => setModalOpen(true);
+    const closeModal = () => setModalOpen(false);
 
     return (
         <div>
+            <button onClick={openModal}>Create Ride</button>
             <RidesList />
+            <Modal
+            isOpen={modalOpen}
+            onRequestClose={closeModal}
+            >
+                <RideCreate closeModal={closeModal} />
+            </Modal>
         </div>
     )
 }
