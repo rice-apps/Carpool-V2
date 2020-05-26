@@ -47,15 +47,6 @@ const GET_USER_INFO = gql`
     }
 `
 
-const GET_LOCATIONS = gql`
-    query GetLocations {
-        locationMany {
-            _id
-            title
-        }
-    }
-`
-
 const CREATE_RIDE = gql`
     mutation CreateRide(
         $owner: MongoID!, $deptLoc: MongoID!, $arrLoc: MongoID!, $deptDate: Date, 
@@ -84,17 +75,12 @@ const transformToRSOptions = (locations) => {
     });
 }
 
-const RideCreate = ({ closeModal }) => {
+const RideCreate = ({ closeModal, locations }) => {
     const { addToast } = useToasts();
     const [getInputs, setInputs] = useState({});
 
-    // This is pre-fetched in the earlier component so it will be ready
-    const { data: locationData } = useQuery(GET_LOCATIONS);
-
-    const { locationMany } = locationData;
-
     // Transform locations into options for react-select
-    const locations = transformToRSOptions(locationMany);
+    locations = transformToRSOptions(locations);
 
     // We also need to get the user info
     const { data: userData } = useQuery(GET_USER_INFO);
