@@ -8,3 +8,7 @@ export const transformToRSOptions = (locations) => {
         return { label: location.title, value: location._id };
     });
 }
+
+export const getSelectionDummy = () => {
+    return { label: "", value: "" };
+}

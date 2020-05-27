@@ -1,9 +1,12 @@
-import React, { useState, createContext, useEffect } from "react";
+import React, { useState, createContext, useEffect, useContext } from "react";
 import styled, { css } from "styled-components";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import moment from "moment";
+import MomentUtils from '@material-ui/pickers/adapter/moment';
+import { MuiPickersUtilsProvider, DateTimePicker, LocalizationProvider, DatePicker,  } from "@material-ui/pickers";
 import Select from "react-select";
-import { transformToRSOptions } from "../../utils/RideUtils";
+import { transformToRSOptions, getSelectionDummy } from "../../utils/RideUtils";
+import { Button, TextField } from "@material-ui/core";
 
 const RideCardList = styled.div`
     display: flex;
@@ -56,9 +59,9 @@ const RideCardBack = styled.div`
     background-color: ${props => props.joined ? "red" : "green"};
 `
 
-const RideJoinButton = styled.button`
-    height: 15px;
-    background-color: ${props => props.joined ? "red" : "green"};
+const RideJoinButton = styled(Button)`
+    height: 100%;
+    width: 100%;
 `
 
 const RideCardDate = styled.div`
@@ -91,9 +94,14 @@ const Year = styled.p`
     margin-top: 0px;
 `
 
-const GET_ALL_RIDES = gql`
-    query GetAllRides {
-        rideMany(limit:10) {
+const GET_RIDES = gql`
+    query GetRides($deptDate:Date, $deptLoc:MongoID, $arrLoc:MongoID) {
+        rideMany( 
+        filter:{
+            departureDate:$deptDate, 
+            departureLocation:$deptLoc, 
+            arrivalLocation:$arrLoc
+        }) {
             _id
             departureDate
             spots
@@ -191,7 +199,10 @@ const RideCard = ({ ride }) => {
             joined={joined}
             >
             { rideFull ? "Sorry, this ride is full." : 
-                <RideJoinButton joined={joined} disabled={rideFull}>
+                <RideJoinButton 
+                outlined 
+                disabled={rideFull}
+                >
                     {joined ? "Leave this ride." : "Join this ride!" }
                 </RideJoinButton>
             }
@@ -213,39 +224,105 @@ const LocationFilterDiv = styled.div`
     max-width: 100%;
 `
 
-const LocationFilter = ({ label, options }) => {
+const DateFilter = ({ label, getDate, setDate }) => {
+    return (
+        <LocalizationProvider dateAdapter={MomentUtils}>
+            {label}
+            <DatePicker
+            renderInput={props => <TextField variant="outlined" {...props} />}
+            disablePast
+            clearable
+            autoOk
+            value={getDate}
+            onChange={setDate}
+            />
+        </LocalizationProvider>
+    )
+}
 
+const LocationFilter = ({ label, options, getSelection, setSelection }) => {
+    const handleChange = (selected, triggeredAction) => {
+        if (triggeredAction.action == "clear") {
+            setSelection({});
+        }
+        setSelection(selected);
+    }
     return (
         <LocationFilterDiv>
             <p>{label}</p>
             <Select
             name={label}
             options={options}
-            onChange={(selected) => console.log("Hello!")}
-            styles={{ container: (styles) => ({ ...styles, width: "100px" }) }}
+            value={getSelection}
+            isClearable={true}
+            onChange={handleChange}
+            styles={{ container: (styles) => ({ ...styles, width: "150px" }) }}
             />
         </LocationFilterDiv>
     )
 }
 
-const FilterOptions = ({ }) => {
+const FilterOptions = ({ getVariables, setVariables }) => {
+    // Manages filters
+    const [getDepartureSelection, setDepartureSelection] = useState(getSelectionDummy());
+    const [getArrivalSelection, setArrivalSelection] = useState(getSelectionDummy());
+    const [getDate, setDate] = useState(null);
+
     const { data, loading, error } = useQuery(GET_LOCATIONS);
-
     if (error || loading) return <p>Waiting...</p>;
-
     let { locationMany: locations } = data;
+
+    const handleSearch = () => {
+        let selectionDummy = getSelectionDummy();
+        let newVariables = {};
+        // Check that at least one filter is active
+        if (getDepartureSelection.value != selectionDummy.value) {
+            newVariables.deptLoc = getDepartureSelection.value;
+            // Reset
+            setDepartureSelection(getSelectionDummy());
+        }
+        if (getArrivalSelection.value != selectionDummy.value) {
+            newVariables.arrLoc = getArrivalSelection.value;
+            setArrivalSelection(getSelectionDummy());
+        }
+        if (getDate != null) {
+            newVariables.deptDate = getDate;
+            setDate(null);
+        }
+        setVariables({...newVariables});
+    }
 
     return (
         <FilterDiv>
-            <LocationFilter label="Departing to" options={transformToRSOptions(locations)} />
-            <LocationFilter label="Arriving at" options={transformToRSOptions(locations)} />
-            <LocationFilter label="Departure date" />
+            <LocationFilter 
+            label="Departing To" 
+            options={transformToRSOptions(locations)} 
+            getSelection={getDepartureSelection}
+            setSelection={setDepartureSelection}
+            />
+            <LocationFilter 
+            label="Arriving To" 
+            options={transformToRSOptions(locations)} 
+            getSelection={getArrivalSelection}
+            setSelection={setArrivalSelection}
+            />
+            <DateFilter 
+            label="Departure Date" 
+            getDate={getDate}
+            setDate={setDate}
+            />
+            <Button variant="outlined" title="Search" onClick={handleSearch}>Search</Button>
         </FilterDiv>
     )
 }
 
 const RidesList = ({ }) => {
-    const { data, loading, error } = useQuery(GET_ALL_RIDES);
+    const [getVariables, setVariables] = useState({});
+    console.log(getVariables);
+    const { data, loading, error } = useQuery(
+        GET_RIDES,
+        { variables: getVariables }
+    );
 
     if (error) return <p>Error.</p>;
     if (loading) return <p>Loading...</p>;
@@ -255,7 +332,7 @@ const RidesList = ({ }) => {
 
     return (
         <RideCardList>
-            <FilterOptions />
+            <FilterOptions getVariables={getVariables} setVariables={setVariables} />
             {rides.map(ride => <RideCard ride={ride} />)}
         </RideCardList>
     )
