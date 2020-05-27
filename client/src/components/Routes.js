@@ -15,7 +15,10 @@ const VERIFY_USER = gql`
     query VerifyQuery($token: String!) {
         verifyUser(token:$token) {
             _id
+            firstName
+            lastName
             netid
+            phone
             token
             recentUpdate
         }

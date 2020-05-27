@@ -69,6 +69,24 @@ const CREATE_RIDE = gql`
     }
 `
 
+/**
+ * A mutation which will allow for the creation of new locations on the frontend
+ */
+const CREATE_LOCATION = gql`
+    mutation CreateLocation( $title: String ) {
+        locationCreateOne(record: { title: $title } ) {
+            recordId
+            record {
+                title
+            }
+        }
+    }
+`
+
+/**
+ * React-Select requires all options to be formatted as { label: "", value: "" }
+ * @param {*} locations: locations to be reformatted for use with react-select
+ */
 const transformToRSOptions = (locations) => {
     return locations.map(location => {
         return { label: location.title, value: location._id };
@@ -86,6 +104,9 @@ const RideCreate = ({ closeModal, locations }) => {
     const { data: userData } = useQuery(GET_USER_INFO);
 
     const { userID } = userData;
+
+    // Create a mutation to handle location creation
+    // const [ createLocation, { data: createLocData, error: createLocError, loading: createLocLoading }] = useMutation(CREATE_LOCATION);
 
     // Set defaults for required inputs
     useEffect(() => {
@@ -135,6 +156,19 @@ const RideCreate = ({ closeModal, locations }) => {
             }
         }
     }
+
+    /**
+     * Use this in the future to enable users to create their own locations
+     * @param {} inputValue 
+     */
+    const handleCreateLocation = (inputValue) => {
+        // Clean it up
+        // let title = inputValue;
+        // Use mutation to create it on the backend
+        // createLocation({ variables: { title: title } });
+        // If the option already exists or is a close match to something else, show a toast notification
+
+    }
     
     // These 3 properties MUST be present before a user can submit the new ride
     let readyToSubmit = ["deptLoc", "arrLoc", "deptDate"].every(requiredElem => getInputs.hasOwnProperty(requiredElem));
@@ -164,6 +198,7 @@ const RideCreate = ({ closeModal, locations }) => {
             </RideCreateInputDiv>
             <RideCreateInputDiv>
                 <RideCreateLabel>Departure Date & Time</RideCreateLabel>
+                {/* Please find a better date & time picker */}
                 <DateTimePicker
                 onChange={value => setInputs({ ...getInputs, deptDate: value })}
                 value={getInputs.deptDate}
