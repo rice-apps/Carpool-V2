@@ -18,19 +18,17 @@ const ProfileDiv = styled.div`
 /**
  * TODO: MOVE TO FRAGMENTS FOLDER; this is the SAME call we make in Routes.js because that call is cached...
  */
-const VERIFY_USER = gql`
-    query VerifyQuery($token: String!) {
-        verifyUser(token:$token) {
+const GET_USER_INFO = gql`
+    query GetUserInfo {
+        user @client {
             _id
             firstName
             lastName
             netid
             phone
-            token
-            recentUpdate
         }
     }
-`;
+`
 
 const ProfileCardEditButton = styled.button`
     width: 30px;
@@ -44,13 +42,13 @@ const Profile = ({}) => {
     const closeModal = () => setModalOpen(false);
 
     // Get user info by running cached operation
-    const { data, loading, error } = useQuery(VERIFY_USER, { variables: { token: localStorage.getItem('token') } });
+    const { data, loading, error } = useQuery(GET_USER_INFO);
 
     if (error) return <p>Error...</p>;
     if (loading) return <p>Wait...</p>;
     if (!data) return <p>No data...</p>;
 
-    const { verifyUser: user } = data;
+    const { user } = data;
 
     return (
         <ProfileDiv>

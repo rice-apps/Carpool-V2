@@ -15,6 +15,7 @@ const VERIFY_USER = gql`
     query VerifyQuery($token: String!) {
         verifyUser(token:$token) {
             _id
+            __typename
             firstName
             lastName
             netid
@@ -30,8 +31,14 @@ const VERIFY_USER = gql`
  */
 const GET_USER_INFO = gql`
     query GetUserInfo {
-        recentUpdate @client
-        userID @client
+        user @client {
+            _id
+            recentUpdate
+            firstName
+            lastName
+            netid
+            phone
+        }
     }
 `
 
@@ -65,12 +72,12 @@ const PrivateRoute = ({ component, ...rest }) => {
     }
 
     // Check whether any recent updates have come in
-    let { _id, netid, recentUpdate } = data.verifyUser;
+    // let { _id, netid, recentUpdate } = data.verifyUser;
 
     // Upon verification, store the returned information
     client.writeQuery({
         query: GET_USER_INFO,
-        data: { userID: _id, recentUpdate: recentUpdate }
+        data: { user: data.verifyUser }
     });
 
     // Everything looks good! Now let's send the user on their way
