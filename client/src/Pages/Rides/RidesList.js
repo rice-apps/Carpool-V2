@@ -10,7 +10,9 @@ const RideCardList = styled.div`
 `
 
 const RideCardItem = styled.div`
-    height: 15em;
+    display: flex;
+    flex-direction: row;
+    height: 10em;
     width: 30em;
     flex-grow: 2;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
@@ -22,6 +24,36 @@ const RideCardItem = styled.div`
 
 const RideJoinButton = styled.button`
     background-color: ${props => props.joined ? "red" : "green"};
+`
+
+const RideCardDate = styled.div`
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+`
+
+const RideCardText = styled.div`
+    display: flex;
+    flex-direction: column;
+    flex-grow: 3;
+    align-items: center;
+`
+
+const Day = styled.h1`
+    font-size: 3em;
+    margin-bottom: 0px;
+`
+
+const Month = styled.p`
+    flex-grow: 1;
+    margin-bottom: 0px;
+`
+
+const Year = styled.p`
+    flex-grow: 1;
+    margin-top: 0px;
 `
 
 const GET_ALL_RIDES = gql`
@@ -108,16 +140,21 @@ const RideCard = ({ ride }) => {
     let rideFull = checkFull(ride);
     return (
         <RideCardItem>
-            <p>Owner: {owner.netid}</p>
-            <p>Departing from: {departureLocation.title}</p>
-            <p>Arriving at: {arrivalLocation.title}</p>
-            <p>Departing at: {departureMoment.format("MM/DD/YYYY")}</p>
-            <p>Spots Left: {spots - riders.length}</p>
-            { rideFull ? "Sorry, this ride is full." : 
-                <RideJoinButton joined={joined} disabled={rideFull}>
-                    {joined ? "Leave this ride." : "Join this ride!" }
-                </RideJoinButton>
-            }
+            <RideCardDate>
+                <Day>{departureMoment.format("DD").toString()}</Day>
+                <Month>{departureMoment.format("MMM").toString()}</Month>
+                <Year>{departureMoment.format("YYYY").toString()}</Year>
+            </RideCardDate>
+            <RideCardText>
+                <p>{departureLocation.title} -> {arrivalLocation.title}</p>
+                <p>{departureMoment.format("hh:mm a")}</p>
+                <p>{spots - riders.length} spots</p>
+                { rideFull ? "Sorry, this ride is full." : 
+                    <RideJoinButton joined={joined} disabled={rideFull}>
+                        {joined ? "Leave this ride." : "Join this ride!" }
+                    </RideJoinButton>
+                }
+            </RideCardText>
         </RideCardItem>
     )
 }

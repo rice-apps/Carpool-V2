@@ -42,8 +42,10 @@ const RideCreateSelect = styled.div`
  */
 const GET_USER_INFO = gql`
     query GetUserInfo {
-        recentUpdate @client
-        userID @client
+        user @client {
+            _id
+            recentUpdate
+        }
     }
 `
 
@@ -103,7 +105,7 @@ const RideCreate = ({ closeModal, locations }) => {
     // We also need to get the user info
     const { data: userData } = useQuery(GET_USER_INFO);
 
-    const { userID } = userData;
+    const { user } = userData;
 
     // Create a mutation to handle location creation
     // const [ createLocation, { data: createLocData, error: createLocError, loading: createLocLoading }] = useMutation(CREATE_LOCATION);
@@ -111,7 +113,7 @@ const RideCreate = ({ closeModal, locations }) => {
     // Set defaults for required inputs
     useEffect(() => {
         setInputs({
-            owner: userID,
+            owner: user._id,
             deptDate: new Date(),
             spots: 4,
             ownerDriving: false
