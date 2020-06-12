@@ -4,7 +4,8 @@ import React, { Component } from "react"
 import {render} from 'react-dom'
 
 import { Router } from 'react-router';
-import { Routes } from './components/Routes'
+import { Routes } from './components/Routes';
+import App from './App';
 
 // Setup history
 import { createBrowserHistory } from 'history';
@@ -22,7 +23,7 @@ render(
     <ApolloProvider client={client}>
         <Router history={history}>
             <ToastProvider>
-                <Routes />
+                <App />
             </ToastProvider>
         </Router>
     </ApolloProvider>, 
