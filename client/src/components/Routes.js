@@ -1,6 +1,7 @@
 import React, { Component, useEffect } from "react"
 import { Switch, Route, Redirect } from 'react-router'
 import { gql, useQuery, useApolloClient } from '@apollo/client';
+import App from '../App';
 import Login from '../Pages/Login';
 import Auth from '../Pages/Auth';
 import Home from '../Pages/Home';
