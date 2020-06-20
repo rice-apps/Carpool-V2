@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { gql, useMutation } from "@apollo/client";
+import '../../App.css'
 
 // Form imports
 import { Formik, Form, useField } from "formik";
@@ -9,33 +10,61 @@ import * as Yup from 'yup';
 import PhoneInput from "react-phone-input-2";
 import 'react-phone-input-2/lib/style.css';
 
+
+
 const EditProfileDiv = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
-    align-items: baseline;
-    max-width: 15vw;
-    height: 20vh;
+    align-items: center;
+    max-width: 100vw;
+    height: 40vh;
 `
 
 const EditProfileFieldDiv = styled.div`
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: space-between;
     flex-wrap: nowrap;
 `
 
 const EditProfileLabel = styled.label`
-
+    padding: .5rem 1rem;
+    background-color: rgba(0,0,0,.03);
+    border: 1px solid rgba(0,0,0,.125);
+    width: 300px;
 `
 
 const EditProfileInput = styled.input`
-
+    padding: .5rem 1rem;
+    font-size: 1.171875rem;
+    line-height: 1.2;
+    display: block;
+    width: 300px;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ccc;
 `
 
 const EditProfileButton = styled.button`
-    width: 50px;
-    background-color: #ffffff;
+    font-weight: 300;
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid transparent;
+    display: block;
+    width: 334px;
+    padding: .5rem 0.5rem;
+    font-size: 1.171875rem;
+    line-height: 0.75;
+    color: #3aafa9;
+    background-color: transparent;
+    border-color: #3aafa9;
+    &:hover {
+        background-color: #359d99;
+        color:#fff;
+    }
+    font-family: inherit;
 `
 
 const EditProfileSchema = Yup.object().shape({
@@ -76,8 +105,9 @@ const EditProfileField = ({ label, ...props }) => {
         <EditProfileFieldDiv>
             <EditProfileLabel>
                 {label}
-                <EditProfileInput {...field} {...props} />
+                
             </EditProfileLabel>
+            <EditProfileInput {...field} {...props} />
             {meta.touched && meta.error ? meta.error : null}
         </EditProfileFieldDiv>
     )
@@ -96,12 +126,13 @@ const EditPhoneField = ({ label, ...props }) => {
         <EditProfileFieldDiv>
             <EditProfileLabel>
                 {label}
-                <PhoneInput
+                
+            </EditProfileLabel>
+            <PhoneInput
                     country={"us"}
                     value={value}
                     onChange={setValue}
                 />
-            </EditProfileLabel>
             {meta.touched && meta.error ? meta.error : null}
         </EditProfileFieldDiv>
     )
@@ -139,7 +170,7 @@ const EditProfile = ({ user, closeModal }) => {
                 <EditProfileDiv>
                     <EditProfileField name="firstName" type="text" label="First Name" />
                     <EditProfileField name="lastName" type="text" label="Last Name" />
-                    <EditPhoneField name="phone" type="tel" label="Phone" />
+                    <EditPhoneField name="phone" type="tel" label="Phone Number" />
                     <EditProfileButton type="submit" >Submit</EditProfileButton>
                 </EditProfileDiv>
             </Form>
