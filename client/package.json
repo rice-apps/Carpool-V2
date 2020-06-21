@@ -20,7 +20,9 @@
     "react-datetime-picker": "^3.0.2",
     "react-dom": "^16.13.1",
     "react-modal": "^3.11.2",
+    "react-number-format": "^4.4.1",
     "react-phone-input-2": "^2.13.5",
+    "react-phone-number-input": "^3.0.23",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
@@ -28,7 +30,7 @@
     "react-toast-notifications": "^2.4.0",
     "styled-components": "^5.1.0",
     "subscriptions-transport-ws": "^0.9.16",
-    "yup": "^0.29.0"
+    "yup": "^0.29.1"
   },
   "scripts": {
     "start": "react-scripts start",

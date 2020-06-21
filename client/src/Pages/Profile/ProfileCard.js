@@ -1,5 +1,8 @@
 import React from "react";
 import styled from "styled-components";
+import '@availity/yup';
+import 'react-phone-input-2/lib/style.css';
+import { formatPhoneNumber } from 'react-phone-number-input'
 
 const PageDiv = styled.div`
     display: flex;
@@ -41,6 +44,7 @@ const ProfileCardName = styled.a`
 `
 
 const ProfileCardPhone = styled.a`
+    font-color: black;
     font-size: 20px;
     font-weight: normal;
 `
@@ -68,7 +72,7 @@ const ProfileCard = ({ user }) => {
             <ProfileImage src="https://www.tinygraphs.com/labs/isogrids/hexa/wcy2?colors=143937&colors=FFF&colors=2B7A78&numcolors=3&size=220&fmt=svg" alt="pic" />
             <PageDiv>
                 <ProfileCardName>{user.firstName} {user.lastName}</ProfileCardName>
-                <ProfileCardPhone>{user.phone}</ProfileCardPhone>
+                <ProfileCardPhone type='tel'>{formatPhoneNumber("+"+user.phone)}</ProfileCardPhone>
                 <Button onClick={sendEmail}>
                     <ProfileCardEmail>{user.netid}@rice.edu</ProfileCardEmail>
                 </Button>
