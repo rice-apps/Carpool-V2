@@ -28,7 +28,7 @@ export const Header = () => {
         border-bottom-style: none !important;
     `
 
-    const H2 = styled(Link)`
+    const H2Link = styled(Link)`
         font-weight: normal;
         vertical-align: middle;
         display: flex;
@@ -83,9 +83,9 @@ export const Header = () => {
         <div>
             <MainHeader>
                 <div>
-                    <H2 to="/about">
+                    <H2Link to="/about">
                         Carpool &nbsp; <img src={carpoolll} alt="Carpool Logo" width="30" height="50"/>
-                    </H2>
+                    </H2Link>
                 </div>
                 <UL>
                     <LI>
