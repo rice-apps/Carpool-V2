@@ -28,12 +28,20 @@ export const Header = () => {
         border-bottom-style: none !important;
     `
 
-    const H2 = styled.h2`
+    const H2 = styled(Link)`
         font-weight: normal;
         vertical-align: middle;
         display: flex;
         justify-content: center;
         align-items: center;
+        color: white;
+        font-size: 24px;
+
+        text-decoration: none;
+
+        &:focus, &:hover, &:visited, &:link, &:active {
+            text-decoration: none;
+        }
     `
 
     const Nav = styled.nav`
@@ -75,7 +83,7 @@ export const Header = () => {
         <div>
             <MainHeader>
                 <div>
-                    <H2>
+                    <H2 to="/about">
                         Carpool &nbsp; <img src={carpoolll} alt="Carpool Logo" width="30" height="50"/>
                     </H2>
                 </div>
