@@ -1,5 +1,6 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
+import carpoolll from '../carpoolll.png'
 import {
     BrowserRouter as Router,
     Switch,
@@ -21,14 +22,26 @@ export const Header = () => {
 
     const A = styled.a`
         color: white;
-        text-decoration: none!important;
-        -webkit-box-shadow: none!important;
-        box-shadow: none!important;
+        text-decoration: none !important;
+        -webkit-box-shadow: none !important;
+        box-shadow: none !important;
+        border-bottom-style: none !important;
     `
 
-    const H2 = styled.h2`
+    const H2Link = styled(Link)`
         font-weight: normal;
         vertical-align: middle;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        font-size: 24px;
+
+        text-decoration: none;
+
+        &:focus, &:hover, &:visited, &:link, &:active {
+            text-decoration: none;
+        }
     `
 
     const Nav = styled.nav`
@@ -36,11 +49,13 @@ export const Header = () => {
     `
 
     const UL = styled.ul`
+        textDecoration: 'none';
         padding: 0 1.4em 0 0;
         text-align: center;
     `
 
     const LI = styled.li`
+        text-decoration: none;
         padding: .6em 1em .6em 1em;
         border-style: solid;
         border-width: thin;
@@ -56,30 +71,37 @@ export const Header = () => {
             background-color: #359d99;
         }
     `
+    const StyledLink = styled(Link)`
+        text-decoration: none;
+
+        &:focus, &:hover, &:visited, &:link, &:active {
+            text-decoration: none;
+        }
+    `
 
     return (
         <div>
             <MainHeader>
-                <span>
-                    <H2>
-                        Carpool
-                    </H2>
-                </span>
+                <div>
+                    <H2Link to="/about">
+                        Carpool &nbsp; <img src={carpoolll} alt="Carpool Logo" width="30" height="50"/>
+                    </H2Link>
+                </div>
                 <UL>
                     <LI>
-                        <Link to="/home"><A>Home</A></Link>
+                        <StyledLink to="/home"><A>Home</A></StyledLink>
                     </LI>
                     <LI>
-                        <Link to="/about"><A>About</A></Link>
+                        <StyledLink to="/about"><A>About</A></StyledLink>
                     </LI>
                     <LI>
-                        <Link to="/login"><A>Login</A></Link>
+                        <StyledLink to="/login"><A>Login</A></StyledLink>
                     </LI>
                     <LI>
-                        <Link to="/rides"><A>Rides</A></Link>
+                        <StyledLink to="/rides"><A>Rides</A></StyledLink>
                     </LI>
                     <LI>
-                        <Link to="/profile"><A>Profile</A></Link>
+                        <StyledLink to="/profile"><A>Profile</A></StyledLink>
                     </LI>
                 </UL>
             </MainHeader>

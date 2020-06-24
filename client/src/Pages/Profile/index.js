@@ -30,8 +30,20 @@ const GET_USER_INFO = gql`
     }
 `
 
-const ProfileCardEditButton = styled.button`
-    width: 30px;
+const Button = styled.div`
+    margin-top: 10px;
+    background-color: #359d99;
+    border: none;
+    color: white;
+    min-width: 150px;
+    min-height: 50px;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 2.7;
+    transition: background-color .2s linear;
+    &:hover {
+        background-color: #4ec2bd;
+    }
 `
 
 const Profile = ({}) => {
@@ -53,9 +65,9 @@ const Profile = ({}) => {
     return (
         <ProfileDiv>
             <ProfileCard user={user} />
-            <ProfileCardEditButton onClick={openModal}>
+            <Button onClick={openModal}>
                 Edit
-            </ProfileCardEditButton>
+            </Button>
             <Modal
             isOpen={modalOpen}
             onRequestClose={closeModal}

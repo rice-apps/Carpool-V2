@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="184.078" height="65.59" viewBox="0 0 184.078 65.59">
+  <defs>
+    <filter id="Union_143" x="118.488" y="0" width="65.59" height="65.59" filterUnits="userSpaceOnUse">
+      <feOffset dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feFlood flood-opacity="0.349"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Group_780" data-name="Group 780" transform="translate(-6 3)">
+    <g id="Group_749" data-name="Group 749" transform="translate(6 5.58)">
+      <g id="Group_748" data-name="Group 748">
+        <text id="New_Ride" data-name="New Ride" transform="translate(0 30)" fill="#f9fafb" font-size="30" font-family="Avenir-Book, Avenir"><tspan x="0" y="0">New Ride</tspan></text>
+      </g>
+      <g transform="matrix(1, 0, 0, 1, 0, -8.58)" filter="url(#Union_143)">
+        <path id="Union_143-2" data-name="Union 143" d="M7.182,44.39h0A1.455,1.455,0,0,1,6.121,43.9L6.107,43.9l-.039-.056a1.4,1.4,0,0,1-.107-.156L.3,35.409a1.413,1.413,0,0,1-.1-.151h0a1.37,1.37,0,0,1-.192-.7V7.024A6.822,6.822,0,0,1,.567,4.29,7,7,0,0,1,2.113,2.057,7.2,7.2,0,0,1,4.406.552a7.418,7.418,0,0,1,5.616,0,7.2,7.2,0,0,1,2.293,1.505A6.994,6.994,0,0,1,13.861,4.29a6.823,6.823,0,0,1,.567,2.734V34.557a1.378,1.378,0,0,1-.367.936L8.423,43.752l-.013.02-.042.062-.005,0a1.454,1.454,0,0,1-1.148.554Zm0-3.657,3.319-4.7H3.911Zm-4.3-7.511h8.656V10.114H2.886ZM11.542,7.3V7.024h0a4.131,4.131,0,0,0-1.269-2.979A4.358,4.358,0,0,0,7.214,2.81,4.277,4.277,0,0,0,2.886,7.024V7.3Z" transform="translate(161.88 9) rotate(45)" fill="#f9fafb"/>
+      </g>
+    </g>
+  </g>
+</svg>
