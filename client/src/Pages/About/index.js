@@ -1,5 +1,10 @@
 import React from "react";
+import styled from "styled-components";
 import Header from '../../components/Header'
+
+const ContainerDiv = styled.div `
+    ${props => `background: #142538;`}
+`;
 
 const About = ({}) => {
 

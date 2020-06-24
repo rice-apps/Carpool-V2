@@ -4,6 +4,12 @@ import '@availity/yup';
 import 'react-phone-input-2/lib/style.css';
 import { formatPhoneNumber } from 'react-phone-number-input'
 
+const ContainerDiv = styled.div `
+    ${props => `background: #142538;`}
+    color: white;
+    font-family: Avenir;
+`;
+
 const PageDiv = styled.div`
     display: flex;
     flex-direction: column;
@@ -40,22 +46,15 @@ const ProfileCardDiv = styled.div`
 
 const ProfileCardName = styled.a`
     font-size: 35px;
-    font-weight: 250;
-    font-family: acari-sans.bold.ttf;
 `
 
 const ProfileCardPhone = styled.a`
-    font-color: black;
     font-size: 20px;
-    font-weight: normal;
-    font-family: acari-sans.light.ttf;
 `
 
 const ProfileCardEmail = styled.a`
     font-size: 18px;
-    font-weight: normal;
     vertical-align: middle;
-    font-family: acari-sans.light.ttf;
 `
 
 const ProfileImage = styled.img`
@@ -71,8 +70,8 @@ const ProfileCard = ({ user }) => {
     }
 
     return (
+        <ContainerDiv>
         <ProfileCardDiv>
-            <ProfileImage src="https://www.tinygraphs.com/labs/isogrids/hexa/wcy2?colors=143937&colors=FFF&colors=2B7A78&numcolors=3&size=220&fmt=svg" alt="pic" />
             <PageDiv>
                 <ProfileCardName>{user.firstName} {user.lastName}</ProfileCardName>
                 <ProfileCardPhone type='tel'>{formatPhoneNumber("+"+user.phone)}</ProfileCardPhone>
@@ -81,6 +80,7 @@ const ProfileCard = ({ user }) => {
                 </Button>
             </PageDiv>
         </ProfileCardDiv>
+        </ContainerDiv>
     )
 }
 

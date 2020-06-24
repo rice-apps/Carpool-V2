@@ -1,4 +1,5 @@
 import React, { Component, useEffect } from "react"
+import styled from "styled-components";
 import { Switch, Route, Redirect } from 'react-router'
 import { gql, useQuery, useApolloClient } from '@apollo/client';
 import App from '../App';
@@ -8,6 +9,10 @@ import Home from '../Pages/Home';
 import Rides from '../Pages/Rides';
 import Profile from '../Pages/Profile';
 import About from '../Pages/About';
+
+const ContainerDiv = styled.div `
+    ${props => `background: #142538;`}
+`;
 
 /**
  * Requests to verify the user's token on the backend
