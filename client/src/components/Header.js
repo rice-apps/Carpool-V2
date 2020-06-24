@@ -1,6 +1,7 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
-import carpoolll from '../carpoolll.png'
+import carpoolll from '../carpoolll.png';
+import AboutUs from '../assets/about_us.svg';
 import {
     BrowserRouter as Router,
     Switch,
@@ -15,7 +16,7 @@ export const Header = () => {
         align-items: center;
         justify-content: space-around;
         flex-wrap: wrap;
-        background-color: #1b474b;
+        background-color: #142537;
         color: white;
         padding: .5em 0 .5em 0;
     `
@@ -52,21 +53,22 @@ export const Header = () => {
         textDecoration: 'none';
         padding: 0 1.4em 0 0;
         text-align: center;
+        font-family: acari-sans.light;
     `
 
     const LI = styled.li`
         text-decoration: none;
         padding: .6em 1em .6em 1em;
-        border-style: solid;
-        border-width: thin;
-        border-right: none;
+        border-style: none;
+        // border-width: thin;
+        // border-right: none;
         background-color: transparent;
         transition: background-color .2s linear;
         display: inline;
-        &:last-child {
-            border-right: solid;
-            border-width: thin;
-        }
+        // &:last-child {
+        //     border-right: solid;
+        //     border-width: thin;
+        // }
         &:hover {
             background-color: #359d99;
         }
@@ -88,20 +90,21 @@ export const Header = () => {
                     </H2Link>
                 </div>
                 <UL>
-                    <LI>
+                    {/* <LI>
                         <StyledLink to="/home"><A>Home</A></StyledLink>
-                    </LI>
+                    </LI> */}
                     <LI>
-                        <StyledLink to="/about"><A>About</A></StyledLink>
-                    </LI>
-                    <LI>
-                        <StyledLink to="/login"><A>Login</A></StyledLink>
+                        {/* <StyledLink to="/about"><A>About</A></StyledLink> */}
+                        <img src={AboutUs} />
                     </LI>
                     <LI>
                         <StyledLink to="/rides"><A>Rides</A></StyledLink>
                     </LI>
                     <LI>
                         <StyledLink to="/profile"><A>Profile</A></StyledLink>
+                    </LI>
+                    <LI>
+                        <StyledLink to="/login"><A>Login</A></StyledLink>
                     </LI>
                 </UL>
             </MainHeader>
