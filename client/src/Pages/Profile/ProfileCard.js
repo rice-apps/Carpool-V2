@@ -39,20 +39,23 @@ const ProfileCardDiv = styled.div`
 `
 
 const ProfileCardName = styled.a`
-    font-size: 30px;
+    font-size: 35px;
     font-weight: normal;
+    font-family: Avenir Std 55 Roman;
 `
 
 const ProfileCardPhone = styled.a`
     font-color: black;
     font-size: 20px;
     font-weight: normal;
+    font-family: Avenir;
 `
 
 const ProfileCardEmail = styled.a`
     font-size: 18px;
     font-weight: normal;
     vertical-align: middle;
+    font-family: Avenir;
 `
 
 const ProfileImage = styled.img`
