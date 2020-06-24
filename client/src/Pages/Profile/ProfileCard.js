@@ -40,22 +40,22 @@ const ProfileCardDiv = styled.div`
 
 const ProfileCardName = styled.a`
     font-size: 35px;
-    font-weight: normal;
-    font-family: Avenir Std 55 Roman;
+    font-weight: 250;
+    font-family: acari-sans.bold.ttf;
 `
 
 const ProfileCardPhone = styled.a`
     font-color: black;
     font-size: 20px;
     font-weight: normal;
-    font-family: Avenir;
+    font-family: acari-sans.light.ttf;
 `
 
 const ProfileCardEmail = styled.a`
     font-size: 18px;
     font-weight: normal;
     vertical-align: middle;
-    font-family: Avenir;
+    font-family: acari-sans.light.ttf;
 `
 
 const ProfileImage = styled.img`
