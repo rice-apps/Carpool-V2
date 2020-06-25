@@ -1,6 +1,12 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
-import carpoolll from '../carpoolll.png'
+import carpoolll from '../carpoolll.png';
+import Icon from '../assets/icon_top_left.svg';
+import AboutUs from '../assets/about_us.svg';
+import NewRide from '../assets/new_ride.svg';
+import FindRide from '../assets/find_ride.svg';
+import Profile from '../assets/profile.svg';
+import Login from '../assets/log_in.svg';
 import {
     BrowserRouter as Router,
     Switch,
@@ -15,9 +21,9 @@ export const Header = () => {
         align-items: center;
         justify-content: space-around;
         flex-wrap: wrap;
-        background-color: #1b474b;
+        background-color: #142537;
         color: white;
-        padding: .5em 0 .5em 0;
+        padding: .1em 0 .1em 0;
     `
 
     const A = styled.a`
@@ -34,10 +40,12 @@ export const Header = () => {
         display: flex;
         justify-content: center;
         align-items: center;
+        word-wrap: break-word;
         color: white;
         font-size: 24px;
-
+        font-family: Copperplate Gothic Light;
         text-decoration: none;
+        width: 8em;
 
         &:focus, &:hover, &:visited, &:link, &:active {
             text-decoration: none;
@@ -49,24 +57,21 @@ export const Header = () => {
     `
 
     const UL = styled.ul`
+        display: flex;
+        flex-direction: row;
         textDecoration: 'none';
-        padding: 0 1.4em 0 0;
+        // padding: 0 1.4em 0 0;
         text-align: center;
+        font-family: acari-sans.light;
     `
 
     const LI = styled.li`
-        text-decoration: none;
-        padding: .6em 1em .6em 1em;
-        border-style: solid;
-        border-width: thin;
-        border-right: none;
+        // padding: .6em 1em .6em 1em;
+        border-style: none;
         background-color: transparent;
         transition: background-color .2s linear;
+        vertical-align: middle;
         display: inline;
-        &:last-child {
-            border-right: solid;
-            border-width: thin;
-        }
         &:hover {
             background-color: #359d99;
         }
@@ -79,29 +84,62 @@ export const Header = () => {
         }
     `
 
+    const ImgWrapper1 = styled.div`
+        width: 8.8em;
+        height: 2.9em;
+    `
+
+    const ImgWrapper3 = styled.div`
+        width: 6em;
+        height: 2.9em;
+    `
+
+    const IMG = styled.img`
+        width: auto;
+        height: 100%;
+    `
+
     return (
         <div>
             <MainHeader>
                 <div>
                     <H2Link to="/about">
-                        Carpool &nbsp; <img src={carpoolll} alt="Carpool Logo" width="30" height="50"/>
+                        <img src={Icon} alt="Carpool Logo" width="30" height="50"/>
+                        &nbsp;
+                        <p>
+                            Rice
+                            Carpool
+                        </p>
                     </H2Link>
                 </div>
                 <UL>
-                    <LI>
+                    {/* <LI>
                         <StyledLink to="/home"><A>Home</A></StyledLink>
+                    </LI> */}
+                    <LI>
+                        <ImgWrapper1>
+                            <StyledLink to="/about"><IMG src={AboutUs} /></StyledLink>
+                        </ImgWrapper1>
                     </LI>
                     <LI>
-                        <StyledLink to="/about"><A>About</A></StyledLink>
+                        <ImgWrapper1>
+                            <StyledLink to="/rides"><IMG src={NewRide} /></StyledLink>
+                        </ImgWrapper1>
                     </LI>
                     <LI>
-                        <StyledLink to="/login"><A>Login</A></StyledLink>
+                        <ImgWrapper1>
+                            <StyledLink to="/rides"><IMG src={FindRide} /></StyledLink>
+                        </ImgWrapper1>
                     </LI>
                     <LI>
-                        <StyledLink to="/rides"><A>Rides</A></StyledLink>
+                        <ImgWrapper1>
+                            <StyledLink to="/profile"><IMG src={Profile} /></StyledLink>
+                        </ImgWrapper1>
                     </LI>
                     <LI>
-                        <StyledLink to="/profile"><A>Profile</A></StyledLink>
+                        <ImgWrapper1>
+                            <StyledLink to="/login"><IMG src={Login} /></StyledLink>
+                        </ImgWrapper1>
                     </LI>
                 </UL>
             </MainHeader>
