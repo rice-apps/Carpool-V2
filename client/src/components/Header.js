@@ -1,12 +1,13 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
-import carpoolll from '../carpoolll.png';
 import Icon from '../assets/icon_top_left.svg';
-import AboutUs from '../assets/about_us.svg';
-import NewRide from '../assets/new_ride.svg';
-import FindRide from '../assets/find_ride.svg';
-import Profile from '../assets/profile.svg';
-import Login from '../assets/log_in.svg';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { 
+    faHome,
+    faPencilAlt,
+    faSearch,
+    faUser
+} from '@fortawesome/free-solid-svg-icons'
 import {
     BrowserRouter as Router,
     Switch,
@@ -66,37 +67,46 @@ export const Header = () => {
     `
 
     const LI = styled.li`
-        // padding: .6em 1em .6em 1em;
-        border-style: none;
+        padding: .6vh 1vh .6vh 1vh;
         background-color: transparent;
-        transition: background-color .2s linear;
         vertical-align: middle;
-        display: inline;
-        &:hover {
-            background-color: #359d99;
+        font-size: 18px;
+        position: relative;
+        display: flex;
+        &:before {
+            content: "";
+            position: absolute;
+            margin: 0 1vh 0 0.9vh;
+            width: 90%;
+            height: .2vh;
+            bottom: 0;
+            left: 0;
+            background-color: white;
+            visibility: hidden;
+            transform: scaleX(0);
+            transition: all 0.3s ease-in-out 0s;
+        }
+        &:hover::before {
+            visibility: visible;
+            transform: scaleX(1);
         }
     `
     const StyledLink = styled(Link)`
+        display: box;
         text-decoration: none;
-
+        color: white;
+        padding-right: .75vh;
         &:focus, &:hover, &:visited, &:link, &:active {
             text-decoration: none;
         }
     `
 
-    const ImgWrapper1 = styled.div`
-        width: 8.8em;
-        height: 2.9em;
-    `
-
-    const ImgWrapper3 = styled.div`
-        width: 6em;
-        height: 2.9em;
-    `
-
-    const IMG = styled.img`
-        width: auto;
-        height: 100%;
+    const StyledIcon = styled(Link)`
+        text-decoration: none;
+        color: white;
+        &:focus, &:hover, &:visited, &:link, &:active {
+            text-decoration: none;
+        }
     `
 
     return (
@@ -117,29 +127,34 @@ export const Header = () => {
                         <StyledLink to="/home"><A>Home</A></StyledLink>
                     </LI> */}
                     <LI>
-                        <ImgWrapper1>
-                            <StyledLink to="/about"><IMG src={AboutUs} /></StyledLink>
-                        </ImgWrapper1>
+                        <StyledLink to="/about">About Us  </StyledLink>
+                        <StyledIcon to="/about">
+                            <FontAwesomeIcon icon={faHome} />
+                        </StyledIcon>
                     </LI>
                     <LI>
-                        <ImgWrapper1>
-                            <StyledLink to="/rides"><IMG src={NewRide} /></StyledLink>
-                        </ImgWrapper1>
+                        <StyledLink to="/rides">New Ride </StyledLink>
+                        <StyledIcon to="/rides">
+                            <FontAwesomeIcon icon={faPencilAlt} />
+                        </StyledIcon>
                     </LI>
                     <LI>
-                        <ImgWrapper1>
-                            <StyledLink to="/rides"><IMG src={FindRide} /></StyledLink>
-                        </ImgWrapper1>
+                        <StyledLink to="/rides">Find Ride </StyledLink>
+                        <StyledIcon to='/rides'>
+                            <FontAwesomeIcon icon={faSearch} />
+                        </StyledIcon>
                     </LI>
                     <LI>
-                        <ImgWrapper1>
-                            <StyledLink to="/profile"><IMG src={Profile} /></StyledLink>
-                        </ImgWrapper1>
+                        <StyledLink to="/profile">Profile </StyledLink>
+                        <StyledIcon to="/profile">
+                            <FontAwesomeIcon icon={faUser} />
+                        </StyledIcon>
                     </LI>
                     <LI>
-                        <ImgWrapper1>
-                            <StyledLink to="/login"><IMG src={Login} /></StyledLink>
-                        </ImgWrapper1>
+                        <StyledLink to="/login">Login </StyledLink>
+                        <StyledIcon>
+                            <FontAwesomeIcon icon={faUser} />
+                        </StyledIcon>
                     </LI>
                 </UL>
             </MainHeader>
