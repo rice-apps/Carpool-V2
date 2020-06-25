@@ -15,6 +15,7 @@ const GET_LOCATIONS = gql`
     }
 `
 
+
 const Rides = ({ }) => {
     const [modalOpen, setModalOpen] = useState(false);
     
@@ -40,6 +41,7 @@ const Rides = ({ }) => {
             <Modal
             isOpen={modalOpen}
             onRequestClose={closeModal}
+            // style={customStyles}
             >
                 <RideCreate 
                 closeModal={closeModal} 

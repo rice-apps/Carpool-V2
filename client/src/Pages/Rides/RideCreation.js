@@ -4,36 +4,47 @@ import Select from "react-select";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import DateTimePicker from 'react-datetime-picker';
 import { useToasts } from "react-toast-notifications";
+import '../../index.css'
+
 
 const RideCreateDiv = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-`;
+    justify-content: space-around;
+`
 
 const RideCreateInputDiv = styled.div`
     width: 50em;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    align-items: baseline;
+    align-items: center;
+    color : white;
 `
 
 const RideCreateLabel = styled.label`
+    
     justify-self: flex-start;
+    width:200px;
+
 `
 
 const RideCreateInput = styled.input`
     justify-self: flex-end;
+    
 `
 
 const RideCreateButton = styled.button`
     justify-self: center;
+    width: 5vw;
+    height: 2vh;
 `
 
 const RideCreateSelect = styled.div`
-    width: 15em;
+    width: 20vw;
+    height: 5vh;
+    border-radius: 50px;
 `
 
 /**
@@ -176,53 +187,53 @@ const RideCreate = ({ closeModal, locations }) => {
     let readyToSubmit = ["deptLoc", "arrLoc", "deptDate"].every(requiredElem => getInputs.hasOwnProperty(requiredElem));
 
     return (
-        <RideCreateDiv>
-            <RideCreateInputDiv>
-                <RideCreateLabel>Departure Location</RideCreateLabel>
-                <RideCreateSelect>
-                    <Select
-                    name="deptLoc"
-                    options={locations}
-                    onChange={(selected) => setInputs({...getInputs, deptLoc: selected.value })}
-                    placeholder="Select a Departure Location"
+            <RideCreateDiv>
+                <RideCreateInputDiv>
+                    <RideCreateLabel>Departing from</RideCreateLabel>
+                    <RideCreateSelect>
+                        <Select
+                        name="deptLoc"
+                        options={locations}
+                        onChange={(selected) => setInputs({...getInputs, deptLoc: selected.value })}
+                        placeholder="Select a Departure Location"
+                        />
+                    </RideCreateSelect>
+                    <RideCreateLabel>Arrival Location</RideCreateLabel>
+                    <RideCreateSelect>
+                        <Select
+                        name="arrLoc"
+                        options={locations.filter(location => location.value != getInputs.deptLoc)}
+                        onChange={(selected) => setInputs({...getInputs, arrLoc: selected.value })}
+                        placeholder="Select an Arrival Location"
+                        isDisabled={getInputs.hasOwnProperty("deptLoc") ? false : true }
+                        />
+                    </RideCreateSelect>
+                </RideCreateInputDiv>
+                <RideCreateInputDiv>
+                    <RideCreateLabel>Departure Date & Time</RideCreateLabel>
+                    {/* Please find a better date & time picker */}
+                    <DateTimePicker
+                    onChange={value => setInputs({ ...getInputs, deptDate: value })}
+                    value={getInputs.deptDate}
                     />
-                </RideCreateSelect>
-                <RideCreateLabel>Arrival Location</RideCreateLabel>
-                <RideCreateSelect>
-                    <Select
-                    name="arrLoc"
-                    options={locations.filter(location => location.value != getInputs.deptLoc)}
-                    onChange={(selected) => setInputs({...getInputs, arrLoc: selected.value })}
-                    placeholder="Select an Arrival Location"
-                    isDisabled={getInputs.hasOwnProperty("deptLoc") ? false : true }
-                    />
-                </RideCreateSelect>
-            </RideCreateInputDiv>
-            <RideCreateInputDiv>
-                <RideCreateLabel>Departure Date & Time</RideCreateLabel>
-                {/* Please find a better date & time picker */}
-                <DateTimePicker
-                onChange={value => setInputs({ ...getInputs, deptDate: value })}
-                value={getInputs.deptDate}
-                />
-            </RideCreateInputDiv>
-            <RideCreateInputDiv>
-                <RideCreateLabel>Spots</RideCreateLabel>
-                <RideCreateInput onChange={handleFormChange} type="number" name="spots" />
-            </RideCreateInputDiv>
-            <RideCreateInputDiv>
-                <RideCreateLabel>Comments</RideCreateLabel>
-                <RideCreateInput onChange={handleFormChange} type="paragraph" name="note" />
-            </RideCreateInputDiv>
-            <RideCreateInputDiv>
-                <RideCreateLabel>Will you be driving?</RideCreateLabel>
-                <RideCreateInput onChange={event => setInputs({...getInputs, ownerDriving: event.target.checked })} type="checkbox" name="ownerDriving" />
-            </RideCreateInputDiv>
-            <RideCreateButton 
-            onClick={handleSubmit} 
-            disabled={!readyToSubmit}
-            >Create Ride!</RideCreateButton>
-        </RideCreateDiv>
+                </RideCreateInputDiv>
+                <RideCreateInputDiv>
+                    <RideCreateLabel>Spots</RideCreateLabel>
+                    <RideCreateInput onChange={handleFormChange} type="number" name="spots" />
+                </RideCreateInputDiv>
+                <RideCreateInputDiv>
+                    <RideCreateLabel>Comments</RideCreateLabel>
+                    <RideCreateInput onChange={handleFormChange} type="paragraph" name="note" />
+                </RideCreateInputDiv>
+                <RideCreateInputDiv>
+                    <RideCreateLabel>Will you be driving?</RideCreateLabel>
+                    <RideCreateInput onChange={event => setInputs({...getInputs, ownerDriving: event.target.checked })} type="checkbox" name="ownerDriving" />
+                </RideCreateInputDiv>
+                <RideCreateButton 
+                onClick={handleSubmit} 
+                disabled={!readyToSubmit}
+                >Submit</RideCreateButton>
+            </RideCreateDiv>
     )
 }
 
