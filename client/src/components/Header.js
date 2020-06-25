@@ -2,6 +2,10 @@ import React from 'react';
 import styled, { css } from 'styled-components';
 import carpoolll from '../carpoolll.png';
 import AboutUs from '../assets/about_us.svg';
+import NewRide from '../assets/new_ride.svg';
+import FindRide from '../assets/find_ride.svg';
+import Profile from '../assets/profile.svg';
+import Login from '../assets/log_in.svg';
 import {
     BrowserRouter as Router,
     Switch,
@@ -57,18 +61,12 @@ export const Header = () => {
     `
 
     const LI = styled.li`
-        text-decoration: none;
-        padding: .6em 1em .6em 1em;
+        // padding: .6em 1em .6em 1em;
         border-style: none;
-        // border-width: thin;
-        // border-right: none;
         background-color: transparent;
         transition: background-color .2s linear;
+        vertical-align: middle;
         display: inline;
-        // &:last-child {
-        //     border-right: solid;
-        //     border-width: thin;
-        // }
         &:hover {
             background-color: #359d99;
         }
@@ -79,6 +77,11 @@ export const Header = () => {
         &:focus, &:hover, &:visited, &:link, &:active {
             text-decoration: none;
         }
+    `
+
+    const IMG = styled.img`
+        max-width: 6em;
+        height: 3em;
     `
 
     return (
@@ -94,17 +97,19 @@ export const Header = () => {
                         <StyledLink to="/home"><A>Home</A></StyledLink>
                     </LI> */}
                     <LI>
-                        {/* <StyledLink to="/about"><A>About</A></StyledLink> */}
-                        <img src={AboutUs} />
+                        <StyledLink to="/about"><IMG src={AboutUs} /></StyledLink>
                     </LI>
                     <LI>
-                        <StyledLink to="/rides"><A>Rides</A></StyledLink>
+                        <StyledLink to="/rides"><IMG src={NewRide} /></StyledLink>
                     </LI>
                     <LI>
-                        <StyledLink to="/profile"><A>Profile</A></StyledLink>
+                        <StyledLink to="/rides"><IMG src={FindRide} /></StyledLink>
                     </LI>
                     <LI>
-                        <StyledLink to="/login"><A>Login</A></StyledLink>
+                        <StyledLink to="/profile"><IMG src={Profile} /></StyledLink>
+                    </LI>
+                    <LI>
+                        <StyledLink to="/login"><IMG src={Login} /></StyledLink>
                     </LI>
                 </UL>
             </MainHeader>
