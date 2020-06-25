@@ -4,48 +4,38 @@ import '@availity/yup';
 import 'react-phone-input-2/lib/style.css';
 import { formatPhoneNumber } from 'react-phone-number-input'
 
-const ContainerDiv = styled.div `
-    ${props => `background: #142538;`}
-    color: white;
-    font-family: Avenir;
-`;
-
 const PageDiv = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: space-around;
     min-height: 10em;
     flex: 1;
+    
 `
-
 const Button = styled.div`
-    background-color: #359d99;
-    border: none;
-    color: white;
+    text-decoration: underline;
+    text-underline-position: under;
     min-width: 150px;
     min-height: 50px;
     text-align: center;
-    vertical-align: middle;
-    line-height: 2.7;
-    transition: background-color .2s linear;
-    &:hover {
-        background-color: #4ec2bd;
-    }
 `
 
 const ProfileCardDiv = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-around;
-    min-width: 25em;
-    box-shadow: 0 0 5px 2px rgba(0,0,0,.35);
-    text-align: center;
-    flex: 1;
+    // display: flex;
+    // flex-direction: column;
+    // align-items: center;
+    // justify-content: space-around;
+    // text-align: center;
+    // flex: 1;
+    background: #142538;
+    color: white;
+    font-family: Avenir;
 `
 
 const ProfileCardName = styled.a`
     font-size: 35px;
+    clear: left;
+    // margin: auto;
 `
 
 const ProfileCardPhone = styled.a`
@@ -70,7 +60,6 @@ const ProfileCard = ({ user }) => {
     }
 
     return (
-        <ContainerDiv>
         <ProfileCardDiv>
             <PageDiv>
                 <ProfileCardName>{user.firstName} {user.lastName}</ProfileCardName>
@@ -80,7 +69,6 @@ const ProfileCard = ({ user }) => {
                 </Button>
             </PageDiv>
         </ProfileCardDiv>
-        </ContainerDiv>
     )
 }
 

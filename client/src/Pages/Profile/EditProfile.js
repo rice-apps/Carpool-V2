@@ -10,8 +10,6 @@ import * as Yup from 'yup';
 import PhoneInput from "react-phone-input-2";
 import 'react-phone-input-2/lib/style.css';
 
-
-
 const EditProfileDiv = styled.div`
     display: flex;
     flex-direction: column;
@@ -19,6 +17,9 @@ const EditProfileDiv = styled.div`
     align-items: center;
     max-width: 100vw;
     height: 40vh;
+    background: #142538;
+    color: white;
+    font-family: Avenir;
 `
 
 const EditProfileFieldDiv = styled.div`

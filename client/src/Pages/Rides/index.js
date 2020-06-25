@@ -7,9 +7,11 @@ import RidesList from "./RidesList";
 
 Modal.bind("#app");
 
-const ContainerDiv = styled.div `
-    ${props => `background: #142538;`}
-`;
+const customStyles = {
+    content : {
+        background: '#142538',
+    }
+};
 
 const GET_LOCATIONS = gql`
     query GetLocations {
@@ -43,6 +45,7 @@ const Rides = ({ }) => {
             <button onClick={openModal}>Create Ride</button>
             <RidesList />
             <Modal
+            style={customStyles}
             isOpen={modalOpen}
             onRequestClose={closeModal}
             >

@@ -5,11 +5,18 @@ import { gql, useQuery, useMutation } from "@apollo/client";
 import DateTimePicker from 'react-datetime-picker';
 import { useToasts } from "react-toast-notifications";
 
+const customStyles = {
+    content : {
+        background: '#142538',
+    }
+  };
+
 const RideCreateDiv = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
+    background-color: #142538;
 `;
 
 const RideCreateInputDiv = styled.div`
