@@ -10,52 +10,41 @@ const PageDiv = styled.div`
     justify-content: space-around;
     min-height: 10em;
     flex: 1;
+    
 `
-
 const Button = styled.div`
-    background-color: #359d99;
-    border: none;
-    color: white;
+    text-decoration: underline;
+    text-underline-position: under;
     min-width: 150px;
     min-height: 50px;
     text-align: center;
-    vertical-align: middle;
-    line-height: 2.7;
-    transition: background-color .2s linear;
-    &:hover {
-        background-color: #4ec2bd;
-    }
 `
 
 const ProfileCardDiv = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-around;
-    min-width: 25em;
-    box-shadow: 0 0 5px 2px rgba(0,0,0,.35);
-    text-align: center;
-    flex: 1;
+    // display: flex;
+    // flex-direction: column;
+    // align-items: center;
+    // justify-content: space-around;
+    // text-align: center;
+    // flex: 1;
+    background: #142538;
+    color: white;
+    font-family: Avenir;
 `
 
 const ProfileCardName = styled.a`
     font-size: 35px;
-    font-weight: normal;
-    font-family: Avenir Std 55 Roman;
+    clear: left;
+    // margin: auto;
 `
 
 const ProfileCardPhone = styled.a`
-    font-color: black;
     font-size: 20px;
-    font-weight: normal;
-    font-family: Avenir;
 `
 
 const ProfileCardEmail = styled.a`
     font-size: 18px;
-    font-weight: normal;
     vertical-align: middle;
-    font-family: Avenir;
 `
 
 const ProfileImage = styled.img`
@@ -72,7 +61,6 @@ const ProfileCard = ({ user }) => {
 
     return (
         <ProfileCardDiv>
-            <ProfileImage src="https://www.tinygraphs.com/labs/isogrids/hexa/wcy2?colors=143937&colors=FFF&colors=2B7A78&numcolors=3&size=220&fmt=svg" alt="pic" />
             <PageDiv>
                 <ProfileCardName>{user.firstName} {user.lastName}</ProfileCardName>
                 <ProfileCardPhone type='tel'>{formatPhoneNumber("+"+user.phone)}</ProfileCardPhone>

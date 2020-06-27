@@ -1,10 +1,17 @@
 import React, { useState } from "react";
+import styled from "styled-components";
 import { gql, useQuery } from "@apollo/client";
 import Modal from "react-modal";
 import RideCreate from "./RideCreation";
 import RidesList from "./RidesList";
 
 Modal.bind("#app");
+
+const customStyles = {
+    content : {
+        background: '#142538',
+    }
+};
 
 const GET_LOCATIONS = gql`
     query GetLocations {
@@ -39,9 +46,9 @@ const Rides = ({ }) => {
             <button onClick={openModal}>Create Ride</button>
             <RidesList />
             <Modal
+            style={customStyles}
             isOpen={modalOpen}
             onRequestClose={closeModal}
-            // style={customStyles}
             >
                 <RideCreate 
                 closeModal={closeModal} 

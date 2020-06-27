@@ -1,50 +1,68 @@
-import React, { useState, createContext, useEffect } from "react";
+import React, { useState, createContext, useEffect} from "react";
 import styled from "styled-components";
-import Select from "react-select";
+import Select, { components } from 'react-select';
 import { gql, useQuery, useMutation } from "@apollo/client";
 import DateTimePicker from 'react-datetime-picker';
 import { useToasts } from "react-toast-notifications";
-import '../../index.css'
+import Illustration from '../../assets/illus_new_ride_page.svg';
 
+const mainDiv = styled.div`
 
-const RideCreateDiv = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-around;
 `
 
-const RideCreateInputDiv = styled.div`
-    width: 50em;
+const IllustrationDiv = styled.div`
+    width: 600px;
+    height:600px;
+    position: fixed;
+    top: 975.57px;
+    left: 284.73px;
+`
+
+const RideCreateDiv = styled.div`
+    width: 1282px;
+    height:297px;
     display: flex;
-    flex-direction: row;
+    align-items: space-between;
     justify-content: space-between;
-    align-items: center;
+    font-size:20pt;
+    letter-spacing: 1px;
+    position: fixed;
+    top: 298px;
+    left: 314px;
+`
+
+
+const RideCreateInputDiv = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: flex-start;
+    color : white;
+`
+
+const RideCreateInputDivLast = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: flex-end;
     color : white;
 `
 
 const RideCreateLabel = styled.label`
-    
-    justify-self: flex-start;
-    width:200px;
 
 `
 
 const RideCreateInput = styled.input`
-    justify-self: flex-end;
     
 `
 
 const RideCreateButton = styled.button`
-    justify-self: center;
-    width: 5vw;
-    height: 2vh;
+
 `
 
 const RideCreateSelect = styled.div`
-    width: 20vw;
-    height: 5vh;
-    border-radius: 50px;
+    display:flex;
+    justify-content:row;
 `
 
 /**
@@ -186,55 +204,126 @@ const RideCreate = ({ closeModal, locations }) => {
     // These 3 properties MUST be present before a user can submit the new ride
     let readyToSubmit = ["deptLoc", "arrLoc", "deptDate"].every(requiredElem => getInputs.hasOwnProperty(requiredElem));
 
+    const Rideroptions = [
+        { value: '1', label: '1' },
+        { value: '2', label: '2' },
+        { value: '3', label: '3' },
+        { value: '4', label: '4' } 
+      ];
+
+      const Luggageoptions = [
+        { value: '1', label: '1' },
+        { value: '2', label: '2' },
+        { value: '3', label: '3' },
+        { value: '4', label: '4' },
+        { value: '5', label: '5' }
+      ];
+
+    const customStyles = {
+        control: (base) => ({
+            ...base,
+            width: 250,
+            
+            background:'#FFFFFF2B',
+            borderRadius: 15,
+            border: 'none',
+        }),
+        indicatorSeparator: (provided) => ({
+            ...provided,
+            display:'none',
+          }),
+        option: (base) => ({
+            ...base,
+            color:'#142538',
+        }),
+        singleValue: (provided) => ({
+            ...provided,
+            paddingBottom:'2px',
+            display: 'flex',
+            color:'#FFFFFF',
+          }),
+      }
+    
+      
+
     return (
+        <mainDiv>
             <RideCreateDiv>
+                <RideCreateInputDiv>    
+                    <RideCreateLabel>*Departing from:</RideCreateLabel>
+                    <RideCreateLabel>*Arriving at:</RideCreateLabel>
+                    <RideCreateLabel>*Number of Luggages:</RideCreateLabel>
+                </RideCreateInputDiv>
+                        
                 <RideCreateInputDiv>
-                    <RideCreateLabel>Departing from</RideCreateLabel>
-                    <RideCreateSelect>
                         <Select
                         name="deptLoc"
                         options={locations}
                         onChange={(selected) => setInputs({...getInputs, deptLoc: selected.value })}
-                        placeholder="Select a Departure Location"
+                        placeholder=""
+                        styles={customStyles}
                         />
-                    </RideCreateSelect>
-                    <RideCreateLabel>Arrival Location</RideCreateLabel>
-                    <RideCreateSelect>
+                        
                         <Select
                         name="arrLoc"
                         options={locations.filter(location => location.value != getInputs.deptLoc)}
                         onChange={(selected) => setInputs({...getInputs, arrLoc: selected.value })}
-                        placeholder="Select an Arrival Location"
+                        placeholder=""
                         isDisabled={getInputs.hasOwnProperty("deptLoc") ? false : true }
+                        styles={customStyles}
                         />
-                    </RideCreateSelect>
+                
+                        <Select
+                        name="luggage"
+                        options={Luggageoptions}
+                        onChange={(selected) => setInputs({...getInputs, luggage: selected.value })}
+                        placeholder=""
+                        styles={customStyles}
+                        />
                 </RideCreateInputDiv>
+
                 <RideCreateInputDiv>
-                    <RideCreateLabel>Departure Date & Time</RideCreateLabel>
+                    <RideCreateLabel>*Max number of Riders:</RideCreateLabel>
+                    <RideCreateLabel>*Departure Date & Time:</RideCreateLabel>
+                    <RideCreateLabel>Invite Others:</RideCreateLabel>
+                    {/* <RideCreateLabel>Extra Notes:</RideCreateLabel> */}
+                </RideCreateInputDiv>
+
+                <RideCreateInputDivLast>
+                    
+                    <Select
+                    options={Rideroptions}
+                    onChange={(selected) => setInputs({...getInputs, arrLoc: selected.value })}
+                    placeholder=""
+                    styles={customStyles}
+                    />
+                    <Select
+                    options={Rideroptions}
+                    onChange={(selected) => setInputs({...getInputs, arrLoc: selected.value })}
+                    placeholder=""
+                    styles={customStyles}
+                    />
                     {/* Please find a better date & time picker */}
-                    <DateTimePicker
+                    {/* <DateTimePicker
                     onChange={value => setInputs({ ...getInputs, deptDate: value })}
                     value={getInputs.deptDate}
-                    />
-                </RideCreateInputDiv>
-                <RideCreateInputDiv>
-                    <RideCreateLabel>Spots</RideCreateLabel>
+                    /> */}
                     <RideCreateInput onChange={handleFormChange} type="number" name="spots" />
-                </RideCreateInputDiv>
-                <RideCreateInputDiv>
-                    <RideCreateLabel>Comments</RideCreateLabel>
-                    <RideCreateInput onChange={handleFormChange} type="paragraph" name="note" />
-                </RideCreateInputDiv>
-                <RideCreateInputDiv>
-                    <RideCreateLabel>Will you be driving?</RideCreateLabel>
-                    <RideCreateInput onChange={event => setInputs({...getInputs, ownerDriving: event.target.checked })} type="checkbox" name="ownerDriving" />
-                </RideCreateInputDiv>
-                <RideCreateButton 
-                onClick={handleSubmit} 
-                disabled={!readyToSubmit}
-                >Submit</RideCreateButton>
+                    {/* <RideCreateInput onChange={handleFormChange} type="paragraph" name="note" /> */}
+                    {/* <RideCreateButton 
+                        onClick={handleSubmit} 
+                        disabled={!readyToSubmit}
+                        >Submit</RideCreateButton> */}
+        
+                    {/* <RideCreateInput onChange={event => setInputs({...getInputs, ownerDriving: event.target.checked })} type="checkbox" name="ownerDriving" /> */}
+                </RideCreateInputDivLast>
             </RideCreateDiv>
-    )
+            <IllustrationDiv>
+                <img src={Illustration} />
+            </IllustrationDiv>
+        </mainDiv>
+        )
+        
 }
 
 export default RideCreate;

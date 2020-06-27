@@ -9,6 +9,12 @@ import EditProfile from "./EditProfile";
 
 Modal.setAppElement("#app");
 
+const ContainerDiv = styled.div `
+    margin: 0;
+    padding: 0;
+    ${props => `background: #142538;`}
+`;
+
 const ProfileDiv = styled.div`
     display: flex;
     flex-direction: column;
@@ -63,6 +69,7 @@ const Profile = ({}) => {
     const { user } = data;
 
     return (
+        <ContainerDiv>
         <ProfileDiv>
             <ProfileCard user={user} />
             <Button onClick={openModal}>
@@ -78,6 +85,7 @@ const Profile = ({}) => {
                 />
             </Modal>
         </ProfileDiv>
+        </ContainerDiv>
     )
 }
 

@@ -20,6 +20,9 @@ const EditProfileDiv = styled.div`
     align-items: center;
     max-width: 100vw;
     height: 40vh;
+    background: #142538;
+    color: white;
+    font-family: Avenir;
 `
 
 const EditProfileFieldDiv = styled.div`
