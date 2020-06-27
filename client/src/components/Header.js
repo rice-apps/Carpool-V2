@@ -24,7 +24,7 @@ export const Header = () => {
         flex-wrap: wrap;
         background-color: #142537;
         color: white;
-        padding: .1em 0 .1em 0;
+        height: 14vh;
     `
 
     const A = styled.a`
