@@ -5,11 +5,12 @@ import { Link } from "react-router-dom";
 
 const ContainerDiv = styled.div `
     display: grid;
-    gird-template-columns: repeat(7, minmax(0, 1fr));
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     margin-left: 5vh;
     margin-right: 5vh;
     width: 95vw;
-    height: 86vh;
+    height: auto;
+    padding-bottom: .5vh;
 `;
 
 const TextDiv = styled.div `

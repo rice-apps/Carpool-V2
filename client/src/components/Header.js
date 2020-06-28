@@ -1,5 +1,6 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
+import { gql, useQuery, useApolloClient } from '@apollo/client';
 import Icon from '../assets/icon_top_left.svg';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { 
@@ -52,11 +53,7 @@ export const Header = () => {
             text-decoration: none;
         }
     `
-
-    const Nav = styled.nav`
-        margin: 1.5em 0 0 5%;
-    `
-
+    
     const UL = styled.ul`
         display: flex;
         flex-direction: row;
@@ -109,6 +106,37 @@ export const Header = () => {
         }
     `
 
+    const VERIFY_USER = gql`
+    query VerifyQuery($token: String!) {
+        verifyUser(token:$token) {
+            _id
+            __typename
+            firstName
+            lastName
+            netid
+            phone
+            token
+            recentUpdate
+        }
+    }
+    `
+
+    let token = localStorage.getItem('token') != null ? localStorage.getItem('token') : '';
+
+    let client = useApolloClient();
+
+    let { data, loading, error } = useQuery(
+        VERIFY_USER,
+        { variables: { token: token }, errorPolicy: 'none' }
+    );
+
+    let btn;
+    if (!data || !data.verifyUser) {
+        btn = <StyledLink to="/login">Login </StyledLink>
+    } else {
+        btn = <StyledLink to="/profile">Profile </StyledLink>
+    }
+
     return (
         <div>
             <MainHeader>
@@ -145,13 +173,7 @@ export const Header = () => {
                         </StyledIcon>
                     </LI>
                     <LI>
-                        <StyledLink to="/profile">Profile </StyledLink>
-                        <StyledIcon to="/profile">
-                            <FontAwesomeIcon icon={faUser} />
-                        </StyledIcon>
-                    </LI>
-                    <LI>
-                        <StyledLink to="/login">Login </StyledLink>
+                        {btn}
                         <StyledIcon>
                             <FontAwesomeIcon icon={faUser} />
                         </StyledIcon>
