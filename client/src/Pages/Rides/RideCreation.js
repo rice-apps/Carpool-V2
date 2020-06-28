@@ -5,30 +5,31 @@ import { gql, useQuery, useMutation } from "@apollo/client";
 import DateTimePicker from 'react-datetime-picker';
 import { useToasts } from "react-toast-notifications";
 import Illustration from '../../assets/illus_new_ride_page.svg';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
 
 const mainDiv = styled.div`
-
+    font-family: acari-sans.light;
 `
 
 const IllustrationDiv = styled.div`
-    width: 600px;
-    height:600px;
-    position: fixed;
-    top: 975.57px;
-    left: 284.73px;
+    position: relative;
+    top: 68vh;
+    left: 15vw;
 `
 
 const RideCreateDiv = styled.div`
-    width: 1282px;
-    height:297px;
+    width: 70vw;
+    height:30vh;
     display: flex;
     align-items: space-between;
     justify-content: space-between;
     font-size:20pt;
-    letter-spacing: 1px;
+    letter-spacing: 0.1vw;
     position: fixed;
-    top: 298px;
-    left: 314px;
+    top: 15vw;
+    left: 15vw;
+    z-index:1;
 `
 
 
@@ -53,7 +54,24 @@ const RideCreateLabel = styled.label`
 `
 
 const RideCreateInput = styled.input`
-    
+    font-size:15pt;
+    font-family: inherit;
+    letter-spacing: 0.1vw;
+    background-color:#FFFFFF2B;
+    border-radius: 2vh;
+    color:white;
+    border: none;
+    width: 15vw;
+    height:4.5vh;
+    outline: none;
+    padding-left: 2vh;
+    padding-right: 2vh;
+    text-align:left;
+    ::-webkit-input-placeholder { 
+        font-size:15pt; 
+        letter-spacing:1pt;
+        font-family: acari-sans.normal;
+    }
 `
 
 const RideCreateButton = styled.button`
@@ -222,11 +240,12 @@ const RideCreate = ({ closeModal, locations }) => {
     const customStyles = {
         control: (base) => ({
             ...base,
-            width: 250,
-            
+            width: '13vw',
+            height:'4.5vh',
             background:'#FFFFFF2B',
-            borderRadius: 15,
+            borderRadius: '2vh',
             border: 'none',
+            boxShadow: 'none',
         }),
         indicatorSeparator: (provided) => ({
             ...provided,
@@ -238,10 +257,13 @@ const RideCreate = ({ closeModal, locations }) => {
         }),
         singleValue: (provided) => ({
             ...provided,
-            paddingBottom:'2px',
+            paddingBottom:'0.8vh',
+            paddingLeft:'1vh',
+            paddingRight:'1vh',
             display: 'flex',
             color:'#FFFFFF',
           }),
+       
       }
     
       
@@ -297,18 +319,19 @@ const RideCreate = ({ closeModal, locations }) => {
                     placeholder=""
                     styles={customStyles}
                     />
-                    <Select
+                    
+                    {/* <Select
                     options={Rideroptions}
                     onChange={(selected) => setInputs({...getInputs, arrLoc: selected.value })}
                     placeholder=""
                     styles={customStyles}
-                    />
+                    /> */}
                     {/* Please find a better date & time picker */}
-                    {/* <DateTimePicker
+                    <DateTimePicker
                     onChange={value => setInputs({ ...getInputs, deptDate: value })}
                     value={getInputs.deptDate}
-                    /> */}
-                    <RideCreateInput onChange={handleFormChange} type="number" name="spots" />
+                    />
+                    <RideCreateInput onChange={handleFormChange} type="text" name="spots" placeholder='Email Address'/>
                     {/* <RideCreateInput onChange={handleFormChange} type="paragraph" name="note" /> */}
                     {/* <RideCreateButton 
                         onClick={handleSubmit} 
