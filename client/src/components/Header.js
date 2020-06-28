@@ -21,7 +21,9 @@ export const Header = () => {
     const MainHeader = styled.header`
         display: flex;
         align-items: center;
-        justify-content: space-around;
+        justify-content: space-between;
+        padding-left: 17vh;
+        padding-right: 17vh;
         flex-wrap: wrap;
         background-color: #142537;
         color: white;
