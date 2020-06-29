@@ -9,32 +9,26 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 
 const mainDiv = styled.div`
-    display: grid;
     font-family: acari-sans.light;
-    grid-template-columns: repeat(20,5%);
-    grid-template-rows: repeat(20,5%);
-    width: 10%;
-    height: 10%;
-    
 `
 
 const IllustrationDiv = styled.div`
-    grid-area: 10/ 3 / 15/ 17;
+    position: relative;
+    top: 68vh;
+    left: 15vw;
 `
 
 const RideCreateDiv = styled.div`
-    grid-column: 3 / 17;
-    grid-row: 7 / 13;
+    width: 70vw;
+    height:30vh;
     display: flex;
     align-items: space-between;
     justify-content: space-between;
     font-size:20pt;
     letter-spacing: 0.1vw;
-    // position: fixed;
-    // top: 15vw;
-    // left: 15vw;
-    // width: 70vw;
-    // height:30vh;
+    position: fixed;
+    top: 15vw;
+    left: 15vw;
     z-index:1;
 `
 
@@ -351,7 +345,8 @@ const RideCreate = ({ closeModal, locations }) => {
                 <img src={Illustration} />
             </IllustrationDiv>
         </mainDiv>
-    )      
+        )
+        
 }
 
 export default RideCreate;

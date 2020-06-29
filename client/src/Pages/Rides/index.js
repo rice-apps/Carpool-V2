@@ -4,7 +4,6 @@ import { gql, useQuery } from "@apollo/client";
 import Modal from "react-modal";
 import RideCreate from "./RideCreation";
 import RidesList from "./RidesList";
-import { Link } from "react-router-dom";
 
 Modal.bind("#app");
 
@@ -44,9 +43,9 @@ const Rides = ({ }) => {
 
     return (
         <div>
-            <Link to="/newride" locations={locations}>Create Ride</Link>
+            <button onClick={openModal}>Create Ride</button>
             <RidesList />
-            {/* <Modal
+            <Modal
             style={customStyles}
             isOpen={modalOpen}
             onRequestClose={closeModal}
@@ -55,7 +54,7 @@ const Rides = ({ }) => {
                 closeModal={closeModal} 
                 locations={locations}
                 />
-            </Modal> */}
+            </Modal>
         </div>
     )
 }
