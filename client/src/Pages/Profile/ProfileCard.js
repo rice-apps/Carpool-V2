@@ -6,11 +6,13 @@ import { formatPhoneNumber } from 'react-phone-number-input'
 
 const PageDiv = styled.div`
     display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    min-height: 10em;
-    flex: 1;
-    
+    align-items: center;
+    justify-content: space-evenly;
+    margin-left: 5vh;
+    margin-right: 5vh;
+    width: 95vw;
+    height: auto;
+    padding-bottom: .5vh;
 `
 const Button = styled.div`
     text-decoration: underline;
@@ -21,21 +23,24 @@ const Button = styled.div`
 `
 
 const ProfileCardDiv = styled.div`
-    // display: flex;
-    // flex-direction: column;
-    // align-items: center;
-    // justify-content: space-around;
-    // text-align: center;
-    // flex: 1;
-    background: #142538;
+    padding-top: 5vh;
+    padding-bottom: 5vh;
+    background: #223244;
     color: white;
     font-family: Avenir;
 `
 
 const ProfileCardName = styled.a`
-    font-size: 35px;
-    clear: left;
-    // margin: auto;
+    font-size: 55px;
+    text-decoration: underline;
+    text-decoration-color: #E8CA5A;
+`
+const ProfileContactDiv = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    height: 19vh;
 `
 
 const ProfileCardPhone = styled.a`
@@ -44,7 +49,6 @@ const ProfileCardPhone = styled.a`
 
 const ProfileCardEmail = styled.a`
     font-size: 18px;
-    vertical-align: middle;
 `
 
 const ProfileImage = styled.img`
@@ -63,10 +67,12 @@ const ProfileCard = ({ user }) => {
         <ProfileCardDiv>
             <PageDiv>
                 <ProfileCardName>{user.firstName} {user.lastName}</ProfileCardName>
-                <ProfileCardPhone type='tel'>{formatPhoneNumber("+"+user.phone)}</ProfileCardPhone>
-                <Button onClick={sendEmail}>
-                    <ProfileCardEmail>{user.netid}@rice.edu</ProfileCardEmail>
-                </Button>
+                <ProfileContactDiv>
+                    <ProfileCardPhone type='tel'>{formatPhoneNumber("+"+user.phone)}</ProfileCardPhone>
+                    <Button onClick={sendEmail}>
+                        <ProfileCardEmail>{user.netid}@rice.edu</ProfileCardEmail>
+                    </Button>
+                </ProfileContactDiv>
             </PageDiv>
         </ProfileCardDiv>
     )

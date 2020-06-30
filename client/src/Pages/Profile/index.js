@@ -4,15 +4,69 @@ import { gql, useQuery } from "@apollo/client";
 
 import Modal from "react-modal";
 
-import ProfileCard from "./ProfileCard";
 import EditProfile from "./EditProfile";
 
+import '@availity/yup';
+import 'react-phone-input-2/lib/style.css';
+import { formatPhoneNumber } from 'react-phone-number-input'
+
 Modal.setAppElement("#app");
+
+const PageDiv = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    margin-left: 5vh;
+    margin-right: 5vh;
+    width: 95vw;
+    height: auto;
+    padding-bottom: .5vh;
+`
+const Button = styled.div`
+    text-decoration: underline;
+    text-underline-position: under;
+    min-width: 150px;
+    min-height: 50px;
+    text-align: center;
+`
+
+const ProfileCardDiv = styled.div`
+    padding-top: 5vh;
+    padding-bottom: 5vh;
+    background: #223244;
+    color: white;
+    font-family: Avenir;
+`
+
+const ProfileCardName = styled.a`
+    font-size: 55px;
+    text-decoration: underline;
+    text-decoration-color: #E8CA5A;
+`
+const ProfileContactDiv = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 19vh;
+    font-size: 20px;
+`
+
+const ProfileCardPhone = styled.a`
+`
+
+const ProfileCardEmail = styled.a`
+`
+
+const ProfileImage = styled.img`
+    max-width: 8em; 
+    max-height: 8em;
+    padding: 2em 0 0 0;
+`
 
 const ContainerDiv = styled.div `
     margin: 0;
     padding: 0;
-    ${props => `background: #142538;`}
 `;
 
 const ProfileDiv = styled.div`
@@ -36,21 +90,21 @@ const GET_USER_INFO = gql`
     }
 `
 
-const Button = styled.div`
-    margin-top: 10px;
-    background-color: #359d99;
-    border: none;
-    color: white;
-    min-width: 150px;
-    min-height: 50px;
-    text-align: center;
-    vertical-align: middle;
-    line-height: 2.7;
-    transition: background-color .2s linear;
-    &:hover {
-        background-color: #4ec2bd;
-    }
-`
+// const Button = styled.div`
+//     margin-top: 10px;
+//     background-color: #359d99;
+//     border: none;
+//     color: white;
+//     min-width: 150px;
+//     min-height: 50px;
+//     text-align: center;
+//     vertical-align: middle;
+//     line-height: 2.7;
+//     transition: background-color .2s linear;
+//     &:hover {
+//         background-color: #4ec2bd;
+//     }
+// `
 
 const Profile = ({}) => {
     // For the modal
@@ -68,13 +122,28 @@ const Profile = ({}) => {
 
     const { user } = data;
 
+    function sendEmail() {
+        window.location = "mailto:" + user.netid + "@rice.edu";
+    }
+
     return (
         <ContainerDiv>
         <ProfileDiv>
-            <ProfileCard user={user} />
-            <Button onClick={openModal}>
-                Edit
-            </Button>
+            <ProfileCardDiv user={user}>
+                <PageDiv>
+                    <ProfileCardName>{user.firstName} {user.lastName}</ProfileCardName>
+                    <ProfileContactDiv>
+                        <ProfileCardPhone type='tel'>{formatPhoneNumber("+"+user.phone)}</ProfileCardPhone>
+                        <Button onClick={sendEmail}>
+                            <ProfileCardEmail>{user.netid}@rice.edu</ProfileCardEmail>
+                        </Button>
+                        <Button onClick={openModal}>
+                            Edit
+                        </Button>
+                    </ProfileContactDiv>
+                </PageDiv>
+            </ProfileCardDiv>
+            
             <Modal
             isOpen={modalOpen}
             onRequestClose={closeModal}
