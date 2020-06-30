@@ -10,8 +10,11 @@ import * as Yup from 'yup';
 import PhoneInput from "react-phone-input-2";
 import 'react-phone-input-2/lib/style.css';
 
-
-
+const customStyles = {
+    content : {
+        background: '#223244',
+    }
+};
 
 const EditProfileDiv = styled.div`
     display: flex;
@@ -19,10 +22,13 @@ const EditProfileDiv = styled.div`
     justify-content: space-evenly;
     align-items: center;
     max-width: 100vw;
-    height: 40vh;
-    background: #142538;
+    height: 60vh;
     color: white;
     font-family: Avenir;
+    font-size: 3vh;
+`
+const EditProfileHeader = styled.div`
+    font-size: 5vh;
 `
 
 const EditProfileFieldDiv = styled.div`
@@ -40,35 +46,29 @@ const EditProfileLabel = styled.label`
 `
 
 const EditProfileInput = styled.input`
-    padding: .5rem 1rem;
-    font-size: 1.171875rem;
-    line-height: 1.2;
-    display: block;
-    width: 300px;
-    color: #495057;
-    background-color: #fff;
-    background-clip: padding-box;
-    border: 1px solid #ccc;
+    font-size: 3vh;
+    letter-spacing: 0.1vw;
+    background-color:#FFFFFF2B;
+    border-radius: 1vh;
+    color:white;
+    border: none;
+    width: 15vw;
+    height:4.5vh;
+    outline: none;
+    padding-left: 2vh;
+    padding-right: 2vh;
+    text-align:left;
+    ::-webkit-input-placeholder { 
+        font-size:15pt; 
+        letter-spacing:1pt;
+        font-family: acari-sans.normal;
+    }
 `
 
-const EditProfileButton = styled.button`
-    font-weight: 300;
+const EditProfileButton = styled.div`
+    text-decoration: underline;
+    text-underline-position: under;
     text-align: center;
-    vertical-align: middle;
-    border: 1px solid transparent;
-    display: block;
-    width: 334px;
-    padding: .5rem 0.5rem;
-    font-size: 1.171875rem;
-    line-height: 0.75;
-    color: #3aafa9;
-    background-color: transparent;
-    border-color: #3aafa9;
-    &:hover {
-        background-color: #359d99;
-        color:#fff;
-    }
-    font-family: inherit;
 `
 
 const EditProfileSchema = Yup.object().shape({
@@ -136,6 +136,7 @@ const EditPhoneField = ({ label, ...props }) => {
                     country={"us"}
                     value={value}
                     onChange={setValue}
+                    style={customStyles}
                 />
             {meta.touched && meta.error ? meta.error : null}
         </EditProfileFieldDiv>
@@ -172,6 +173,7 @@ const EditProfile = ({ user, closeModal }) => {
         >
             <Form>
                 <EditProfileDiv>
+                    <EditProfileHeader>Edit Profile</EditProfileHeader>
                     <EditProfileField name="firstName" type="text" label="First Name" />
                     <EditProfileField name="lastName" type="text" label="Last Name" />
                     <EditPhoneField name="phone" type="tel" label="Phone Number" />

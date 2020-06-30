@@ -12,6 +12,12 @@ import { formatPhoneNumber } from 'react-phone-number-input'
 
 Modal.setAppElement("#app");
 
+const customStyles = {
+    content : {
+        background: '#223244',
+    }
+};
+
 const PageDiv = styled.div`
     display: flex;
     align-items: center;
@@ -39,7 +45,7 @@ const ProfileCardDiv = styled.div`
 `
 
 const ProfileCardName = styled.a`
-    font-size: 55px;
+    font-size: 9vh;
     text-decoration: underline;
     text-decoration-color: #E8CA5A;
 `
@@ -49,7 +55,7 @@ const ProfileContactDiv = styled.div`
     align-items: center;
     justify-content: center;
     height: 19vh;
-    font-size: 20px;
+    font-size: 3vh;
 `
 
 const ProfileCardPhone = styled.a`
@@ -147,6 +153,7 @@ const Profile = ({}) => {
             <Modal
             isOpen={modalOpen}
             onRequestClose={closeModal}
+            style={customStyles}
             >
                 <EditProfile 
                 closeModal={closeModal} 
