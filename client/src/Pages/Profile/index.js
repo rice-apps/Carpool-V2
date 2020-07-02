@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import Modal from "react-modal";
@@ -143,12 +143,12 @@ const GET_RIDES = gql`
 * This simply fetches from our cache whether a recent update has occurred
 * TODO: MOVE TO FRAGMENT FOLDER; THIS IS ALSO IN ROUTES.JS
 */
-// const GET_USER_INFO = gql`
-//     query GetUserInfo {
-//         recentUpdate @client
-//         userID @client
-//     }
-// `
+const GET_USER_INFO = gql`
+    query GetUserInfo {
+        recentUpdate @client
+        userID @client
+    }
+`
 
 const GET_LOCATIONS = gql`
     query GetLocations {
@@ -289,17 +289,17 @@ const ProfileDiv = styled.div`
 /**
  * TODO: MOVE TO FRAGMENTS FOLDER; this is the SAME call we make in Routes.js because that call is cached...
  */
-const GET_USER_INFO = gql`
-    query GetUserInfo {
-        user @client {
-            _id
-            firstName
-            lastName
-            netid
-            phone
-        }
-    }
-`
+// const GET_USER_INFO = gql`
+//     query GetUserInfo {
+//         user @client {
+//             _id
+//             firstName
+//             lastName
+//             netid
+//             phone
+//         }
+//     }
+// `
 
 // const Button = styled.div`
 //     margin-top: 10px;
@@ -339,6 +339,14 @@ const GET_UPCOMING_RIDES = gql`
     }
 `
 
+const FilterOptions = ({ user, getVariables, setVariables }) => {
+
+        setVariables({
+            owner: user._id
+        });
+    
+}
+
 const Profile = ({}) => {
     console.log("HELLLOOOOO");
 
@@ -352,8 +360,14 @@ const Profile = ({}) => {
     // Get user info by running cached operation
     const { data, loading, error } = useQuery(GET_USER_INFO);
 
-    
+    const user = data;
+
+    setVariables({
+        owner: user._id
+    });
+
     console.log(getVariables);
+
     const { data2, loading2, error2 } = useQuery(
         GET_UPCOMING_RIDES,
         { variables: getVariables }
@@ -362,13 +376,13 @@ const Profile = ({}) => {
     if (error) return <p>Error...</p>;
     if (loading) return <p>Wait...</p>;
     if (!data) return <p>No data...</p>;
-
-    const { user } = data;
+    
 
     if (error2) return <p>Error.</p>;
     if (loading2) return <p>Loading...</p>;
     if (!data2) return <p>No data...</p>;
 
+    
     const { rideMany: rides } = data2;
 
     function sendEmail() {
@@ -390,6 +404,7 @@ const Profile = ({}) => {
                             Edit
                         </Button>
                     </ProfileContactDiv>
+                    {/* <FilterOptions user={user} getVariables={getVariables} setVariables={setVariables} /> */}
                     {rides.map(ride => <RideCard ride={ride} />)}
                 </PageDiv>
             </ProfileCardDiv>
