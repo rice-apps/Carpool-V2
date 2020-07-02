@@ -319,7 +319,7 @@ const GET_USER_INFO = gql`
 
 
 const GET_UPCOMING_RIDES = gql`
-    query GetUpcomingRides($owner: MongoID!) {
+    query GetUpcomingRides($owner: MongoID) {
         {
             rideMany (filter: {owner: $owner}) {
               _id
@@ -338,10 +338,6 @@ const GET_UPCOMING_RIDES = gql`
         }
     }
 `
-
-const [getUpcomingRides, { data, loading, error }] = useMutation(
-    GET_UPCOMING_RIDES,
-);
 
 const Profile = ({}) => {
     console.log("HELLLOOOOO");
