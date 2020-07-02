@@ -8,7 +8,7 @@ import Illustration from '../../assets/illus_new_ride_page.svg';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 
-const mainDiv = styled.div`
+const MainDiv = styled.div`
     font-family: acari-sans.light;
 `
 
@@ -163,7 +163,8 @@ const RideCreate = ({ closeModal, locations }) => {
             owner: user._id,
             deptDate: new Date(),
             spots: 4,
-            ownerDriving: false
+            ownerDriving: false,
+            note: "None"
         });
     }, []);
 
@@ -178,10 +179,11 @@ const RideCreate = ({ closeModal, locations }) => {
     }, [error]);
 
     const handleSubmit = () => {
+        console.log("get inputs!!!!", getInputs)
         createRide({
             variables: getInputs
         })
-        .then(fulfilled => {
+        .then(() => {
             closeModal();
         })
         .catch((error) => {
@@ -269,7 +271,7 @@ const RideCreate = ({ closeModal, locations }) => {
       
 
     return (
-        <mainDiv>
+        <MainDiv>
             <RideCreateDiv>
                 <RideCreateInputDiv>    
                     <RideCreateLabel>*Departing from:</RideCreateLabel>
@@ -277,6 +279,10 @@ const RideCreate = ({ closeModal, locations }) => {
                     <RideCreateLabel>*Number of Luggages:</RideCreateLabel>
                 </RideCreateInputDiv>
                         
+                {/* 
+            spots: $spots,
+            note: $note,
+            ownerDriving: $ownerDriving */}
                 <RideCreateInputDiv>
                         <Select
                         name="deptLoc"
@@ -313,30 +319,30 @@ const RideCreate = ({ closeModal, locations }) => {
 
                 <RideCreateInputDivLast>
                     
-                    <Select
-                    options={Rideroptions}
-                    onChange={(selected) => setInputs({...getInputs, arrLoc: selected.value })}
-                    placeholder=""
-                    styles={customStyles}
-                    />
-                    
                     {/* <Select
                     options={Rideroptions}
                     onChange={(selected) => setInputs({...getInputs, arrLoc: selected.value })}
                     placeholder=""
                     styles={customStyles}
                     /> */}
+                    
+                    <Select
+                    options={Rideroptions}
+                    // onChange={(selected) => setInputs({...getInputs, arrLoc: selected.value })}
+                    placeholder=""
+                    styles={customStyles}
+                    />
                     {/* Please find a better date & time picker */}
                     <DateTimePicker
                     onChange={value => setInputs({ ...getInputs, deptDate: value })}
                     value={getInputs.deptDate}
                     />
-                    <RideCreateInput onChange={handleFormChange} type="text" name="spots" placeholder='Email Address'/>
-                    {/* <RideCreateInput onChange={handleFormChange} type="paragraph" name="note" /> */}
-                    {/* <RideCreateButton 
+                    {/* <RideCreateInput onChange={handleFormChange} type="text" name="spots" placeholder='Email Address'/> */}
+                    {/* <RideCreateInput onChange={handleFormChange} type="paragraph" name="note" />  */}
+                    <RideCreateButton 
                         onClick={handleSubmit} 
                         disabled={!readyToSubmit}
-                        >Submit</RideCreateButton> */}
+                        >Submit</RideCreateButton>
         
                     {/* <RideCreateInput onChange={event => setInputs({...getInputs, ownerDriving: event.target.checked })} type="checkbox" name="ownerDriving" /> */}
                 </RideCreateInputDivLast>
@@ -344,7 +350,7 @@ const RideCreate = ({ closeModal, locations }) => {
             <IllustrationDiv>
                 <img src={Illustration} />
             </IllustrationDiv>
-        </mainDiv>
+        </MainDiv>
         )
         
 }
