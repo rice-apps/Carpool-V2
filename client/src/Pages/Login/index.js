@@ -1,8 +1,13 @@
 import React from "react";
+import styled from "styled-components";
 import { useQuery, gql } from "@apollo/client";
 import { SERVICE_URL } from '../../config';
 
 const casLoginURL = "https://idp.rice.edu/idp/profile/cas/login";
+
+const ContainerDiv = styled.div `
+    ${props => `background: #142538;`}
+`;
 
 // const GET_SERVICE_LOCAL = gql`
 //     query GetService {
