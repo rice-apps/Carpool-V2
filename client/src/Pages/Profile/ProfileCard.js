@@ -57,6 +57,9 @@ const ProfileImage = styled.img`
     padding: 2em 0 0 0;
 `
 
+
+
+
 const ProfileCard = ({ user }) => {
 
     function sendEmail() {

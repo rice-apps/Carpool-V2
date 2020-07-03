@@ -3,7 +3,9 @@ import styled from "styled-components";
 import { gql, useQuery } from "@apollo/client";
 import Modal from "react-modal";
 import RideCreate from "./RideCreation";
+import RideCreate2 from "./RideCreationUI";
 import RidesList from "./RidesList";
+import { Link } from "react-router-dom";
 
 Modal.bind("#app");
 
@@ -44,6 +46,9 @@ const Rides = ({ }) => {
     return (
         <div>
             <button onClick={openModal}>Create Ride</button>
+            <Link to='/newride'>
+                Go to UI
+            </Link>
             <RidesList />
             <Modal
             style={customStyles}

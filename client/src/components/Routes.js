@@ -9,6 +9,7 @@ import Home from '../Pages/Home';
 import Rides from '../Pages/Rides';
 import Profile from '../Pages/Profile';
 import About from '../Pages/About';
+import RideCreate from '../Pages/Rides/RideCreationUI'
 
 const ContainerDiv = styled.div `
     ${props => `background: #142538;`}
@@ -121,6 +122,11 @@ const routesArray = [
     {
         path: "/about",
         component: About,
+        privateRoute: false
+    },
+    {
+        path: "/newride",
+        component: RideCreate,
         privateRoute: false
     },
 ];
