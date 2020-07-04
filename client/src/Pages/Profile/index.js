@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
-import { gql, useQuery, useMutation } from "@apollo/client";
+import { gql, useQuery, useLazyQuery, useMutation } from "@apollo/client";
 import Modal from "react-modal";
 import moment from "moment";
 
@@ -360,18 +360,16 @@ const Profile = ({}) => {
     // Get user info by running cached operation
     const { data, loading, error } = useQuery(GET_USER_INFO);
 
-    const user = data;
+    // console.log(data)
+    // const user = data;
 
-    setVariables({
-        owner: user._id
-    });
+    const [fetchRides, { data: userRideData ,loading: loading2, error: error2}] = useLazyQuery(GET_UPCOMING_RIDES);
+    useEffect(() => {
+        if (data.user._id) {
+            fetchRides({ variables: { owner: data.user._id }});
+        }
+    }, [data]);
 
-    console.log(getVariables);
-
-    const { data2, loading2, error2 } = useQuery(
-        GET_UPCOMING_RIDES,
-        { variables: getVariables }
-    );
 
     if (error) return <p>Error...</p>;
     if (loading) return <p>Wait...</p>;
@@ -380,10 +378,11 @@ const Profile = ({}) => {
 
     if (error2) return <p>Error.</p>;
     if (loading2) return <p>Loading...</p>;
-    if (!data2) return <p>No data...</p>;
-
+    if (!userRideData) return <p>No data...</p>;
     
-    const { rideMany: rides } = data2;
+    const user = data;
+    const { rideMany: rides } = userRideData;
+    
 
     function sendEmail() {
         window.location = "mailto:" + user.netid + "@rice.edu";
@@ -404,7 +403,7 @@ const Profile = ({}) => {
                             Edit
                         </Button>
                     </ProfileContactDiv>
-                    {/* <FilterOptions user={user} getVariables={getVariables} setVariables={setVariables} /> */}
+                    <FilterOptions user={user} getVariables={getVariables} setVariables={setVariables} /> 
                     {rides.map(ride => <RideCard ride={ride} />)}
                 </PageDiv>
             </ProfileCardDiv>
