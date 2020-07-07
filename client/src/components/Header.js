@@ -163,8 +163,8 @@ export const Header = () => {
                         </StyledIcon>
                     </LI>
                     <LI>
-                        <StyledLink to="/rides">New Ride </StyledLink>
-                        <StyledIcon to="/rides">
+                        <StyledLink to="/newride">New Ride </StyledLink>
+                        <StyledIcon to="/newride">
                             <FontAwesomeIcon icon={faPencilAlt} />
                         </StyledIcon>
                     </LI>

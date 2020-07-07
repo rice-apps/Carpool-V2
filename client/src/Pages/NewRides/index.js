@@ -1,12 +1,7 @@
 import React, { useState } from "react";
-import styled from "styled-components";
 import { gql, useQuery } from "@apollo/client";
-import Modal from "react-modal";
-import RideCreate from "./RideCreation";
-import RidesList from "./RidesList";
-import { Link } from "react-router-dom";
+import RideCreate from "./RideCreationUI";
 
-Modal.bind("#app");
 
 const customStyles = {
     content : {
@@ -24,8 +19,7 @@ const GET_LOCATIONS = gql`
 `
 
 
-const Rides = ({ }) => {
-    const [modalOpen, setModalOpen] = useState(false);
+const NewRide = ({ }) => {
     
     // Load it up here so we can use it in multiple places later
     const { data: locationData, 
@@ -39,25 +33,11 @@ const Rides = ({ }) => {
     // Gets the locationMany property from the query
     const { locationMany: locations } = locationData;
     
-    const openModal = () => setModalOpen(true);
-    const closeModal = () => setModalOpen(false);
-
     return (
         <div>
-            <button onClick={openModal}>Create Ride</button>
-            <RidesList />
-            <Modal
-            style={customStyles}
-            isOpen={modalOpen}
-            onRequestClose={closeModal}
-            >
-                <RideCreate 
-                closeModal={closeModal} 
-                locations={locations}
-                />
-            </Modal>
+            <RideCreate locations={locations} />
         </div>
     )
 }
 
-export default Rides;
+export default NewRide;

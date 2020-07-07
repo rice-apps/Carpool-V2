@@ -5,10 +5,10 @@ import { gql, useQuery, useMutation } from "@apollo/client";
 import DateTimePicker from 'react-datetime-picker';
 import { useToasts } from "react-toast-notifications";
 import Illustration from '../../assets/illus_new_ride_page.svg';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 
-
-const mainDiv = styled.div`
+const MainDiv = styled.div`
     font-family: acari-sans.light;
 `
 
@@ -149,7 +149,7 @@ const RideCreate = ({ closeModal, locations }) => {
 
     // We also need to get the user info
     const { data: userData } = useQuery(GET_USER_INFO);
-
+    
     const { user } = userData;
 
     // Create a mutation to handle location creation
@@ -161,13 +161,14 @@ const RideCreate = ({ closeModal, locations }) => {
             owner: user._id,
             deptDate: new Date(),
             spots: 4,
-            ownerDriving: false
+            ownerDriving: false,
+            note: "None"
         });
     }, []);
 
     const [createRide, { data, loading, error }] = useMutation(
         CREATE_RIDE,
-    );  //backend
+    );
 
     useEffect(() => {
         if (error) {
@@ -176,10 +177,11 @@ const RideCreate = ({ closeModal, locations }) => {
     }, [error]);
 
     const handleSubmit = () => {
+        console.log("get inputs!!!!", getInputs)
         createRide({
             variables: getInputs
         })
-        .then(fulfilled => {
+        .then(() => {
             closeModal();
         })
         .catch((error) => {
@@ -267,7 +269,7 @@ const RideCreate = ({ closeModal, locations }) => {
       
 
     return (
-        <mainDiv>
+        <MainDiv>
             <RideCreateDiv>
                 <RideCreateInputDiv>    
                     <RideCreateLabel>*Departing from:</RideCreateLabel>
@@ -275,6 +277,10 @@ const RideCreate = ({ closeModal, locations }) => {
                     <RideCreateLabel>*Number of Luggages:</RideCreateLabel>
                 </RideCreateInputDiv>
                         
+                {/* 
+            spots: $spots,
+            note: $note,
+            ownerDriving: $ownerDriving */}
                 <RideCreateInputDiv>
                         <Select
                         name="deptLoc"
@@ -311,32 +317,31 @@ const RideCreate = ({ closeModal, locations }) => {
 
                 <RideCreateInputDivLast>
                     
-                    <Select
-                    name='rider'
-                    options={Rideroptions}
-                    onChange={(selected) => setInputs({...getInputs, rider: selected.value })}
-                    placeholder=""
-                    styles={customStyles}
-                    />
-                    
                     {/* <Select
                     options={Rideroptions}
                     onChange={(selected) => setInputs({...getInputs, arrLoc: selected.value })}
                     placeholder=""
                     styles={customStyles}
                     /> */}
+                    
+                    <Select
+                    name="rider"
+                    options={Rideroptions}
+                    onChange={(selected) => setInputs({...getInputs, rider: selected.value })}
+                    placeholder=""
+                    styles={customStyles}
+                    />
                     {/* Please find a better date & time picker */}
                     <DateTimePicker
-                    name='deptDate'
                     onChange={value => setInputs({ ...getInputs, deptDate: value })}
                     value={getInputs.deptDate}
                     />
-                    <RideCreateInput onChange={handleFormChange} type="text" name="invite" placeholder='Email Address'/>
-                    {/* <RideCreateInput onChange={handleFormChange} type="paragraph" name="note" /> */}
-                    {/* <RideCreateButton 
+                    {/* <RideCreateInput onChange={handleFormChange} type="text" name="spots" placeholder='Email Address'/> */}
+                    <RideCreateInput onChange={handleFormChange} type="paragraph" name="note" /> 
+                    <RideCreateButton 
                         onClick={handleSubmit} 
                         disabled={!readyToSubmit}
-                        >Submit</RideCreateButton> */}
+                        >Submit</RideCreateButton>
         
                     {/* <RideCreateInput onChange={event => setInputs({...getInputs, ownerDriving: event.target.checked })} type="checkbox" name="ownerDriving" /> */}
                 </RideCreateInputDivLast>
@@ -344,7 +349,7 @@ const RideCreate = ({ closeModal, locations }) => {
             <IllustrationDiv>
                 <img src={Illustration} />
             </IllustrationDiv>
-        </mainDiv>
+        </MainDiv>
         )
         
 }

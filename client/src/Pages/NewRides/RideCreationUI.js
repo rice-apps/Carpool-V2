@@ -1,7 +1,7 @@
 import React, { useState, createContext, useEffect} from "react";
 import styled from "styled-components";
 import Select, { components } from 'react-select';
-import { gql, useQuery, useMutation } from "@apollo/client";
+import { gql, useQuery, useMutation, useLazyQuery } from "@apollo/client";
 // import DateTimePicker from 'react-datetime-picker';
 import DateFnsAdapter from '@material-ui/pickers/adapter/date-fns';
 import { DateTimePicker, LocalizationProvider } from '@material-ui/pickers';
@@ -38,7 +38,7 @@ const RideCreateDiv = styled.div`
 `
 const ExtraNotes = styled.textarea`
     grid-area:11/13/20/18;
-    font-size:2.1vh;
+    font-size:2.8vh;
     font-family: inherit;
     letter-spacing: 0.03vw;
     background-color:#FFFFFF2B;
@@ -91,7 +91,7 @@ const ExtraNotesLabel = styled.label`
 `
 
 const RideCreateInput = styled.input`
-    font-size:2.1vh;
+    font-size:2.8vh;
     font-family: inherit;
     letter-spacing: 0.03vw;
     background-color:#FFFFFF2B;
@@ -224,35 +224,32 @@ const transformToRSOptions = (locations) => {
 
 
 
-const RideCreate = ({}) => {
-    // Load it up here so we can use it in multiple places later
-    const { data: locationData, 
-        loading: locationLoading, 
-        error: locationError } = useQuery(GET_LOCATIONS);
-
-    // Gets the locationMany property from the query
-    const { locationMany: locations } = locationData;
-
+const RideCreate = ({locations}) => {
     const { addToast } = useToasts();
     const [getInputs, setInputs] = useState({});
 
     // Transform locations into options for react-select
-    // locations = transformToRSOptions(locations);
+    locations = transformToRSOptions(locations);
 
     // We also need to get the user info
     const { data: userData } = useQuery(GET_USER_INFO);
-
+    
     const { user } = userData;
 
+    // Create a mutation to handle location creation
+    // const [ createLocation, { data: createLocData, error: createLocError, loading: createLocLoading }] = useMutation(CREATE_LOCATION);
+    
     // Set defaults for required inputs
     useEffect(() => {
         setInputs({
             owner: user._id,
             deptDate: new Date(),
             spots: 4,
-            ownerDriving: false
+            ownerDriving: false,
+            note: "None"
         });
     }, []);
+
 
     const [createRide, { data, loading, error }] = useMutation(
         CREATE_RIDE,
@@ -265,6 +262,7 @@ const RideCreate = ({}) => {
     }, [error]);
 
     const handleSubmit = () => {
+        console.log("getInputs!!!", getInputs)
         createRide({
             variables: getInputs
         })
@@ -305,6 +303,8 @@ const RideCreate = ({}) => {
     // These 3 properties MUST be present before a user can submit the new ride
     let readyToSubmit = ["deptLoc", "arrLoc", "deptDate"].every(requiredElem => getInputs.hasOwnProperty(requiredElem));
 
+    
+
     const Rideroptions = [
     { value: '1', label: '1' },
     { value: '2', label: '2' },
@@ -343,15 +343,16 @@ const customStyles = {
         ...provided,
         paddingBottom:'0.8vh',
         paddingLeft:'1vh',
-        paddingRight:'1vh',
         display: 'flex',
         color:'#FFFFFF',
       }),
-   
+    placeholder:(provided) => ({
+        ...provided,
+        display:'none',
+    }),
   }
 
-  const [selectedDate, handleDateChange] = useState(new Date());
-  
+//   const [selectedDate, handleDateChange] = useState(new Date());
 
     return (
         <MainDiv>
@@ -369,21 +370,22 @@ const customStyles = {
                         <Select
                         name="deptLoc"
                         options={locations}
-                        placeholder=""
+                        onChange={(selected) => setInputs({...getInputs, deptLoc: selected.value })}
                         styles={customStyles}
                         />
                         
                         <Select
                         name="arrLoc"
-                        options={locations}                  
-                        placeholder=""                   
+                        options={locations.filter(location => location.value != getInputs.deptLoc)}
+                        onChange={(selected) => setInputs({...getInputs, arrLoc: selected.value })}    
+                        isDisabled={getInputs.hasOwnProperty("deptLoc") ? false : true }                               
                         styles={customStyles}
                         />
                 
                         <Select
                         name="luggage"
-                        options={Luggageoptions}                   
-                        placeholder=""
+                        options={Luggageoptions}  
+                        onChange={(selected) => setInputs({...getInputs, luggage: selected.value })}                 
                         styles={customStyles}
                         />
                 </RideCreateInputDiv>
@@ -394,24 +396,25 @@ const customStyles = {
                     <RideCreateLabel>Invite Others:</RideCreateLabel>
                 </RideCreateInputDivText>
 
-                <RideCreateInputDivLast>
-                    
+                <RideCreateInputDivLast>   
                     <Select
-                    options={Rideroptions}               
-                    placeholder=""
+                    name="rider"
+                    options={Rideroptions} 
+                    onChange={(selected) => setInputs({...getInputs, rider: selected.value })}                
                     styles={customStyles}
                     />
                     
                     {/* Please find a better date & time picker */}
                     <LocalizationProvider dateAdapter={DateFnsAdapter}>
                         <DateTimePicker 
+                        name="deptDate"
                         renderInput={props => <TextField {...props} />}
-                        value={selectedDate}
-                        onChange={date => handleDateChange(date)}
+                        onChange={value => setInputs({ ...getInputs, deptDate: value })}
+                        value={getInputs.deptDate}
                         />
                     </LocalizationProvider>
 
-                    <RideCreateInput  type="text" name="invite" placeholder='Email Address'/>
+                    <RideCreateInput onChange={handleFormChange} type="text" name="invite" placeholder='Email Address'/>
                     {/* <RideCreateInput onChange={handleFormChange} type="paragraph" name="note" /> */}
         
                     {/* <RideCreateInput onChange={event => setInputs({...getInputs, ownerDriving: event.target.checked })} type="checkbox" name="ownerDriving" /> */}
