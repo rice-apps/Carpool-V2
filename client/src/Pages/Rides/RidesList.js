@@ -12,6 +12,7 @@ const RideCardList = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    color: white;
 `
 
 const RideCardItem = styled.div`

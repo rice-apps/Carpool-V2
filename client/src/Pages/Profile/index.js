@@ -265,6 +265,11 @@ const ProfileCardPhone = styled.a`
 const ProfileCardEmail = styled.a`
 `
 
+const ProfileCardEdit = styled.a`
+    cursor: pointer;
+`
+
+
 const ProfileImage = styled.img`
     max-width: 8em; 
     max-height: 8em;
@@ -445,12 +450,12 @@ const Profile = ({}) => {
                         <ProfileCardName>{user.firstName} {user.lastName}</ProfileCardName>
                         <ProfileContactDiv>
                             <ProfileCardPhone type='tel'>{formatPhoneNumber("+"+user.phone)}</ProfileCardPhone>
-                            <Button>
-                                <ProfileCardEmail>{user.netid}@rice.edu</ProfileCardEmail>
-                            </Button>
-                            <Button onClick={openModal}>
-                                Edit
-                            </Button>
+                            <ProfileCardEmail>{user.netid}@rice.edu</ProfileCardEmail>
+                            <ProfileCardEdit>
+                                <Button onClick={openModal}>
+                                    Edit
+                                </Button>
+                            </ProfileCardEdit>
                         </ProfileContactDiv>
                     </PageDiv>
                 </ProfileCardDiv>

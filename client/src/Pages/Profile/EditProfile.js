@@ -69,6 +69,7 @@ const EditProfileButton = styled.div`
     text-decoration: underline;
     text-underline-position: under;
     text-align: center;
+    cursor: pointer;
 `
 
 const EditProfileSchema = Yup.object().shape({
