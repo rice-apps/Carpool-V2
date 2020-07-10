@@ -1,8 +1,13 @@
-import React, { useState } from "react";
 import styled, { css } from "styled-components";
-import { gql, useQuery, useMutation } from "@apollo/client";
-import Modal from "react-modal";
+import React, { useState, useEffect } from "react";
+import { gql, useQuery, useMutation, useLazyQuery } from "@apollo/client";
 import moment from "moment";
+import Modal from "react-modal";
+import Linkage from "../../assets/destination_linkage_vertical.svg"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { 
+    faLongArrowAltDown
+} from '@fortawesome/free-solid-svg-icons'
 
 import EditProfile from "./EditProfile";
 
@@ -113,27 +118,17 @@ const Year = styled.p`
 `
 
 const GET_RIDES = gql`
-    query GetRides($deptDate:Date, $deptLoc:MongoID, $arrLoc:MongoID) {
-        rideMany( 
-        filter:{
-            departureDate:$deptDate, 
-            departureLocation:$deptLoc, 
-            arrivalLocation:$arrLoc
-        }) {
-            _id
-            departureDate
-            spots
-            departureLocation {
-                title
-            }
-            arrivalLocation {
-                title
-            }
-            owner {
-                netid
-            }
-            riders {
-                netid
+    query GetRides($_id: MongoID) {
+        userOne (filter: {_id: $_id}) {
+            rides {
+                departureDate
+                departureLocation {
+                    title
+                }
+                arrivalLocation {
+                    title
+                }
+                spots
             }
         }
     }
@@ -185,50 +180,50 @@ const checkFull = (ride) => {
     return false;
 }
 
-const RideCard = ({ ride }) => {
-    console.log(ride)
-    // Get properties from ride object
-    let { owner, riders, departureDate, departureLocation, arrivalLocation, spots } = ride;
-    // Get UserID from our local state management in apollo
-    let { userID } = useQuery(GET_USER_INFO);
+// const RideCard = ({ ride }) => {
+//     console.log(ride)
+//     // Get properties from ride object
+//     let { owner, riders, departureDate, departureLocation, arrivalLocation, spots } = ride;
+//     // Get UserID from our local state management in apollo
+//     let { userID } = useQuery(GET_USER_INFO);
 
-    // Transform departure date object into a moment object so we can use it easily
-    let departureMoment = moment(departureDate);
+//     // Transform departure date object into a moment object so we can use it easily
+//     let departureMoment = moment(departureDate);
 
-    // Check if the current user is already part of this ride
-    let joined = checkJoined(userID, ride);
+//     // Check if the current user is already part of this ride
+//     let joined = checkJoined(userID, ride);
 
-    // If the ride is full, disable ability to join
-    let rideFull = checkFull(ride);
-    return (
-        <RideCardItem>
-            <RideCardFront>
-                <RideCardDate>
-                    <Day>{departureMoment.format("DD").toString()}</Day>
-                    <Month>{departureMoment.format("MMM").toString()}</Month>
-                    <Year>{departureMoment.format("YYYY").toString()}</Year>
-                </RideCardDate>
-                <RideCardText>
-                    <p>{departureLocation.title} -> {arrivalLocation.title}</p>
-                    <p>{departureMoment.format("hh:mm a")}</p>
-                    <p>{spots - riders.length} spots</p>
-                </RideCardText>
-            </RideCardFront>
-            <RideCardBack 
-            joined={joined}
-            >
-            { rideFull ? "Sorry, this ride is full." : 
-                <RideJoinButton 
-                outlined 
-                disabled={rideFull}
-                >
-                    {joined ? "Leave this ride." : "Join this ride!" }
-                </RideJoinButton>
-            }
-            </RideCardBack>
-        </RideCardItem>
-    )
-}
+//     // If the ride is full, disable ability to join
+//     let rideFull = checkFull(ride);
+//     return (
+//         <RideCardItem>
+//             <RideCardFront>
+//                 <RideCardDate>
+//                     <Day>{departureMoment.format("DD").toString()}</Day>
+//                     <Month>{departureMoment.format("MMM").toString()}</Month>
+//                     <Year>{departureMoment.format("YYYY").toString()}</Year>
+//                 </RideCardDate>
+//                 <RideCardText>
+//                     <p>{departureLocation.title} -> {arrivalLocation.title}</p>
+//                     <p>{departureMoment.format("hh:mm a")}</p>
+//                     <p>{spots - riders.length} spots</p>
+//                 </RideCardText>
+//             </RideCardFront>
+//             <RideCardBack 
+//             joined={joined}
+//             >
+//             { rideFull ? "Sorry, this ride is full." : 
+//                 <RideJoinButton 
+//                 outlined 
+//                 disabled={rideFull}
+//                 >
+//                     {joined ? "Leave this ride." : "Join this ride!" }
+//                 </RideJoinButton>
+//             }
+//             </RideCardBack>
+//         </RideCardItem>
+//     )
+// }
 
 const PageDiv = styled.div`
     display: flex;
@@ -261,6 +256,7 @@ const ProfileContactDiv = styled.div`
     justify-content: center;
     height: 19vh;
     font-size: 3vh;
+    font-family: acari-sans.light;
 `
 
 const ProfileCardPhone = styled.a`
@@ -275,6 +271,10 @@ const ProfileImage = styled.img`
     padding: 2em 0 0 0;
 `
 
+const Date = styled.a`
+    font-weight: bold;
+`
+
 const ContainerDiv = styled.div `
     margin: 0;
     padding: 0;
@@ -285,6 +285,49 @@ const ProfileDiv = styled.div`
     flex-direction: column;
     align-items: center;
 `
+
+const BottomContainerDiv = styled.div `
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-left: 5vh;
+    margin-right: 5vh;
+    width: 95vw;
+    justify-items: center;
+    height: auto;
+    padding-bottom: .5vh;
+    font-family: acari-sans.light;
+    color: white;
+`;
+
+const RideColumn = styled.div`
+    display: flex;
+    flex-direction: column;
+    border-style: solid;
+    border-width: 1.5px;
+    border-color: #223244;
+    margin-top: 5vh;
+    padding: 1vh 3vw;
+    width: 20vw;
+    line-height: 3.5vh;
+`;
+
+const RideLocations = styled.div`
+    display: flex;
+    flex-direction: column;
+`
+
+const IllusColumn = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: left;
+`
+
+const StyledIcon = styled.div`
+    margin-right: .5vw;
+    margin-top: 1.25vh;
+    font-size: 2em;
+`
+
 
 /**
  * TODO: MOVE TO FRAGMENTS FOLDER; this is the SAME call we make in Routes.js because that call is cached...
@@ -300,6 +343,7 @@ const GET_USER_INFO = gql`
         }
     }
 `
+
 
 // const Button = styled.div`
 //     margin-top: 10px;
@@ -317,31 +361,33 @@ const GET_USER_INFO = gql`
 //     }
 // `
 
+const RideCard = ({ ride }) => {
+    let { arrivalLocation, departureDate, departureLocation, spots } = ride;
+    let departureMoment = moment(departureDate);
 
-const GET_UPCOMING_RIDES = gql`
-    query GetUpcomingRides($owner: MongoID!) {
-        {
-            rideMany (filter: {owner: $owner}) {
-              _id
-              owner {
-                _id
-                netid
-              }
-              departureDate
-                  departureLocation {
-                    address
-                  }
-                  arrivalLocation {
-                    address
-                  }
-            }
-        }
-    }
-`
-
-const [getUpcomingRides, { data, loading, error }] = useMutation(
-    GET_UPCOMING_RIDES,
-);
+    return (
+        <BottomContainerDiv>
+            <RideColumn>
+                <Date>
+                    {departureMoment.format("DD").toString()} {departureMoment.format("MMM").toString()} {departureMoment.format("YYYY").toString()}, {departureMoment.format("hh:mm z")}
+                </Date>
+                <a> # of spots {spots}</a>
+                <IllusColumn>
+                    <StyledIcon>
+                        <FontAwesomeIcon icon={faLongArrowAltDown}/>
+                    </StyledIcon>
+                    <RideLocations>
+                        <a>{departureLocation.title}</a>
+                        <a>{arrivalLocation.title}</a>
+                    </RideLocations>
+                </IllusColumn>
+            </RideColumn>
+            <RideColumn>
+                Hello
+            </RideColumn>
+        </BottomContainerDiv>
+    );
+}
 
 const Profile = ({}) => {
     console.log("HELLLOOOOO");
@@ -356,59 +402,73 @@ const Profile = ({}) => {
     // Get user info by running cached operation
     const { data, loading, error } = useQuery(GET_USER_INFO);
 
-    
-    console.log(getVariables);
-    const { data2, loading2, error2 } = useQuery(
-        GET_UPCOMING_RIDES,
-        { variables: getVariables }
-    );
+    const { user } = data;
+
+    // if (error2) return <p>Error.</p>;
+    // if (loading2) return <p>Loading...</p>;
+    // if (!data2) return <p>No data...</p>;
+
+    // const { rideMany: rides } = data2;
+
+    console.log(user._id);
+    const [fetchRides, { called, loading: rideLoading, data: rideData }] = useLazyQuery(GET_RIDES);
+
+    useEffect(() => {
+        if (user._id) {
+            fetchRides({ variables: {_id: user._id}});
+        }
+    }, [rideData]);
+
+    console.log("called");
+    console.log(called);
+    console.log("loading");
+    console.log(rideLoading);
+    console.log("data");
+    console.log(rideData);
 
     if (error) return <p>Error...</p>;
     if (loading) return <p>Wait...</p>;
     if (!data) return <p>No data...</p>;
+    if (called && rideLoading) return <p>Loading ...</p>
+    if (!rideData) return <p>No data...</p>;
 
-    const { user } = data;
-
-    if (error2) return <p>Error.</p>;
-    if (loading2) return <p>Loading...</p>;
-    if (!data2) return <p>No data...</p>;
-
-    const { rideMany: rides } = data2;
-
-    function sendEmail() {
-        window.location = "mailto:" + user.netid + "@rice.edu";
-    }
+    // const { userOne: rides } = rideData;
+    const rides = rideData["userOne"]["rides"];
+    console.log("rides");
+    console.log(rides);
 
     return (
         <ContainerDiv>
-        <ProfileDiv>
-            <ProfileCardDiv user={user}>
-                <PageDiv>
-                    <ProfileCardName>{user.firstName} {user.lastName}</ProfileCardName>
-                    <ProfileContactDiv>
-                        <ProfileCardPhone type='tel'>{formatPhoneNumber("+"+user.phone)}</ProfileCardPhone>
-                        <Button onClick={sendEmail}>
-                            <ProfileCardEmail>{user.netid}@rice.edu</ProfileCardEmail>
-                        </Button>
-                        <Button onClick={openModal}>
-                            Edit
-                        </Button>
-                    </ProfileContactDiv>
-                    {rides.map(ride => <RideCard ride={ride} />)}
-                </PageDiv>
-            </ProfileCardDiv>
-            
-            <Modal
-            isOpen={modalOpen}
-            onRequestClose={closeModal}
-            style={customStyles}
-            >
-                <EditProfile 
-                closeModal={closeModal} 
-                user={user}
-                />
-            </Modal>
-        </ProfileDiv>
+            <ProfileDiv>
+                <ProfileCardDiv user={user}>
+                    <PageDiv>
+                        <ProfileCardName>{user.firstName} {user.lastName}</ProfileCardName>
+                        <ProfileContactDiv>
+                            <ProfileCardPhone type='tel'>{formatPhoneNumber("+"+user.phone)}</ProfileCardPhone>
+                            <Button>
+                                <ProfileCardEmail>{user.netid}@rice.edu</ProfileCardEmail>
+                            </Button>
+                            <Button onClick={openModal}>
+                                Edit
+                            </Button>
+                        </ProfileContactDiv>
+                    </PageDiv>
+                </ProfileCardDiv>
+                
+                <Modal
+                isOpen={modalOpen}
+                onRequestClose={closeModal}
+                style={customStyles}
+                >
+                    <EditProfile 
+                    closeModal={closeModal} 
+                    user={user}
+                    />
+                </Modal>
+            </ProfileDiv>
+            <div>
+                {rides.map(ride => <RideCard ride={ride} />)}
+            </div>
         </ContainerDiv>
     )
 }

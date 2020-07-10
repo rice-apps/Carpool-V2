@@ -261,6 +261,7 @@ const ProfileImage = styled.img`
     padding: 2em 0 0 0;
 `
 
+<<<<<<< HEAD
 const GET_UPCOMING_RIDES = gql`
     query GetUpcomingRides($owner: MongoID!) {
         {
@@ -285,6 +286,10 @@ const GET_UPCOMING_RIDES = gql`
 const [getUpcomingRides, { data, loading, error }] = useMutation(
     GET_UPCOMING_RIDES,
 );
+=======
+
+
+>>>>>>> beb8f08112bd141e52e00a5bfb053e7512bca5f1
 
 const ProfileCard = ({ user }) => {
     console.log("HELLLOOOOO");

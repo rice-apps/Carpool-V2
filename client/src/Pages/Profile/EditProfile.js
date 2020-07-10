@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { gql, useMutation } from "@apollo/client";
 import '../../App.css'
 
 // Form imports
-import { Formik, Form, useField } from "formik";
+import { Formik, Form, useField, useFormik, FormikConsumer } from "formik";
 import '@availity/yup';
 import * as Yup from 'yup';
 import PhoneInput from "react-phone-input-2";
@@ -146,7 +146,8 @@ const EditPhoneField = ({ label, ...props }) => {
 const EditProfile = ({ user, closeModal }) => {
     // We want the initial values of form elements to be the current user values that are not _id, typename, token, recentUpdate, and netid
     let { _id, __typename, token, recentUpdate, netid, ...initialValues } = user;
-
+    
+    
     // Check if any initialValues are null/undefined
     for (let fieldName of Object.keys(initialValues)) {
         if (!initialValues[fieldName]) {
@@ -154,30 +155,89 @@ const EditProfile = ({ user, closeModal }) => {
         }
     }
 
+    // console.log(initialValues);
+
+    // const [getInputs, setInputs] = useState(initialValues);
+
     // Create mutation which we'll use to update the user fields
     const [updateUser, { data, loading }] = useMutation(UPDATE_USER);
 
-    const handleSubmit = (values, actions) => {
-        // Use mutation
-        updateUser({ variables: values });
-    }
+    // const handleFormChange = (event) => {
+    //     // If value is empty, remove from object
+    //     if (event.target.value == "") {
+    //         // Nice little syntactic sugar to remove property from object: https://codeburst.io/use-es2015-object-rest-operator-to-omit-properties-38a3ecffe90
+    //         let { [event.target.name]: propertyToRemove, ...rest } = getInputs;            
+    //         setInputs(rest);
+    //     } else {
+    //         setInputs({...getInputs, [event.target.name]: event.target.value});
+    //     }
+    // }
+
+    // const handleSubmit = () => {
+    //     // Use mutation
+    //     console.log("getInputs!!!!!");
+    //     console.log(getInputs);
+    //     updateUser({ 
+    //         variables: getInputs 
+    //     })
+    //     .then(() => {
+    //         closeModal();
+    //     })
+    //     .catch((error) => {
+    //         console.log("Oh no.");
+    //     });
+    // }
+
+    console.log(initialValues);
+    const formik = useFormik({
+        
+        initialValues: {initialValues},
+        onSubmit: (values) => {
+            updateUser({ 
+                variables: values 
+            })
+            .then(() => {
+                closeModal();
+            })
+            .catch((error) => {
+                console.log("Oh no.");
+            });
+            },
+      });
 
     if (loading) return <p>Submitting...</p>;
     if (data) closeModal(); // if we're successful, then close the edit screen
 
     return (
         <Formik
-            initialValues={initialValues}
+            // initialValues={initialValues}
             validationSchema={EditProfileSchema}
-            onSubmit={handleSubmit}
         >
             <Form>
                 <EditProfileDiv>
                     <EditProfileHeader>Edit Profile</EditProfileHeader>
-                    <EditProfileField name="firstName" type="text" label="First Name" />
-                    <EditProfileField name="lastName" type="text" label="Last Name" />
-                    <EditPhoneField name="phone" type="tel" label="Phone Number" />
-                    <EditProfileButton type="submit" >Submit</EditProfileButton>
+                    <EditProfileField 
+                        name="firstName"
+                        type="text"
+                        label="First Name"
+                        defaultValue={initialValues["firstName"]}
+                        onChange={formik.handleChange}
+                    />
+                    <EditProfileField
+                        name="lastName"
+                        type="text"
+                        label="Last Name"
+                        defaultValue={initialValues["lastName"]}
+                        onChange={formik.handleChange}
+                    />
+                    <EditPhoneField
+                        name="phone"
+                        type="tel"
+                        label="Phone Number"
+                        defaultValue={initialValues["phone"]}
+                        onChange={formik.handleChange}
+                    />
+                    <EditProfileButton onClick={formik.handleSubmit} type="submit" >Submit</EditProfileButton>
                 </EditProfileDiv>
             </Form>
         </Formik>
