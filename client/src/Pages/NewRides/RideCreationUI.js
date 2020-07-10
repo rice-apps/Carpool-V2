@@ -5,10 +5,14 @@ import { gql, useQuery, useMutation, useLazyQuery } from "@apollo/client";
 // import DateTimePicker from 'react-datetime-picker';
 import DateFnsAdapter from '@material-ui/pickers/adapter/date-fns';
 import { DateTimePicker, LocalizationProvider } from '@material-ui/pickers';
-import { TextField } from "@material-ui/core";
+import { TextField, FormHelperText } from "@material-ui/core";
 import { useToasts } from "react-toast-notifications";
 import Illustration from '../../assets/illus_new_ride_page.svg';
 import {Link} from "react-router-dom";
+
+import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
+import { yellow } from "@material-ui/core/colors";
+
 
 
 
@@ -330,6 +334,7 @@ const customStyles = {
         borderRadius: '2vh',
         border: 'none',
         boxShadow: 'none',
+        cursor:'pointer'
     }),
     indicatorSeparator: (provided) => ({
         ...provided,
@@ -338,10 +343,11 @@ const customStyles = {
     option: (base) => ({
         ...base,
         color:'#142538',
+        cursor:'pointer'
     }),
     singleValue: (provided) => ({
         ...provided,
-        paddingBottom:'0.8vh',
+        paddingBottom:'0.4vh',
         paddingLeft:'1vh',
         display: 'flex',
         color:'#FFFFFF',
@@ -351,6 +357,36 @@ const customStyles = {
         display:'none',
     }),
   }
+
+  const defaultMaterialTheme = createMuiTheme({
+    palette: {
+        primary: yellow,
+    },
+    overrides: {
+        MuiOutlinedInput: {
+          input: {
+            cursor:'pointer',
+            color:'#FFFFFF',
+            paddingLeft:'1vw',
+        },
+        root: {
+            width: '13vw',
+            height:'4.5vh',
+            background:'#FFFFFF2B',
+            borderRadius: '2vh',
+            border: 'none',
+            boxShadow: 'none',
+          },
+        }
+    }
+});
+
+const styles = {
+    helper: {
+         color: '#FFFFFF',
+    }
+    
+}
 
 //   const [selectedDate, handleDateChange] = useState(new Date());
 
@@ -372,6 +408,7 @@ const customStyles = {
                         options={locations}
                         onChange={(selected) => setInputs({...getInputs, deptLoc: selected.value })}
                         styles={customStyles}
+                        isSearchable={false}
                         />
                         
                         <Select
@@ -380,6 +417,7 @@ const customStyles = {
                         onChange={(selected) => setInputs({...getInputs, arrLoc: selected.value })}    
                         isDisabled={getInputs.hasOwnProperty("deptLoc") ? false : true }                               
                         styles={customStyles}
+                        isSearchable={false}
                         />
                 
                         <Select
@@ -387,6 +425,7 @@ const customStyles = {
                         options={Luggageoptions}  
                         onChange={(selected) => setInputs({...getInputs, luggage: selected.value })}                 
                         styles={customStyles}
+                        isSearchable={false}
                         />
                 </RideCreateInputDiv>
 
@@ -402,19 +441,26 @@ const customStyles = {
                     options={Rideroptions} 
                     onChange={(selected) => setInputs({...getInputs, rider: selected.value })}                
                     styles={customStyles}
+                    isSearchable={false}
                     />
                     
                     {/* Please find a better date & time picker */}
                     <LocalizationProvider dateAdapter={DateFnsAdapter}>
-                        <DateTimePicker 
-                        name="deptDate"
-                        renderInput={props => <TextField {...props} />}
-                        onChange={value => setInputs({ ...getInputs, deptDate: value })}
-                        value={getInputs.deptDate}
-                        />
+                        <ThemeProvider theme={defaultMaterialTheme}>
+                            <DateTimePicker 
+                            name="deptDate"
+                            OpenPickerButtonProps={{ style: styles.helper }}
+                            renderInput={props => 
+                            <TextField {...props} variant="outlined" FormHelperTextProps={{ style: styles.helper }} onFocus={{}}
+                            />
+                            }
+                            onChange={value => setInputs({ ...getInputs, deptDate: value })}
+                            value={getInputs.deptDate}
+                            />
+                        </ThemeProvider>
                     </LocalizationProvider>
 
-                    <RideCreateInput onChange={handleFormChange} type="text" name="invite" placeholder='Email Address'/>
+                    <RideCreateInput onChange={handleFormChange} type="email" name="invite" placeholder='Email Address'/>
                     {/* <RideCreateInput onChange={handleFormChange} type="paragraph" name="note" /> */}
         
                     {/* <RideCreateInput onChange={event => setInputs({...getInputs, ownerDriving: event.target.checked })} type="checkbox" name="ownerDriving" /> */}
