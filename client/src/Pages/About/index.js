@@ -2,6 +2,9 @@ import React from "react";
 import styled from "styled-components";
 import IllusLanding from "../../assets/illus_landing_page.svg"
 import { Link } from "react-router-dom";
+import { SERVICE_URL } from '../../config';
+
+const casLoginURL = "https://idp.rice.edu/idp/profile/cas/login";
 
 const ContainerDiv = styled.div `
     display: grid;
@@ -66,8 +69,22 @@ const GraphicDiv = styled.div `
     color: white;
 `;
 
-const About = ({}) => {
+// const GET_SERVICE_LOCAL = gql`
+//     query GetService {
+//         service @client # @client indicates that this is a local field; we're just looking at our cache, NOT our backend!
+//     }
+// `;
 
+const About = ({}) => {
+    // Fetch service from cache since it depends on where this app is deployed
+    // const { data } = useQuery(GET_SERVICE_LOCAL);
+
+    // Handles click of login button
+    const handleClick = () => {
+        // Redirects user to the CAS login page
+        let redirectURL = casLoginURL + "?service=" + SERVICE_URL;
+        window.open(redirectURL, "_self");
+    }
     return (
         <ContainerDiv>
             <TextDiv>
@@ -77,7 +94,7 @@ const About = ({}) => {
                 <DetailText>
                     Getting ready for a trip? Make this amazing journey with your friends &amp; <strong>Rice Carpool</strong>
                 </DetailText>
-                <Link to="/login">
+                <Link onClick={handleClick}>
                     <Login>Login</Login>
                 </Link>
             </TextDiv>
