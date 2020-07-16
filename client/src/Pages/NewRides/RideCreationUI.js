@@ -14,10 +14,13 @@ import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { yellow } from "@material-ui/core/colors";
 
 
+const HiddenInput = styled.input`
+    display:none;
+    visibility:hidden;
+`
 
 
-
-const MainDiv = styled.div`
+const MainDiv = styled.form`
     font-family: acari-sans.light;
     display:grid;
     grid-template-rows:repeat(20,5%);
@@ -121,7 +124,7 @@ const Illus = styled.img`
 `;
 
 const Slogan = styled.div `
-    font-size: 75px;
+    font-size: 3.5vw;
     margin-left: 2vw;
     margin-right: 2vw;
     text-align: center;
@@ -150,6 +153,7 @@ text-decoration: underline;
 text-decoration-color: white;
 padding-right: .75vh;
 `
+
 
 const customStyles = {
     content : {
@@ -215,6 +219,7 @@ const CREATE_LOCATION = gql`
     }
 `
 
+
 /**
  * React-Select requires all options to be formatted as { label: "", value: "" }
  * @param {*} locations: locations to be reformatted for use with react-select
@@ -231,6 +236,10 @@ const transformToRSOptions = (locations) => {
 const RideCreate = ({locations}) => {
     const { addToast } = useToasts();
     const [getInputs, setInputs] = useState({});
+
+    // These 3 properties MUST be present before a user can submit the new ride
+    let readyToSubmit = ["deptLoc", "arrLoc", "deptDate"].every(requiredElem => getInputs.hasOwnProperty(requiredElem))
+
 
     // Transform locations into options for react-select
     locations = transformToRSOptions(locations);
@@ -250,7 +259,7 @@ const RideCreate = ({locations}) => {
             deptDate: new Date(),
             spots: 4,
             ownerDriving: false,
-            note: "None"
+            note: "None",
         });
     }, []);
 
@@ -262,7 +271,7 @@ const RideCreate = ({locations}) => {
     useEffect(() => {
         if (error) {
             addToast("Sorry, an error occurred processing your new ride. Please try again later.", { appearance: 'error' });
-        }
+        } 
     }, [error]);
 
     const handleSubmit = () => {
@@ -291,6 +300,23 @@ const RideCreate = ({locations}) => {
         }
     }
 
+
+    const handleClear = () => {
+        document.getElementById("res").click();
+        let { luggage: propertyToRemove1, deptLoc: propertyToRemove2, arrLoc: propertyToRemove3,rider: propertyToRemove4,  ...rest } = getInputs; 
+        setInputs(rest);
+        setInputs({deptDate:new Date()});
+        // setInputs({...getInputs, luggage: null, deptLoc:null, arrLoc:null,rider:null,deptDate:new Date()})
+    }
+
+
+    const handleToast = () => {
+        if (readyToSubmit){
+            addToast("Congratulations! Your ride has been successfully created.", { appearance: 'success'});
+        }
+    }
+
+
     /**
      * Use this in the future to enable users to create their own locations
      * @param {} inputValue 
@@ -304,8 +330,7 @@ const RideCreate = ({locations}) => {
 
     }
     
-    // These 3 properties MUST be present before a user can submit the new ride
-    let readyToSubmit = ["deptLoc", "arrLoc", "deptDate"].every(requiredElem => getInputs.hasOwnProperty(requiredElem));
+ 
 
     
 
@@ -388,6 +413,8 @@ const styles = {
     
 }
 
+
+
 //   const [selectedDate, handleDateChange] = useState(new Date());
 
     return (
@@ -409,6 +436,7 @@ const styles = {
                         onChange={(selected) => setInputs({...getInputs, deptLoc: selected.value })}
                         styles={customStyles}
                         isSearchable={false}
+                        value={locations.find(obj => obj.value === getInputs.deptLoc) ? locations.find(obj => obj.value === getInputs.deptLoc):null}
                         />
                         
                         <Select
@@ -418,6 +446,7 @@ const styles = {
                         isDisabled={getInputs.hasOwnProperty("deptLoc") ? false : true }                               
                         styles={customStyles}
                         isSearchable={false}
+                        value={locations.find(obj => obj.value === getInputs.arrLoc) ? locations.find(obj => obj.value === getInputs.arrLoc) : null}
                         />
                 
                         <Select
@@ -426,6 +455,7 @@ const styles = {
                         onChange={(selected) => setInputs({...getInputs, luggage: selected.value })}                 
                         styles={customStyles}
                         isSearchable={false}
+                        value={Luggageoptions.find(obj => obj.value === getInputs.luggage) ? Luggageoptions.find(obj => obj.value === getInputs.luggage) : null}
                         />
                 </RideCreateInputDiv>
 
@@ -442,6 +472,7 @@ const styles = {
                     onChange={(selected) => setInputs({...getInputs, rider: selected.value })}                
                     styles={customStyles}
                     isSearchable={false}
+                    value={Rideroptions.find(obj => obj.value === getInputs.rider) ? Rideroptions.find(obj => obj.value === getInputs.rider) : null}
                     />
                     
                     {/* Please find a better date & time picker */}
@@ -455,7 +486,7 @@ const styles = {
                             />
                             }
                             onChange={value => setInputs({ ...getInputs, deptDate: value })}
-                            value={getInputs.deptDate}
+                            value={getInputs.deptDate === new Date() ? new Date() : getInputs.deptDate}
                             />
                         </ThemeProvider>
                     </LocalizationProvider>
@@ -472,15 +503,16 @@ const styles = {
             <ExtraNotesLabel>
                 Extra Notes:
             </ExtraNotesLabel>
-            <ExtraNotes type="text" rows="10">
+            <ExtraNotes type="text" rows="10" onChange={handleFormChange} name = 'notes'>
             </ExtraNotes>
             <StyledLinkDiv>
-                <StyledLink>Clear Form</StyledLink>
+                <StyledLink onClick = {handleClear}>Clear Form </StyledLink>
                 <StyledLink
-                onClick={handleSubmit} 
-                disabled={!readyToSubmit}
+                type="submit" 
+                onClick={() => {handleSubmit(); handleClear();handleToast()}} 
                 >Submit</StyledLink>
             </StyledLinkDiv>
+            <HiddenInput id="res" name="res" type="reset"/>
         </MainDiv>
         )
         
