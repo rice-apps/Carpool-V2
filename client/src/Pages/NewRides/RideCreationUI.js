@@ -303,9 +303,8 @@ const RideCreate = ({locations}) => {
 
     const handleClear = () => {
         document.getElementById("res").click();
-        let { luggage: propertyToRemove1, deptLoc: propertyToRemove2, arrLoc: propertyToRemove3,rider: propertyToRemove4,  ...rest } = getInputs; 
+        let { luggage: propertyToRemove1, deptLoc: propertyToRemove2, arrLoc: propertyToRemove3,rider: propertyToRemove4, deptDate:propertyToRemove5,  ...rest } = getInputs; 
         setInputs(rest);
-        setInputs({deptDate:new Date()});
         // setInputs({...getInputs, luggage: null, deptLoc:null, arrLoc:null,rider:null,deptDate:new Date()})
     }
 
@@ -486,7 +485,7 @@ const styles = {
                             />
                             }
                             onChange={value => setInputs({ ...getInputs, deptDate: value })}
-                            value={getInputs.deptDate === new Date() ? new Date() : getInputs.deptDate}
+                            value={getInputs.deptDate}
                             />
                         </ThemeProvider>
                     </LocalizationProvider>
