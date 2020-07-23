@@ -7,62 +7,45 @@ import { MuiPickersUtilsProvider, DateTimePicker, LocalizationProvider, DatePick
 import Select from "react-select";
 import { transformToRSOptions, getSelectionDummy } from "../../utils/RideUtils";
 import { Button, TextField } from "@material-ui/core";
+import {Link} from "react-router-dom";
 
 const RideCardList = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
     color: white;
+    font-family: Avenir;
 `
 
 const RideCardItem = styled.div`
     position: relative;
     height: 10em;
-    width: 30em;
+    width: 40em;
     overflow: hidden; /* need this to ensure no weird text transform effect */
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.2s;
+    box-shadow: 0 6px 12px 0 rgba(0,0,0,0.2);
 
-    :hover {
-        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    // :hover {
+    //     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
 
-        & > div:first-of-type { // frontside of the card
-            height: 0px;
-            transform: perspective(1000px) rotateX(-180deg);
-        }
+    //     & > div:first-of-type { // frontside of the card
+    //         height: 0px;
+    //         transform: perspective(1000px) rotateX(-180deg);
+    //     }
 
-        & > div:last-of-type { // backside of the card
-            transform: perspective(1000px) rotateX(0deg);
-        }
-    }
+    //     & > div:last-of-type { // backside of the card
+    //         transform: perspective(1000px) rotateX(0deg);
+    //     }
+    // }
 `
 
-// Card sides
-const CardSide = css`
+const RideCardFront = styled.div`
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
     width: 100%;
     height: 100%;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-    transition: all .2s ease;
-`
-
-const RideCardFront = styled.div`
-    ${CardSide}
-`
-
-const RideCardBack = styled.div`
-    ${CardSide}
-    transform: rotateX(-180deg);
-    background-color: ${props => props.joined ? "red" : "green"};
-`
-
-const RideJoinButton = styled(Button)`
-    height: 100%;
-    width: 100%;
+    color: white;
 `
 
 const RideCardDate = styled.div`
@@ -93,6 +76,41 @@ const Month = styled.p`
 const Year = styled.p`
     flex-grow: 1;
     margin-top: 0px;
+`
+
+const StyledLink = styled(Link)`
+    // display: flex;
+    text-align: center;
+    font-size:3.5vh;
+    color: white;
+    background-color: black;
+    color: #E8CA5A;
+    text-decoration: none;
+    border-style: solid;
+    border-color: #E8CA5A;
+    border-radius: 10px;
+    display: inline-block;
+    margin-top: 4vh;
+    padding-left: 2vh;
+    padding-right: 2vh;
+`
+
+const RideJoinButton = styled.button`
+    text-align: center;
+    font-size: 2.4vh;
+    color: white;
+    background-color: black;
+    color: #E8CA5A;
+    text-decoration: none;
+    border-style: solid;
+    border-color: #E8CA5A;
+    border-radius: 10px;
+    display: inline-block;
+    cursor: pointer;
+`
+
+const SelectDiv = styled(Select)`
+    color: black;
 `
 
 const GET_RIDES = gql`
@@ -142,6 +160,52 @@ const GET_LOCATIONS = gql`
     }
 `
 
+const ADD_RIDER = gql`
+
+    mutation AddRider(
+        $owner: MongoID!, $deptLoc: MongoID!, $arrLoc: MongoID!, $deptDate: Date, 
+        $spots: Float, $note: String, $ownerDriving: Boolean, $riders: [MongoID!]) {
+        addRider(record: {
+            spots: $spots,
+            riders: $riders
+        }) {
+            recordId
+            record {
+                _id
+                __typename
+            }
+        }
+    }
+
+
+`
+
+const UPDATE_RIDE = gql`
+
+    mutation UpdateRide(
+        $owner: MongoID!, $deptLoc: MongoID!, $arrLoc: MongoID!, $deptDate: Date, 
+        $spots: Float, $note: String, $ownerDriving: Boolean, $riders: [MongoID!]) {
+        rideUpdateOne(record: {
+            owner: $owner,
+            departureLocation: $deptLoc,
+            arrivalLocation: $arrLoc,
+            departureDate: $deptDate,
+            spots: $spots,
+            note: $note,
+            ownerDriving: $ownerDriving,
+            riders: $riders
+        }) {
+            recordId
+            record {
+                _id
+                __typename
+            }
+        }
+    }
+
+
+`
+
 /**
 * Helper Functions
 */
@@ -180,6 +244,21 @@ const RideCard = ({ ride }) => {
     // Check if the current user is already part of this ride
     let joined = checkJoined(userID, ride);
 
+    const [addRider, { data, loading, error }] = useMutation(
+        ADD_RIDER
+    );  
+
+    const handleJoin = ( ride ) => {
+        console.log("HANDLE JOIN");
+        console.log(ride);
+        addRider({
+            variables: ride
+        })
+        .catch((error) => {
+            console.log("Oh no.");
+        });
+    }
+
     // If the ride is full, disable ability to join
     let rideFull = checkFull(ride);
     return (
@@ -195,27 +274,25 @@ const RideCard = ({ ride }) => {
                     <p>{departureMoment.format("hh:mm a")}</p>
                     <p>{spots - riders.length} spots</p>
                 </RideCardText>
-            </RideCardFront>
-            <RideCardBack 
-            joined={joined}
-            >
-            { rideFull ? "Sorry, this ride is full." : 
+                { rideFull ? "Sorry, this ride is full." : 
                 <RideJoinButton 
-                outlined 
+                joined={joined}
                 disabled={rideFull}
+                onClick={handleJoin( {ride} )}
                 >
-                    {joined ? "Leave this ride." : "Join this ride!" }
+                    {joined ? "Leave this ride" : "Join this ride" }
                 </RideJoinButton>
             }
-            </RideCardBack>
+            </RideCardFront>
         </RideCardItem>
+        
     )
 }
 
 const FilterDiv = styled.div`
     display: flex;
     flex-direction: column;
-    width: 15vw;
+    width: 25vw;
 `
 
 const LocationFilterDiv = styled.div`
@@ -225,17 +302,31 @@ const LocationFilterDiv = styled.div`
     max-width: 100%;
 `
 
+const styles = {
+    helper: {
+         color: '#FFFFFF',
+    }
+    
+}
+
 const DateFilter = ({ label, getDate, setDate }) => {
     return (
         <LocalizationProvider dateAdapter={MomentUtils}>
             {label}
             <DatePicker
-            renderInput={props => <TextField variant="outlined" {...props} />}
-            disablePast
-            clearable
-            autoOk
-            value={getDate}
-            onChange={setDate}
+                name="deptDate"
+                OpenPickerButtonProps={{ style: styles.helper }}
+                renderInput={props => 
+                    <TextField 
+                        variant="outlined" {...props} 
+                        FormHelperTextProps={{ style: styles.helper }} 
+                        onFocus={{}}
+                    />}
+                disablePast
+                clearable
+                autoOk
+                value={getDate}
+                onChange={setDate}
             />
         </LocalizationProvider>
     )
@@ -251,7 +342,7 @@ const LocationFilter = ({ label, options, getSelection, setSelection }) => {
     return (
         <LocationFilterDiv>
             <p>{label}</p>
-            <Select
+            <SelectDiv
             name={label}
             options={options}
             value={getSelection}
@@ -312,7 +403,7 @@ const FilterOptions = ({ getVariables, setVariables }) => {
             getDate={getDate}
             setDate={setDate}
             />
-            <Button variant="outlined" title="Search" onClick={handleSearch}>Search</Button>
+            <StyledLink type="submit" onClick={handleSearch} >Search</StyledLink>
         </FilterDiv>
     )
 }
@@ -331,10 +422,14 @@ const RidesList = ({ }) => {
 
     const { rideMany: rides } = data;
 
+    const upcomingrides = rides.filter(ride => moment(ride.departureDate) >= new Date())
+    upcomingrides.sort((a, b) => moment(b.departureDate) - moment(a.departureDate))
+
     return (
         <RideCardList>
             <FilterOptions getVariables={getVariables} setVariables={setVariables} />
-            {rides.map(ride => <RideCard ride={ride} />)}
+            <br/>
+            {upcomingrides.map(ride => <RideCard ride={ride} />)}
         </RideCardList>
     )
 }
