@@ -15,6 +15,7 @@ import '@availity/yup';
 import 'react-phone-input-2/lib/style.css';
 import { formatPhoneNumber } from 'react-phone-number-input'
 
+
 Modal.setAppElement("#app");
 
 const customStyles = {
@@ -276,7 +277,7 @@ const ProfileImage = styled.img`
     padding: 2em 0 0 0;
 `
 
-const Date = styled.a`
+const Time = styled.a`
     font-weight: bold;
 `
 
@@ -294,9 +295,9 @@ const ProfileDiv = styled.div`
 const BottomContainerDiv = styled.div `
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    margin-left: 5vh;
-    margin-right: 5vh;
-    width: 95vw;
+    margin-left: 5vw;
+    margin-right: 5vw;
+    width: 90vw;
     justify-items: center;
     height: auto;
     padding-bottom: .5vh;
@@ -304,7 +305,22 @@ const BottomContainerDiv = styled.div `
     color: white;
 `;
 
-const RideColumn = styled.div`
+const RideDiv = styled.div `
+    border-right: 0.3vh solid #E8CA5A;
+    padding-left:9.5vw;
+    padding-right:9.5vw;
+    margin-top:4vh;
+    margin-bottom:4vh;
+`
+
+const RideDiv2 = styled.div `
+    margin-top:4vh;
+    margin-bottom:4vh;
+`;
+
+
+
+const RideBox = styled.div`
     display: flex;
     flex-direction: column;
     border-style: solid;
@@ -333,6 +349,23 @@ const StyledIcon = styled.div`
     font-size: 2em;
 `
 
+const RideHeader = styled.div`
+    padding-left: 1vh;
+    text-align: left;
+    color: white;
+    font-size: 3vh;
+    font-weight: bold;
+    letter-spacing:0.08vh;
+    margin-bottom:-2vh;
+`
+const VerticalLine = styled.div `
+    border-left: 0.6vh solid #E8CA5A;
+    position: absolute;
+    left: 50.5%;
+    top: 47%;
+    bottom:0;
+    
+`
 
 /**
  * TODO: MOVE TO FRAGMENTS FOLDER; this is the SAME call we make in Routes.js because that call is cached...
@@ -371,26 +404,21 @@ const RideCard = ({ ride }) => {
     let departureMoment = moment(departureDate);
 
     return (
-        <BottomContainerDiv>
-            <RideColumn>
-                <Date>
-                    {departureMoment.format("DD").toString()} {departureMoment.format("MMM").toString()} {departureMoment.format("YYYY").toString()}, {departureMoment.format("hh:mm z")}
-                </Date>
-                <a> # of spots {spots}</a>
-                <IllusColumn>
-                    <StyledIcon>
-                        <FontAwesomeIcon icon={faLongArrowAltDown}/>
-                    </StyledIcon>
-                    <RideLocations>
-                        <a>{departureLocation.title}</a>
-                        <a>{arrivalLocation.title}</a>
-                    </RideLocations>
-                </IllusColumn>
-            </RideColumn>
-            <RideColumn>
-                Hello
-            </RideColumn>
-        </BottomContainerDiv>
+        <RideBox>
+            <Time>
+                {departureMoment.format("DD").toString()} {departureMoment.format("MMM").toString()} {departureMoment.format("YYYY").toString()}, {departureMoment.format("hh:mm a")}
+            </Time>
+            <a> # of spots: {spots}</a>
+            <IllusColumn>
+                <StyledIcon>
+                    <FontAwesomeIcon icon={faLongArrowAltDown}/>
+                </StyledIcon>
+                <RideLocations>
+                    <a>{departureLocation.title}</a>
+                    <a>{arrivalLocation.title}</a>
+                </RideLocations>
+            </IllusColumn>
+        </RideBox>
     );
 }
 
@@ -442,6 +470,15 @@ const Profile = ({}) => {
     console.log("rides");
     console.log(rides);
 
+    const previousrides = rides.filter(ride => moment(ride.departureDate) < new Date())
+    previousrides.sort((a, b) => moment(b.departureDate) - moment(a.departureDate))
+    // console.log('previousrides')
+    // console.log(previousrides)
+    const upcomingrides = rides.filter(ride => moment(ride.departureDate) >= new Date())
+    upcomingrides.sort((a, b) => moment(b.departureDate) - moment(a.departureDate))
+    // console.log('upcomingrides')
+    // console.log(upcomingrides)
+
     return (
         <ContainerDiv>
             <ProfileDiv>
@@ -471,10 +508,19 @@ const Profile = ({}) => {
                     />
                 </Modal>
             </ProfileDiv>
-            <div>
-                {rides.map(ride => <RideCard ride={ride} />)}
-            </div>
+            <BottomContainerDiv>
+                <RideDiv>
+                    <RideHeader>Upcoming Rides</RideHeader>
+                    {upcomingrides.map(ride => <RideCard ride={ride} />)}
+                </RideDiv>
+                <RideDiv2>
+                    <RideHeader>Previous Rides</RideHeader>
+                    {previousrides.map(ride => <RideCard ride={ride} />)}
+                </RideDiv2>
+            </BottomContainerDiv>
+            
         </ContainerDiv>
+        
     )
 }
 

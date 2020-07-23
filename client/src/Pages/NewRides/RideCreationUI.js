@@ -1,7 +1,7 @@
 import React, { useState, createContext, useEffect} from "react";
 import styled from "styled-components";
 import Select, { components } from 'react-select';
-import { gql, useQuery, useMutation, useLazyQuery } from "@apollo/client";
+import { gql, useQuery, useMutation } from "@apollo/client";
 // import DateTimePicker from 'react-datetime-picker';
 import DateFnsAdapter from '@material-ui/pickers/adapter/date-fns';
 import { DateTimePicker, LocalizationProvider } from '@material-ui/pickers';
@@ -20,7 +20,7 @@ const HiddenInput = styled.input`
 `
 
 
-const MainDiv = styled.form`
+const MainForm = styled.form`
     font-family: acari-sans.light;
     display:grid;
     grid-template-rows:repeat(20,5%);
@@ -45,7 +45,7 @@ const RideCreateDiv = styled.div`
 `
 const ExtraNotes = styled.textarea`
     grid-area:11/13/20/18;
-    font-size:2.8vh;
+    font-size:2.5vh;
     font-family: inherit;
     letter-spacing: 0.03vw;
     background-color:#FFFFFF2B;
@@ -84,6 +84,7 @@ const RideCreateInputDivLast = styled.div`
     justify-content: space-around;
     align-items: flex-end;
     color : white;
+    margin-top:0.5vh;
 `
 
 const RideCreateLabel = styled.label`
@@ -98,7 +99,7 @@ const ExtraNotesLabel = styled.label`
 `
 
 const RideCreateInput = styled.input`
-    font-size:2.8vh;
+    font-size:2.5vh;
     font-family: inherit;
     letter-spacing: 0.03vw;
     background-color:#FFFFFF2B;
@@ -110,12 +111,10 @@ const RideCreateInput = styled.input`
     outline: none;
     padding-left: 2vh;
     padding-right: 2vh;
+    padding-top:0;
     padding-bottom:0.5vh;
     text-align:left;
-    ::-webkit-input-placeholder { 
-        font-size:2.1vh; 
-        letter-spacing:0.14;
-        font-family: acari-sans.normal;
+    ::placeholder { 
     }
 `
 
@@ -139,7 +138,6 @@ const StyledLinkDiv = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-around;
-    font-size:2.8vh;
     letter-spacing: 0.1vw;
     z-index:1;
 `
@@ -249,6 +247,7 @@ const RideCreate = ({locations}) => {
     
     const { user } = userData;
 
+
     // Create a mutation to handle location creation
     // const [ createLocation, { data: createLocData, error: createLocError, loading: createLocLoading }] = useMutation(CREATE_LOCATION);
     
@@ -329,9 +328,6 @@ const RideCreate = ({locations}) => {
 
     }
     
- 
-
-    
 
     const Rideroptions = [
     { value: '1', label: '1' },
@@ -367,7 +363,9 @@ const customStyles = {
     option: (base) => ({
         ...base,
         color:'#142538',
-        cursor:'pointer'
+        cursor:'pointer',
+        fontSize:'2.5vh',
+        letterSpacing:'0.03vw'
     }),
     singleValue: (provided) => ({
         ...provided,
@@ -375,6 +373,8 @@ const customStyles = {
         paddingLeft:'1vh',
         display: 'flex',
         color:'#FFFFFF',
+        fontSize:'2.5vh',
+        letterSpacing:'0.03vw'
       }),
     placeholder:(provided) => ({
         ...provided,
@@ -417,7 +417,7 @@ const styles = {
 //   const [selectedDate, handleDateChange] = useState(new Date());
 
     return (
-        <MainDiv>
+        <MainForm>
             <Slogan>
                 Initiate A Ride
             </Slogan>
@@ -512,7 +512,7 @@ const styles = {
                 >Submit</StyledLink>
             </StyledLinkDiv>
             <HiddenInput id="res" name="res" type="reset"/>
-        </MainDiv>
+        </MainForm>
         )
         
 }

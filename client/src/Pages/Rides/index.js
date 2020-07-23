@@ -16,7 +16,6 @@ const GET_LOCATIONS = gql`
 
 
 const Rides = ({ }) => {
-    // const [modalOpen, setModalOpen] = useState(false);
     
     // Load it up here so we can use it in multiple places later
     const { data: locationData, 
@@ -30,8 +29,6 @@ const Rides = ({ }) => {
     // Gets the locationMany property from the query
     const { locationMany: locations } = locationData;
     
-    // const openModal = () => setModalOpen(true);
-    // const closeModal = () => setModalOpen(false);
 
     return (
         <div>
