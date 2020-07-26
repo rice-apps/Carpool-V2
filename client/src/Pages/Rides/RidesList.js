@@ -146,8 +146,10 @@ const GET_RIDES = gql`
 */
 const GET_USER_INFO = gql`
     query GetUserInfo {
-        recentUpdate @client
-        userID @client
+        user @client {
+            _id
+            recentUpdate
+        }
     }
 `
 
@@ -161,49 +163,19 @@ const GET_LOCATIONS = gql`
 `
 
 const ADD_RIDER = gql`
-
-    mutation AddRider(
-        $owner: MongoID!, $deptLoc: MongoID!, $arrLoc: MongoID!, $deptDate: Date, 
-        $spots: Float, $note: String, $ownerDriving: Boolean, $riders: [MongoID!]) {
-        addRider(record: {
-            spots: $spots,
-            riders: $riders
-        }) {
-            recordId
-            record {
-                _id
-                __typename
-            }
+    mutation AddRider($_id: MongoID!) {
+        addRider(rideID: $_id) {
+            _id
         }
     }
-
-
 `
 
-const UPDATE_RIDE = gql`
-
-    mutation UpdateRide(
-        $owner: MongoID!, $deptLoc: MongoID!, $arrLoc: MongoID!, $deptDate: Date, 
-        $spots: Float, $note: String, $ownerDriving: Boolean, $riders: [MongoID!]) {
-        rideUpdateOne(record: {
-            owner: $owner,
-            departureLocation: $deptLoc,
-            arrivalLocation: $arrLoc,
-            departureDate: $deptDate,
-            spots: $spots,
-            note: $note,
-            ownerDriving: $ownerDriving,
-            riders: $riders
-        }) {
-            recordId
-            record {
-                _id
-                __typename
-            }
+const REMOVE_RIDER = gql`
+    mutation RemoveRider($_id: MongoID!) {
+        removeRider(rideID: $_id) {
+            _id
         }
     }
-
-
 `
 
 /**
@@ -216,6 +188,9 @@ const UPDATE_RIDE = gql`
 * @param {*} ride 
 */
 const checkJoined = (userID, ride) => {
+    // console.log(userID);
+    // console.log(ride.owner._id);
+    // console.log(ride.riders.map(rider => rider._id));
     if (userID == ride.owner._id) return true; // saves us some computational power from executing the next line
     if (ride.riders.map(rider => rider._id).includes(userID)) return true;
     return false;
@@ -234,7 +209,7 @@ const checkFull = (ride) => {
 
 const RideCard = ({ ride }) => {
     // Get properties from ride object
-    let { owner, riders, departureDate, departureLocation, arrivalLocation, spots } = ride;
+    let { owner, riders, departureDate, departureLocation, arrivalLocation, spots, _id } = ride;
     // Get UserID from our local state management in apollo
     let { userID } = useQuery(GET_USER_INFO);
 
@@ -248,15 +223,30 @@ const RideCard = ({ ride }) => {
         ADD_RIDER
     );  
 
-    const handleJoin = ( ride ) => {
+    const [removeRider, { data2, loading2, error2 }] = useMutation(
+        REMOVE_RIDER
+    );  
+
+    const handleJoin = () => {
         console.log("HANDLE JOIN");
         console.log(ride);
-        addRider({
-            variables: ride
-        })
-        .catch((error) => {
-            console.log("Oh no.");
-        });
+        console.log(ride._id);
+        console.log(_id);
+        if (joined) {
+            console.log("joined");
+            removeRider({
+                variables: {_id: ride._id}
+            }).catch((error) => {
+                console.log("Oh no.");
+            });
+        } else {
+            console.log("not joined");
+            addRider({
+                variables: {_id: ride._id}
+            }).catch((error) => {
+                console.log("Oh no.");
+            });
+        }
     }
 
     // If the ride is full, disable ability to join
@@ -274,15 +264,15 @@ const RideCard = ({ ride }) => {
                     <p>{departureMoment.format("hh:mm a")}</p>
                     <p>{spots - riders.length} spots</p>
                 </RideCardText>
-                { rideFull ? "Sorry, this ride is full." : 
-                <RideJoinButton 
-                joined={joined}
-                disabled={rideFull}
-                onClick={handleJoin( {ride} )}
-                >
-                    {joined ? "Leave this ride" : "Join this ride" }
-                </RideJoinButton>
-            }
+                    { rideFull ? "Sorry, this ride is full." : 
+                    <RideJoinButton 
+                        joined={joined}
+                        disabled={rideFull}
+                        onClick={()=>handleJoin()}
+                    >
+                        {joined ? "Leave this ride" : "Join this ride" }
+                    </RideJoinButton>
+                    }
             </RideCardFront>
         </RideCardItem>
         
@@ -320,7 +310,6 @@ const DateFilter = ({ label, getDate, setDate }) => {
                     <TextField 
                         variant="outlined" {...props} 
                         FormHelperTextProps={{ style: styles.helper }} 
-                        onFocus={{}}
                     />}
                 disablePast
                 clearable
@@ -424,6 +413,8 @@ const RidesList = ({ }) => {
 
     const upcomingrides = rides.filter(ride => moment(ride.departureDate) >= new Date())
     upcomingrides.sort((a, b) => moment(b.departureDate) - moment(a.departureDate))
+    console.log('UPCOMING');
+    console.log(upcomingrides);
 
     return (
         <RideCardList>
