@@ -114,10 +114,9 @@ const SelectDiv = styled(Select)`
 `
 
 const GET_RIDES = gql`
-    query GetRides($deptDate:Date, $deptLoc:MongoID, $arrLoc:MongoID) {
+    query GetRides($deptLoc:MongoID, $arrLoc:MongoID) {
         rideMany( 
         filter:{
-            departureDate:$deptDate, 
             departureLocation:$deptLoc, 
             arrivalLocation:$arrLoc
         }) {
@@ -144,11 +143,21 @@ const GET_RIDES = gql`
 * This simply fetches from our cache whether a recent update has occurred
 * TODO: MOVE TO FRAGMENT FOLDER; THIS IS ALSO IN ROUTES.JS
 */
+// const GET_USER_INFO = gql`
+//     query GetUserInfo {
+//         recentUpdate @client
+//         userID @client
+//     }
+// `
+
 const GET_USER_INFO = gql`
     query GetUserInfo {
         user @client {
             _id
-            recentUpdate
+            firstName
+            lastName
+            netid
+            phone
         }
     }
 `
@@ -163,7 +172,7 @@ const GET_LOCATIONS = gql`
 `
 
 const ADD_RIDER = gql`
-    mutation AddRider($_id: MongoID!) {
+    mutation AddRider($_id: ID!) {
         addRider(rideID: $_id) {
             _id
         }
@@ -171,7 +180,7 @@ const ADD_RIDER = gql`
 `
 
 const REMOVE_RIDER = gql`
-    mutation RemoveRider($_id: MongoID!) {
+    mutation RemoveRider($_id: ID!) {
         removeRider(rideID: $_id) {
             _id
         }
@@ -188,9 +197,9 @@ const REMOVE_RIDER = gql`
 * @param {*} ride 
 */
 const checkJoined = (userID, ride) => {
-    // console.log(userID);
-    // console.log(ride.owner._id);
-    // console.log(ride.riders.map(rider => rider._id));
+    console.log(userID);
+    console.log(ride.owner._id);
+    console.log(ride.riders.map(rider => rider._id));
     if (userID == ride.owner._id) return true; // saves us some computational power from executing the next line
     if (ride.riders.map(rider => rider._id).includes(userID)) return true;
     return false;
@@ -209,9 +218,12 @@ const checkFull = (ride) => {
 
 const RideCard = ({ ride }) => {
     // Get properties from ride object
-    let { owner, riders, departureDate, departureLocation, arrivalLocation, spots, _id } = ride;
+    let { owner, riders, departureDate, departureLocation, arrivalLocation, spots } = ride;
     // Get UserID from our local state management in apollo
-    let { userID } = useQuery(GET_USER_INFO);
+    const { userID } = useQuery(GET_USER_INFO);
+    
+    console.log(userID);
+
 
     // Transform departure date object into a moment object so we can use it easily
     let departureMoment = moment(departureDate);
@@ -231,7 +243,6 @@ const RideCard = ({ ride }) => {
         console.log("HANDLE JOIN");
         console.log(ride);
         console.log(ride._id);
-        console.log(_id);
         if (joined) {
             console.log("joined");
             removeRider({
@@ -310,6 +321,9 @@ const DateFilter = ({ label, getDate, setDate }) => {
                     <TextField 
                         variant="outlined" {...props} 
                         FormHelperTextProps={{ style: styles.helper }} 
+                        color="secondary"
+                        // inputProps={color="white"}
+                        // <input type="color"/>
                     />}
                 disablePast
                 clearable
@@ -359,7 +373,6 @@ const FilterOptions = ({ getVariables, setVariables }) => {
         // Check that at least one filter is active
         if (getDepartureSelection.value != selectionDummy.value) {
             newVariables.deptLoc = getDepartureSelection.value;
-            // Reset
             setDepartureSelection(getSelectionDummy());
         }
         if (getArrivalSelection.value != selectionDummy.value) {
@@ -368,7 +381,7 @@ const FilterOptions = ({ getVariables, setVariables }) => {
         }
         if (getDate != null) {
             newVariables.deptDate = getDate;
-            setDate(null);
+            // setDate(null);
         }
         setVariables({...newVariables});
     }
@@ -376,7 +389,7 @@ const FilterOptions = ({ getVariables, setVariables }) => {
     return (
         <FilterDiv>
             <LocationFilter 
-            label="Departing To" 
+            label="Departing From" 
             options={transformToRSOptions(locations)} 
             getSelection={getDepartureSelection}
             setSelection={setDepartureSelection}
@@ -392,7 +405,7 @@ const FilterOptions = ({ getVariables, setVariables }) => {
             getDate={getDate}
             setDate={setDate}
             />
-            <StyledLink type="submit" onClick={handleSearch} >Search</StyledLink>
+            <StyledLink type="submit" onClick={() => handleSearch()} >Search</StyledLink>
         </FilterDiv>
     )
 }
@@ -411,16 +424,23 @@ const RidesList = ({ }) => {
 
     const { rideMany: rides } = data;
 
-    const upcomingrides = rides.filter(ride => moment(ride.departureDate) >= new Date())
-    upcomingrides.sort((a, b) => moment(b.departureDate) - moment(a.departureDate))
-    console.log('UPCOMING');
-    console.log(upcomingrides);
+    const upcomingRides = rides.filter(ride => moment(ride.departureDate) >= new Date())
+    upcomingRides.sort((a, b) => moment(b.departureDate) - moment(a.departureDate))
+
+    const updateSearch = (upcomingRides) => {
+        console.log("GETDATE");
+        console.log(getVariables.deptDate);
+        if (getVariables.deptDate) {
+            return upcomingRides.filter(ride => moment(ride.departureDate).isSame(getVariables.deptDate, 'day'));
+        }
+        return upcomingRides;
+    }
 
     return (
         <RideCardList>
             <FilterOptions getVariables={getVariables} setVariables={setVariables} />
             <br/>
-            {upcomingrides.map(ride => <RideCard ride={ride} />)}
+            {updateSearch(upcomingRides).map(ride => <RideCard ride={ride} />)}
         </RideCardList>
     )
 }
