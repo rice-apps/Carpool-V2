@@ -24,7 +24,7 @@ const HiddenInput = styled.input`
 `
 
 
-const MainDiv = styled.form`
+const MainForm = styled.form`
     font-family: acari-sans.light;
     display:grid;
     grid-template-rows:repeat(20,5%);
@@ -49,7 +49,7 @@ const RideCreateDiv = styled.div`
 `
 const ExtraNotes = styled.textarea`
     grid-area:11/13/20/18;
-    font-size:2.8vh;
+    font-size:2.5vh;
     font-family: inherit;
     letter-spacing: 0.03vw;
     background-color:#FFFFFF2B;
@@ -102,7 +102,7 @@ const ExtraNotesLabel = styled.label`
 `
 
 const RideCreateInput = styled.input`
-    font-size:2.8vh;
+    font-size:2.5vh;
     font-family: inherit;
     letter-spacing: 0.03vw;
     background-color:#FFFFFF2B;
@@ -115,11 +115,9 @@ const RideCreateInput = styled.input`
     padding-left: 2vh;
     padding-right: 2vh;
     padding-bottom:0.5vh;
+    padding-top: 0;
     text-align:left;
-    ::-webkit-input-placeholder { 
-        font-size:2.1vh; 
-        letter-spacing:0.14;
-        font-family: acari-sans.normal;
+    ::placeholder { 
     }
 `
 
@@ -143,7 +141,6 @@ const StyledLinkDiv = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-around;
-    font-size:2.8vh;
     letter-spacing: 0.1vw;
     z-index:1;
 `
@@ -430,7 +427,9 @@ const customStyles = {
         borderRadius: '2vh',
         border: 'none',
         boxShadow: 'none',
-        cursor:'pointer'
+        cursor:'pointer',
+        fontSize:'2.5vh',
+        letterSpacing:'0.03vw'
     }),
     indicatorSeparator: (provided) => ({
         ...provided,
@@ -447,6 +446,8 @@ const customStyles = {
         paddingLeft:'1vh',
         display: 'flex',
         color:'#FFFFFF',
+        fontSize:'2.5vh',
+        letterSpacing:'0.03vw'
       }),
     placeholder:(provided) => ({
         ...provided,
@@ -536,7 +537,7 @@ const styles = {
     // if (loading2) return <p>Wait...</p>;
 
     return (
-        <MainDiv>
+        <MainForm>
             <Slogan>
                 Initiate A Ride
             </Slogan>
@@ -679,7 +680,7 @@ const styles = {
                 >Submit</StyledLink>
             </StyledLinkDiv>
             <HiddenInput id="res" name="res" type="reset"/>
-        </MainDiv>
+        </MainForm>
         )
         
 }
