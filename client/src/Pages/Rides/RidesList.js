@@ -1,6 +1,6 @@
 import React, { useState, createContext, useEffect, useContext } from "react";
 import styled, { css } from "styled-components";
-import { gql, useQuery, useMutation } from "@apollo/client";
+import { gql, useQuery, useLazyQuery, useMutation } from "@apollo/client";
 import moment from "moment";
 import MomentUtils from '@material-ui/pickers/adapter/moment';
 import { MuiPickersUtilsProvider, DateTimePicker, LocalizationProvider, DatePicker,  } from "@material-ui/pickers";
@@ -152,7 +152,7 @@ const GET_RIDES = gql`
 
 const GET_USER_INFO = gql`
     query GetUserInfo {
-        user @client {
+        user {
             _id
             firstName
             lastName
@@ -198,10 +198,11 @@ const REMOVE_RIDER = gql`
 */
 const checkJoined = (userID, ride) => {
     console.log(userID);
+    console.log(ride);
     console.log(ride.owner._id);
     console.log(ride.riders.map(rider => rider._id));
-    if (userID == ride.owner._id) return true; // saves us some computational power from executing the next line
-    if (ride.riders.map(rider => rider._id).includes(userID)) return true;
+    if (userID == ride.owner.netid) return true; // saves us some computational power from executing the next line
+    if (ride.riders.map(rider => rider.netid).includes(userID)) return true;
     return false;
 }
 
@@ -220,16 +221,25 @@ const RideCard = ({ ride }) => {
     // Get properties from ride object
     let { owner, riders, departureDate, departureLocation, arrivalLocation, spots } = ride;
     // Get UserID from our local state management in apollo
-    const { userID } = useQuery(GET_USER_INFO);
+    const userData = useQuery(GET_USER_INFO);
+    // const [fetchUserID, { data: userID}] = useLazyQuery(GET_USER_INFO);
     
-    console.log(userID);
+    console.log(userData);
+    console.log(userData.data.user._id);
+    const userNetID = userData.data.user.netid;
+    
 
 
     // Transform departure date object into a moment object so we can use it easily
     let departureMoment = moment(departureDate);
 
     // Check if the current user is already part of this ride
-    let joined = checkJoined(userID, ride);
+    let joined = checkJoined(userNetID, ride);
+    // let joined = fetchUserID().then(({userID}) => {
+    //     console.log(userID);
+    //     checkJoined(userID, ride)
+    // });
+    
 
     const [addRider, { data, loading, error }] = useMutation(
         ADD_RIDER
