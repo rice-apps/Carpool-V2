@@ -235,35 +235,26 @@ const CREATE_LOCATION = gql`
     }
 `
 
+const defaultLocations = [
+    "5eca36b008d82d5e82aaba10",
+    "5f0faaae8043fe8db20d7b2f",
+    "5f0fab90e021e829d49be5f7",
+    "5f104e94bd33f13b6c1b66d8",
+    "5f104ed2bd33f13b6c1b66d9",
+    "5f104f49bd33f13b6c1b66da"
+]
+
 
 /**
  * React-Select requires all options to be formatted as { label: "", value: "" }
  * @param {*} locations: locations to be reformatted for use with react-select
  */
 const transformToRSOptions = (locations) => {
-    return locations.map(location => {
-        return { label: location.title, value: location._id };
+    return locations.filter(location => {
+        if (defaultLocations.includes(location._id)) {
+            return { label: location.title, value: location._id };
+        }
     });
-}
-
-
-const CustomRide = ({place}) => {
-    console.log("hello");
-    console.log(place);
-    const [ createLocation, { data, loading, error } ] = useMutation(
-        CREATE_LOCATION,
-        { variables: { title: place.name, address: place.formatted_address} }
-    );
-    useEffect(() => {
-        // We only want this mutation to run once; if we hit any errors we redirect to login
-        createLocation().catch(err => <Redirect path={"/newride"} />);
-    }, []);
-    console.log("test");
-    console.log(data);
-    if (error) return <Redirect path={"/newride"} />;
-    if (loading) return <p>Bad.</p>;
-    if (!data) return <p>Bad.</p>;
-    return;
 }
 
 const RideCreate = ({locations}) => {
@@ -278,6 +269,7 @@ const RideCreate = ({locations}) => {
 
     // Transform locations into options for react-select
     locations = transformToRSOptions(locations);
+    console.log('locations', locations);
 
     // We also need to get the user info
     const { data: userData } = useQuery(GET_USER_INFO);
