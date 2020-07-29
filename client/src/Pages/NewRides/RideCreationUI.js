@@ -220,6 +220,15 @@ const CREATE_RIDE = gql`
     }
 `
 
+const CHECK_LOCATION = gql`
+    query CheckLocation($address: String) {
+        locationOne (filter: {address: $address}) {
+            title
+            address
+        }
+    }
+`
+
 /**
  * A mutation which will allow for the creation of new locations on the frontend
  */
@@ -250,11 +259,12 @@ const defaultLocations = [
  * @param {*} locations: locations to be reformatted for use with react-select
  */
 const transformToRSOptions = (locations) => {
-    return locations.filter(location => {
-        if (defaultLocations.includes(location._id)) {
-            return { label: location.title, value: location._id };
-        }
-    });
+    return locations
+        .filter(location1 => defaultLocations.includes(location1._id))
+            .map(location => {
+                return { label: location.title, value: location._id };
+            }
+        );
 }
 
 const RideCreate = ({locations}) => {
@@ -306,22 +316,28 @@ const RideCreate = ({locations}) => {
         } 
     }, [error]);
 
-    
+    const { data: checkData } = useQuery(CHECK_LOCATION, {
+        variables: {address: newDeptLocation},
+        skip: newDeptLocation === null
+    });
 
     const handleSubmit = () => {
         console.log("getInputs!!!", getInputs);
         console.log(newDeptLocation);
         if (newDeptLocation) {
             console.log("preparing to create new departure location");
+            // fetchCheck(
+            //     { variables: {address: newDeptLocation.formatted_address}}
+            // ).then(({ data }) => {
+            //     console.log("checkData", data);
+            // });
+            console.log("checkData", checkData);
             createLocation({
                 variables: {title: newDeptLocation.name, address: newDeptLocation.formatted_address}
             }).then(({ data }) => {
-                console.log('got data', data);
                 const recordId = data["locationCreateOne"]["recordId"];
-                console.log("new location id", recordId);
                 setInputs({...getInputs, deptLoc: recordId });
                 getInputs["deptLoc"] = recordId;
-                console.log('final inputs', getInputs);
                 createRide({
                     variables: getInputs
                 })
