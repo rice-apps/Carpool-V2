@@ -298,6 +298,7 @@ const RideCreate = ({locations}) => {
             spots: 4,
             ownerDriving: false,
             note: "None",
+            luggage: null
         });
     }, []);
 
@@ -321,6 +322,16 @@ const RideCreate = ({locations}) => {
         skip: newDeptLocation === null
     });
 
+    function addCreateCustomRide() {
+        createRide({
+            variables: getInputs
+        })
+        .catch((error) => {
+            console.log("Oh no.");
+        });
+        addToast("Congratulations! Your custom ride has been successfully created.", { appearance: 'success'});
+    }
+
     const handleSubmit = () => {
         console.log("getInputs!!!", getInputs);
         console.log(newDeptLocation);
@@ -338,14 +349,28 @@ const RideCreate = ({locations}) => {
                 const recordId = data["locationCreateOne"]["recordId"];
                 setInputs({...getInputs, deptLoc: recordId });
                 getInputs["deptLoc"] = recordId;
-                createRide({
-                    variables: getInputs
-                })
-                .catch((error) => {
-                    console.log("Oh no.");
-                });
-                addToast("Congratulations! Your custom ride has been successfully created.", { appearance: 'success'});
+                if (newArrLocation) {
+                    createLocation({
+                        variables: {title: newArrLocation.name, address: newArrLocation.formatted_address}
+                    }).then(({ data }) => {
+                        const recordId = data["locationCreateOne"]["recordId"];
+                        setInputs({...getInputs, arrLoc: recordId });
+                        getInputs["arrLoc"] = recordId;
+                        addCreateCustomRide();
+                    });
+                } else {
+                    addCreateCustomRide();
+                }
             })
+        } else if (newArrLocation) {
+            createLocation({
+                variables: {title: newArrLocation.name, address: newArrLocation.formatted_address}
+            }).then(({ data }) => {
+                const recordId = data["locationCreateOne"]["recordId"];
+                setInputs({...getInputs, arrLoc: recordId });
+                getInputs["arrLoc"] = recordId;
+                addCreateCustomRide();
+            });
         } else {
             createRide({
                 variables: getInputs
@@ -418,13 +443,13 @@ const RideCreate = ({locations}) => {
   ];
 
   
-  const Luggageoptions = [
-    { value: '1', label: '1' },
-    { value: '2', label: '2' },
-    { value: '3', label: '3' },
-    { value: '4', label: '4' },
-    { value: '5', label: '5' }
-  ];
+//   const Luggageoptions = [
+//     { value: '1', label: '1' },
+//     { value: '2', label: '2' },
+//     { value: '3', label: '3' },
+//     { value: '4', label: '4' },
+//     { value: '5', label: '5' }
+//   ];
 
 const customStyles = {
     control: (base) => ({
@@ -554,7 +579,7 @@ const styles = {
                     <RideCreateLabel>*Departing from:</RideCreateLabel>
                     <RideCreateLabel>*Arriving at:</RideCreateLabel>
                     {/* <RideCreateLabel>Add Custom Location:</RideCreateLabel> */}
-                    <RideCreateLabel>*Number of Luggages:</RideCreateLabel>
+                    {/* <RideCreateLabel>*Number of Luggages:</RideCreateLabel> */}
                 </RideCreateInputDivText>
                         
                 <RideCreateInputDiv>
@@ -616,7 +641,8 @@ const styles = {
                                 onPlaceSelected={(place) => {
                                     console.log(place.name);
                                     console.log(place.formatted_address);
-                                    newArrLocation = place;
+                                    setNewArrLocation(place);
+                                    console.log("newArrLocation", newArrLocation); 
                                     // return <CustomRide place={place}/>;
                                 }}
                                 types={['establishment']}
@@ -624,14 +650,14 @@ const styles = {
                             />
                         </StyledCheckbox>
                 
-                        <Select
+                        {/* <Select
                         name="luggage"
                         options={Luggageoptions}  
                         onChange={(selected) => setInputs({...getInputs, luggage: selected.value })}                 
                         styles={customStyles}
                         isSearchable={false}
                         value={Luggageoptions.find(obj => obj.value === getInputs.luggage) ? Luggageoptions.find(obj => obj.value === getInputs.luggage) : null}
-                        />
+                        /> */}
                 </RideCreateInputDiv>
 
                 <RideCreateInputDivText>
