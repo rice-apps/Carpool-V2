@@ -16,6 +16,7 @@ import { yellow } from "@material-ui/core/colors";
 import Autocomplete from 'react-google-autocomplete';
 import { Redirect } from "react-router";
 import Checkbox from '@material-ui/core/Checkbox';
+import Tooltip from '@material-ui/core/Tooltip';
 
 
 const HiddenInput = styled.input`
@@ -29,8 +30,8 @@ const MainForm = styled.form`
     display:grid;
     grid-template-rows:repeat(20,5%);
     grid-template-columns:repeat(20,5%);
-    width:100vw;
-    height:100vh;
+    width: 100vw;
+    height: 100vh;
 `
 
 const IllustrationDiv = styled.div`
@@ -569,6 +570,7 @@ const styles = {
     // if (error2) return <p>Error...</p>;
     // if (loading2) return <p>Wait...</p>;
 
+    
     return (
         <MainForm>
             <Slogan>
@@ -584,12 +586,17 @@ const styles = {
                         
                 <RideCreateInputDiv>
                         <StyledCheckbox>
-                            <Checkbox
-                                // checked={checked}
-                                onChange={handleDeptChange}
-                                color="primary"
-                                inputProps={{ 'aria-label': 'primary checkbox' }}
-                            />
+                            <Tooltip title="Enable custom departure location">
+                                <Checkbox
+                                    // checked={checked}
+                                    onChange={handleDeptChange}
+                                    color="primary"
+                                    style ={{
+                                        color: "#FFFFFF",
+                                    }}
+                                    inputProps={{ 'aria-label': 'primary checkbox' }}
+                                />
+                            </Tooltip>
                             <Select
                                 name="deptLoc"
                                 options={locations}
@@ -618,12 +625,17 @@ const styles = {
                         </StyledCheckbox>
                         
                         <StyledCheckbox>
-                            <Checkbox
-                                // checked={checked}
-                                onChange={handleArrChange}
-                                color="primary"
-                                inputProps={{ 'aria-label': 'primary checkbox' }}
-                            />
+                            <Tooltip title="Enable custom arrival location">
+                                <Checkbox
+                                    // checked={checked}
+                                    onChange={handleArrChange}
+                                    color="primary"
+                                    style ={{
+                                        color: "#FFFFFF",
+                                    }}
+                                    inputProps={{ 'aria-label': 'primary checkbox' }}
+                                />
+                            </Tooltip>
                             <Select
                                 name="arrLoc"
                                 id="arrSelect"
