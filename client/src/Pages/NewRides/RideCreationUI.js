@@ -226,6 +226,7 @@ const CHECK_LOCATION = gql`
         locationOne (filter: {address: $address}) {
             title
             address
+            _id
         }
     }
 `
@@ -285,6 +286,8 @@ const RideCreate = ({locations}) => {
     // We also need to get the user info
     const { data: userData } = useQuery(GET_USER_INFO);
     const [fetchLocation, { called, loading: locationLoading, data: locationData }] = useLazyQuery(GET_LOCATION);
+    const [fetchCheck, {called2, loading: checkLoading, data: checkData }] = useLazyQuery(CHECK_LOCATION);
+    const [fetchArrCheck, {data: checkArrData}] = useLazyQuery(CHECK_LOCATION);
     
     const { user } = userData;
 
@@ -318,10 +321,10 @@ const RideCreate = ({locations}) => {
         } 
     }, [error]);
 
-    const { data: checkData } = useQuery(CHECK_LOCATION, {
-        variables: {address: newDeptLocation},
-        skip: newDeptLocation === null
-    });
+    // const { data: checkData } = useQuery(CHECK_LOCATION, {
+    //     variables: {address: newDeptLocation},
+    //     skip: newDeptLocation === null
+    // });
 
     function addCreateCustomRide() {
         createRide({
@@ -338,54 +341,89 @@ const RideCreate = ({locations}) => {
         console.log(newDeptLocation);
         if (newDeptLocation) {
             console.log("preparing to create new departure location");
+            console.log("new address", newDeptLocation.formatted_address)
             // fetchCheck(
             //     { variables: {address: newDeptLocation.formatted_address}}
-            // ).then(({ data }) => {
-            //     console.log("checkData", data);
-            // });
-            console.log("checkData", checkData);
-            createLocation({
-                variables: {title: newDeptLocation.name, address: newDeptLocation.formatted_address}
-            }).then(({ data }) => {
-                const recordId = data["locationCreateOne"]["recordId"];
-                setInputs({...getInputs, deptLoc: recordId });
-                getInputs["deptLoc"] = recordId;
-                if (newArrLocation) {
-                    createLocation({
-                        variables: {title: newArrLocation.name, address: newArrLocation.formatted_address}
-                    }).then(({ data }) => {
-                        const recordId = data["locationCreateOne"]["recordId"];
-                        setInputs({...getInputs, arrLoc: recordId });
-                        getInputs["arrLoc"] = recordId;
-                        addCreateCustomRide();
-                    });
-                } else {
+            // )
+            if (checkData) {
+                getInputs["deptLoc"] = checkData["locationOne"]["_id"];
+                if (checkArrData) {
+                    console.log("checkArrData", checkArrData);
+                    getInputs["arrLoc"] = checkArrData["locationOne"]["_id"];
                     addCreateCustomRide();
+                    return;
                 }
-            })
+            } else {
+                console.log("checkData", checkData);
+                createLocation({
+                    variables: {title: newDeptLocation.name, address: newDeptLocation.formatted_address}
+                }).then(({ data }) => {
+                    const recordId = data["locationCreateOne"]["recordId"];
+                    setInputs({...getInputs, deptLoc: recordId });
+                    getInputs["deptLoc"] = recordId;
+                    if (newArrLocation) {
+                        if (checkArrData) {
+                            console.log("checkArrData", checkArrData);
+                            getInputs["arrLoc"] = checkArrData["locationOne"]["_id"];
+                            addCreateCustomRide();
+                            return;
+                        } else {
+                            createLocation({
+                                variables: {title: newArrLocation.name, address: newArrLocation.formatted_address}
+                            }).then(({ data }) => {
+                                const recordId = data["locationCreateOne"]["recordId"];
+                                setInputs({...getInputs, arrLoc: recordId });
+                                getInputs["arrLoc"] = recordId;
+                                addCreateCustomRide();
+                            });
+                        }
+                    } else {
+                        addCreateCustomRide();
+                        return;
+                    }
+                })
+            }
         } else if (newArrLocation) {
-            createLocation({
-                variables: {title: newArrLocation.name, address: newArrLocation.formatted_address}
-            }).then(({ data }) => {
-                const recordId = data["locationCreateOne"]["recordId"];
-                setInputs({...getInputs, arrLoc: recordId });
-                getInputs["arrLoc"] = recordId;
+            if (checkArrData) {
+                getInputs["arrLoc"] = checkArrData["locationOne"]["_id"];
                 addCreateCustomRide();
-            });
-        } else {
-            createRide({
-                variables: getInputs
-            })
-            .catch((error) => {
-                console.log("Oh no.");
-            });
+                return;
+            } else {
+                createLocation({
+                    variables: {title: newArrLocation.name, address: newArrLocation.formatted_address}
+                }).then(({ data }) => {
+                    const recordId = data["locationCreateOne"]["recordId"];
+                    setInputs({...getInputs, arrLoc: recordId });
+                    getInputs["arrLoc"] = recordId;
+                    addCreateCustomRide();
+                    return;
+                });
+            }
         }
+        addCreateCustomRide();
         // if (newArrLocation) {
         //     createLocation({
         //         variables: {title: newArrLocation.name, address: newArrLocation.formatted_address}
         //     })
         // }
     };
+
+    useEffect(() => {
+        if (newDeptLocation !== null) {
+            console.log("test2");
+            fetchCheck(
+                { variables: {address: newDeptLocation.formatted_address}}
+            )
+        }
+    }, [checkData, newDeptLocation]);
+
+    useEffect(() => {
+        if (newArrLocation !== null) {
+            fetchArrCheck(
+                { variables: {address: newArrLocation.formatted_address}}
+            )
+        }
+    }, [checkArrData, newArrLocation]);
 
     const handleFormChange = (event) => {
         // If value is empty, remove from object
@@ -615,7 +653,6 @@ const styles = {
                                     console.log(place.name);
                                     console.log(place.formatted_address);
                                     setNewDeptLocation(place);
-                                    console.log("newDeptLocation", newDeptLocation); 
                                     // setInputs({...getInputs, deptLoc: selected.value });
                                     // return <CustomRide place={place}/>;
                                 }}
@@ -653,8 +690,7 @@ const styles = {
                                 onPlaceSelected={(place) => {
                                     console.log(place.name);
                                     console.log(place.formatted_address);
-                                    setNewArrLocation(place);
-                                    console.log("newArrLocation", newArrLocation); 
+                                    setNewArrLocation(place); 
                                     // return <CustomRide place={place}/>;
                                 }}
                                 types={['establishment']}
