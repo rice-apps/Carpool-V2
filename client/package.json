@@ -28,6 +28,7 @@
     "react-bootstrap": "^1.0.1",
     "react-datetime-picker": "^3.0.2",
     "react-dom": "^16.13.1",
+    "react-google-autocomplete": "^1.2.6",
     "react-modal": "^3.11.2",
     "react-number-format": "^4.4.1",
     "react-phone-input-2": "^2.13.5",
