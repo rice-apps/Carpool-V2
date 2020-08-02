@@ -6,7 +6,8 @@ import Modal from "react-modal";
 import Linkage from "../../assets/destination_linkage_vertical.svg"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { 
-    faLongArrowAltDown
+    faLongArrowAltDown,
+    faTrash
 } from '@fortawesome/free-solid-svg-icons'
 
 import EditProfile from "./EditProfile";
@@ -32,33 +33,7 @@ const Button = styled.div`
     text-align: center;
 `
 
-const RideCardList = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-`
 
-const RideCardItem = styled.div`
-    position: relative;
-    height: 10em;
-    width: 30em;
-    overflow: hidden; /* need this to ensure no weird text transform effect */
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.2s;
-
-    :hover {
-        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-
-        & > div:first-of-type { // frontside of the card
-            height: 0px;
-            transform: perspective(1000px) rotateX(-180deg);
-        }
-
-        & > div:last-of-type { // backside of the card
-            transform: perspective(1000px) rotateX(0deg);
-        }
-    }
-`
 
 // Card sides
 const CardSide = css`
@@ -73,50 +48,7 @@ const CardSide = css`
     transition: all .2s ease;
 `
 
-const RideCardFront = styled.div`
-    ${CardSide}
-`
 
-const RideCardBack = styled.div`
-    ${CardSide}
-    transform: rotateX(-180deg);
-    background-color: ${props => props.joined ? "red" : "green"};
-`
-
-const RideJoinButton = styled(Button)`
-    height: 100%;
-    width: 100%;
-`
-
-const RideCardDate = styled.div`
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-`
-
-const RideCardText = styled.div`
-    display: flex;
-    flex-direction: column;
-    flex-grow: 3;
-    align-items: center;
-`
-
-const Day = styled.h1`
-    font-size: 3em;
-    margin-bottom: 0px;
-`
-
-const Month = styled.p`
-    flex-grow: 1;
-    margin-bottom: 0px;
-`
-
-const Year = styled.p`
-    flex-grow: 1;
-    margin-top: 0px;
-`
 
 const GET_RIDES = gql`
     query GetRides($_id: MongoID) {
@@ -130,6 +62,18 @@ const GET_RIDES = gql`
                     title
                 }
                 spots
+                _id
+            }
+        }
+    }
+`
+
+const DELETE_RIDE = gql`
+    mutation DeleteRide($_id: MongoID) {
+        rideDeleteOne(_id: $_id) {
+            recordId
+            record {
+                _id
             }
         }
     }
@@ -154,6 +98,7 @@ const GET_LOCATIONS = gql`
         }
     }
 `
+
 
 /**
 * Helper Functions
@@ -181,50 +126,7 @@ const checkFull = (ride) => {
     return false;
 }
 
-// const RideCard = ({ ride }) => {
-//     console.log(ride)
-//     // Get properties from ride object
-//     let { owner, riders, departureDate, departureLocation, arrivalLocation, spots } = ride;
-//     // Get UserID from our local state management in apollo
-//     let { userID } = useQuery(GET_USER_INFO);
 
-//     // Transform departure date object into a moment object so we can use it easily
-//     let departureMoment = moment(departureDate);
-
-//     // Check if the current user is already part of this ride
-//     let joined = checkJoined(userID, ride);
-
-//     // If the ride is full, disable ability to join
-//     let rideFull = checkFull(ride);
-//     return (
-//         <RideCardItem>
-//             <RideCardFront>
-//                 <RideCardDate>
-//                     <Day>{departureMoment.format("DD").toString()}</Day>
-//                     <Month>{departureMoment.format("MMM").toString()}</Month>
-//                     <Year>{departureMoment.format("YYYY").toString()}</Year>
-//                 </RideCardDate>
-//                 <RideCardText>
-//                     <p>{departureLocation.title} -> {arrivalLocation.title}</p>
-//                     <p>{departureMoment.format("hh:mm a")}</p>
-//                     <p>{spots - riders.length} spots</p>
-//                 </RideCardText>
-//             </RideCardFront>
-//             <RideCardBack 
-//             joined={joined}
-//             >
-//             { rideFull ? "Sorry, this ride is full." : 
-//                 <RideJoinButton 
-//                 outlined 
-//                 disabled={rideFull}
-//                 >
-//                     {joined ? "Leave this ride." : "Join this ride!" }
-//                 </RideJoinButton>
-//             }
-//             </RideCardBack>
-//         </RideCardItem>
-//     )
-// }
 
 const PageDiv = styled.div`
     display: flex;
@@ -270,12 +172,6 @@ const ProfileCardEdit = styled.a`
     cursor: pointer;
 `
 
-
-const ProfileImage = styled.img`
-    max-width: 8em; 
-    max-height: 8em;
-    padding: 2em 0 0 0;
-`
 
 const Time = styled.a`
     font-weight: bold;
@@ -327,27 +223,37 @@ const RideBox = styled.div`
     border-width: 1.5px;
     border-color: #223244;
     margin-top: 5vh;
-    padding: 1vh 3vw;
+    padding: 1vh 2vw;
     width: 20vw;
     line-height: 3.5vh;
 `;
 
 const RideLocations = styled.div`
+    grid-column: 2 / 10;
     display: flex;
     flex-direction: column;
 `
 
 const IllusColumn = styled.div`
-    display: flex;
-    flex-direction: row;
-    align-items: left;
+    display: grid;
+    grid-template-columns:repeat(10,10%);
 `
 
 const StyledIcon = styled.div`
+    grid-column: 1 / 2;
     margin-right: .5vw;
     margin-top: 1.25vh;
     font-size: 2em;
 `
+const StyledIcon2 = styled.div`
+    grid-column: 10 / 11;
+    margin-right: .5vw;
+    margin-left: 1.7vw;
+    margin-top: 3vh;
+    font-size: 1em;
+`
+
+
 
 const RideHeader = styled.div`
     padding-left: 1vh;
@@ -383,25 +289,30 @@ const GET_USER_INFO = gql`
 `
 
 
-// const Button = styled.div`
-//     margin-top: 10px;
-//     background-color: #359d99;
-//     border: none;
-//     color: white;
-//     min-width: 150px;
-//     min-height: 50px;
-//     text-align: center;
-//     vertical-align: middle;
-//     line-height: 2.7;
-//     transition: background-color .2s linear;
-//     &:hover {
-//         background-color: #4ec2bd;
-//     }
-// `
-
 const RideCard = ({ ride }) => {
-    let { arrivalLocation, departureDate, departureLocation, spots } = ride;
+    let { arrivalLocation, departureDate, departureLocation, spots, _id } = ride;
     let departureMoment = moment(departureDate);
+
+    const [deleteRide, { data, loading, error }] = useMutation(
+        DELETE_RIDE,
+    );  
+
+    // useEffect(() => {
+    //     if (error) {
+    //         console.log("There's an error");
+    //     } 
+    // }, [error]);
+    
+    
+    const handleDelete = () => {
+        console.log("ride", ride)
+        deleteRide({
+            variables: {_id: ride._id}
+        })
+        .catch((error) => {
+            console.log("Oh no.");
+        });
+    };
 
     return (
         <RideBox>
@@ -417,10 +328,18 @@ const RideCard = ({ ride }) => {
                     <a>{departureLocation.title}</a>
                     <a>{arrivalLocation.title}</a>
                 </RideLocations>
+                <StyledIcon2>
+                    <FontAwesomeIcon 
+                    icon={faTrash}
+                    onClick={()=>handleDelete()}
+                    />
+                </StyledIcon2>
             </IllusColumn>
         </RideBox>
     );
 }
+
+
 
 const Profile = ({}) => {
     console.log("HELLLOOOOO");
@@ -452,12 +371,12 @@ const Profile = ({}) => {
         }
     }, [rideData]);
 
-    console.log("called");
-    console.log(called);
-    console.log("loading");
-    console.log(rideLoading);
-    console.log("data");
-    console.log(rideData);
+    // console.log("called");
+    // console.log(called);
+    // console.log("loading");
+    // console.log(rideLoading);
+    // console.log("data");
+    // console.log(rideData);
 
     if (error) return <p>Error...</p>;
     if (loading) return <p>Wait...</p>;
@@ -467,8 +386,8 @@ const Profile = ({}) => {
 
     // const { userOne: rides } = rideData;
     const rides = rideData["userOne"]["rides"];
-    console.log("rides");
-    console.log(rides);
+    // console.log("rides");
+    // console.log(rides);
 
     const previousrides = rides.filter(ride => moment(ride.departureDate) < new Date())
     previousrides.sort((a, b) => moment(b.departureDate) - moment(a.departureDate))
