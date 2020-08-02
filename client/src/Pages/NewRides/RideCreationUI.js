@@ -1,7 +1,7 @@
 import React, { useState, createContext, useEffect} from "react";
 import styled from "styled-components";
 import Select, { components } from 'react-select';
-import { gql, useQuery, useMutation } from "@apollo/client";
+import { gql, useQuery, useMutation, useLazyQuery } from "@apollo/client";
 // import DateTimePicker from 'react-datetime-picker';
 import DateFnsAdapter from '@material-ui/pickers/adapter/date-fns';
 import { DateTimePicker, LocalizationProvider } from '@material-ui/pickers';
@@ -12,6 +12,11 @@ import {Link} from "react-router-dom";
 
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { yellow } from "@material-ui/core/colors";
+
+import Autocomplete from 'react-google-autocomplete';
+import { Redirect } from "react-router";
+import Checkbox from '@material-ui/core/Checkbox';
+import Tooltip from '@material-ui/core/Tooltip';
 
 
 const HiddenInput = styled.input`
@@ -25,8 +30,8 @@ const MainForm = styled.form`
     display:grid;
     grid-template-rows:repeat(20,5%);
     grid-template-columns:repeat(20,5%);
-    width:100vw;
-    height:100vh;
+    width: 100vw;
+    height: 100vh;
 `
 
 const IllustrationDiv = styled.div`
@@ -84,7 +89,6 @@ const RideCreateInputDivLast = styled.div`
     justify-content: space-around;
     align-items: flex-end;
     color : white;
-    margin-top:0.5vh;
 `
 
 const RideCreateLabel = styled.label`
@@ -107,12 +111,12 @@ const RideCreateInput = styled.input`
     color:white;
     border: none;
     width: 15vw;
-    height:4.5vh;
+    height: 4.5vh;
     outline: none;
     padding-left: 2vh;
     padding-right: 2vh;
-    padding-top:0;
     padding-bottom:0.5vh;
+    padding-top: 0;
     text-align:left;
     ::placeholder { 
     }
@@ -144,12 +148,18 @@ const StyledLinkDiv = styled.div`
         
     
 const StyledLink = styled(Link)`
-font-size:3.5vh;
-display: box;
-color: white;
-text-decoration: underline;
-text-decoration-color: white;
-padding-right: .75vh;
+    font-size:3.5vh;
+    display: box;
+    color: white;
+    text-decoration: underline;
+    text-decoration-color: white;
+    padding-right: .75vh;
+`
+
+const StyledCheckbox = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 `
 
 
@@ -164,6 +174,14 @@ const GET_LOCATIONS = gql`
         locationMany {
             _id
             title
+        }
+    }
+`
+
+const GET_LOCATION = gql`
+    query GetLocation {
+        locationOne (filter: {title: $title}) {
+            _id
         }
     }
 `
@@ -203,19 +221,39 @@ const CREATE_RIDE = gql`
     }
 `
 
+const CHECK_LOCATION = gql`
+    query CheckLocation($address: String) {
+        locationOne (filter: {address: $address}) {
+            title
+            address
+            _id
+        }
+    }
+`
+
 /**
  * A mutation which will allow for the creation of new locations on the frontend
  */
 const CREATE_LOCATION = gql`
-    mutation CreateLocation( $title: String ) {
-        locationCreateOne(record: { title: $title } ) {
+    mutation CreateLocation( $title: String, $address: String ) {
+        locationCreateOne(record: { title: $title, address: $address } ) {
             recordId
             record {
                 title
+                address
             }
         }
     }
 `
+
+const defaultLocations = [
+    "5eca36b008d82d5e82aaba10",
+    "5f0faaae8043fe8db20d7b2f",
+    "5f0fab90e021e829d49be5f7",
+    "5f104e94bd33f13b6c1b66d8",
+    "5f104ed2bd33f13b6c1b66d9",
+    "5f104f49bd33f13b6c1b66da"
+]
 
 
 /**
@@ -223,17 +261,19 @@ const CREATE_LOCATION = gql`
  * @param {*} locations: locations to be reformatted for use with react-select
  */
 const transformToRSOptions = (locations) => {
-    return locations.map(location => {
-        return { label: location.title, value: location._id };
-    });
+    return locations
+        .filter(location1 => defaultLocations.includes(location1._id))
+            .map(location => {
+                return { label: location.title, value: location._id };
+            }
+        );
 }
-
-
-
 
 const RideCreate = ({locations}) => {
     const { addToast } = useToasts();
     const [getInputs, setInputs] = useState({});
+    const [newDeptLocation, setNewDeptLocation] = useState(null);
+    const [newArrLocation, setNewArrLocation] = useState(null);
 
     // These 3 properties MUST be present before a user can submit the new ride
     let readyToSubmit = ["deptLoc", "arrLoc", "deptDate"].every(requiredElem => getInputs.hasOwnProperty(requiredElem))
@@ -241,12 +281,15 @@ const RideCreate = ({locations}) => {
 
     // Transform locations into options for react-select
     locations = transformToRSOptions(locations);
+    console.log('locations', locations);
 
     // We also need to get the user info
     const { data: userData } = useQuery(GET_USER_INFO);
+    const [fetchLocation, { called, loading: locationLoading, data: locationData }] = useLazyQuery(GET_LOCATION);
+    const [fetchCheck, {called2, loading: checkLoading, data: checkData }] = useLazyQuery(CHECK_LOCATION);
+    const [fetchArrCheck, {data: checkArrData}] = useLazyQuery(CHECK_LOCATION);
     
     const { user } = userData;
-
 
     // Create a mutation to handle location creation
     // const [ createLocation, { data: createLocData, error: createLocError, loading: createLocLoading }] = useMutation(CREATE_LOCATION);
@@ -259,13 +302,18 @@ const RideCreate = ({locations}) => {
             spots: 4,
             ownerDriving: false,
             note: "None",
+            luggage: null
         });
     }, []);
 
 
     const [createRide, { data, loading, error }] = useMutation(
         CREATE_RIDE,
-    );  
+    );
+    
+    const [ createLocation, { data2, loading2, error2 } ] = useMutation(
+        CREATE_LOCATION
+    );
 
     useEffect(() => {
         if (error) {
@@ -273,15 +321,109 @@ const RideCreate = ({locations}) => {
         } 
     }, [error]);
 
-    const handleSubmit = () => {
-        console.log("getInputs!!!", getInputs)
+    // const { data: checkData } = useQuery(CHECK_LOCATION, {
+    //     variables: {address: newDeptLocation},
+    //     skip: newDeptLocation === null
+    // });
+
+    function addCreateCustomRide() {
         createRide({
             variables: getInputs
         })
         .catch((error) => {
             console.log("Oh no.");
         });
+        addToast("Congratulations! Your custom ride has been successfully created.", { appearance: 'success'});
+    }
+
+    const handleSubmit = () => {
+        console.log("getInputs!!!", getInputs);
+        console.log(newDeptLocation);
+        if (newDeptLocation) {
+            console.log("preparing to create new departure location");
+            console.log("new address", newDeptLocation.formatted_address)
+            // fetchCheck(
+            //     { variables: {address: newDeptLocation.formatted_address}}
+            // )
+            if (checkData) {
+                getInputs["deptLoc"] = checkData["locationOne"]["_id"];
+                if (checkArrData) {
+                    console.log("checkArrData", checkArrData);
+                    getInputs["arrLoc"] = checkArrData["locationOne"]["_id"];
+                    addCreateCustomRide();
+                    return;
+                }
+            } else {
+                console.log("checkData", checkData);
+                createLocation({
+                    variables: {title: newDeptLocation.name, address: newDeptLocation.formatted_address}
+                }).then(({ data }) => {
+                    const recordId = data["locationCreateOne"]["recordId"];
+                    setInputs({...getInputs, deptLoc: recordId });
+                    getInputs["deptLoc"] = recordId;
+                    if (newArrLocation) {
+                        if (checkArrData) {
+                            console.log("checkArrData", checkArrData);
+                            getInputs["arrLoc"] = checkArrData["locationOne"]["_id"];
+                            addCreateCustomRide();
+                            return;
+                        } else {
+                            createLocation({
+                                variables: {title: newArrLocation.name, address: newArrLocation.formatted_address}
+                            }).then(({ data }) => {
+                                const recordId = data["locationCreateOne"]["recordId"];
+                                setInputs({...getInputs, arrLoc: recordId });
+                                getInputs["arrLoc"] = recordId;
+                                addCreateCustomRide();
+                            });
+                        }
+                    } else {
+                        addCreateCustomRide();
+                        return;
+                    }
+                })
+            }
+        } else if (newArrLocation) {
+            if (checkArrData) {
+                getInputs["arrLoc"] = checkArrData["locationOne"]["_id"];
+                addCreateCustomRide();
+                return;
+            } else {
+                createLocation({
+                    variables: {title: newArrLocation.name, address: newArrLocation.formatted_address}
+                }).then(({ data }) => {
+                    const recordId = data["locationCreateOne"]["recordId"];
+                    setInputs({...getInputs, arrLoc: recordId });
+                    getInputs["arrLoc"] = recordId;
+                    addCreateCustomRide();
+                    return;
+                });
+            }
+        }
+        addCreateCustomRide();
+        // if (newArrLocation) {
+        //     createLocation({
+        //         variables: {title: newArrLocation.name, address: newArrLocation.formatted_address}
+        //     })
+        // }
     };
+
+    useEffect(() => {
+        if (newDeptLocation !== null) {
+            console.log("test2");
+            fetchCheck(
+                { variables: {address: newDeptLocation.formatted_address}}
+            )
+        }
+    }, [checkData, newDeptLocation]);
+
+    useEffect(() => {
+        if (newArrLocation !== null) {
+            fetchArrCheck(
+                { variables: {address: newArrLocation.formatted_address}}
+            )
+        }
+    }, [checkArrData, newArrLocation]);
 
     const handleFormChange = (event) => {
         // If value is empty, remove from object
@@ -328,6 +470,9 @@ const RideCreate = ({locations}) => {
 
     }
     
+ 
+
+    
 
     const Rideroptions = [
     { value: '1', label: '1' },
@@ -337,13 +482,13 @@ const RideCreate = ({locations}) => {
   ];
 
   
-  const Luggageoptions = [
-    { value: '1', label: '1' },
-    { value: '2', label: '2' },
-    { value: '3', label: '3' },
-    { value: '4', label: '4' },
-    { value: '5', label: '5' }
-  ];
+//   const Luggageoptions = [
+//     { value: '1', label: '1' },
+//     { value: '2', label: '2' },
+//     { value: '3', label: '3' },
+//     { value: '4', label: '4' },
+//     { value: '5', label: '5' }
+//   ];
 
 const customStyles = {
     control: (base) => ({
@@ -354,7 +499,9 @@ const customStyles = {
         borderRadius: '2vh',
         border: 'none',
         boxShadow: 'none',
-        cursor:'pointer'
+        cursor:'pointer',
+        fontSize:'2.5vh',
+        letterSpacing:'0.03vw'
     }),
     indicatorSeparator: (provided) => ({
         ...provided,
@@ -363,9 +510,7 @@ const customStyles = {
     option: (base) => ({
         ...base,
         color:'#142538',
-        cursor:'pointer',
-        fontSize:'2.5vh',
-        letterSpacing:'0.03vw'
+        cursor:'pointer'
     }),
     singleValue: (provided) => ({
         ...provided,
@@ -412,10 +557,58 @@ const styles = {
     
 }
 
-
-
 //   const [selectedDate, handleDateChange] = useState(new Date());
 
+    const [checked, setChecked] = React.useState(true);
+
+    const autocompleteStyle = {
+        fontSize: "2.8vh",
+        fontFamily: "inherit",
+        letterSpacing: "0.03vw",
+        backgroundColor: "#FFFFFF2B",
+        borderRadius: "2vh",
+        color: "white",
+        border: "none",
+        width: "11.1vw",
+        height: "4.5vh",
+        outline: "none",
+        paddingLeft: "2vh",
+        paddingRight: "2vh",
+        paddingBottom: "0.5vh",
+        display: "none",
+        textAlign: "left"
+    };
+
+    const toggleVisible = function(item){
+        if (item.style.display === 'none'){
+            return item.style.display = 'block';
+        } else {
+            return item.style.display = 'none';
+        }
+    };
+
+    const handleDeptChange = (event) => {
+        setChecked(event.target.checked);
+        let select = document.getElementById("deptSelect");
+        let custom = document.getElementById("customDept");
+        toggleVisible(select);
+        toggleVisible(custom);
+    };
+
+    const handleArrChange = (event) => {
+        setChecked(event.target.checked);
+        let select = document.getElementById("arrSelect");
+        let custom = document.getElementById("customArr");
+        toggleVisible(select);
+        toggleVisible(custom);
+    };
+
+    // if (error) return <p>Error...</p>;
+    // if (loading) return <p>Wait...</p>;
+    // if (error2) return <p>Error...</p>;
+    // if (loading2) return <p>Wait...</p>;
+
+    
     return (
         <MainForm>
             <Slogan>
@@ -425,37 +618,94 @@ const styles = {
                 <RideCreateInputDivText>    
                     <RideCreateLabel>*Departing from:</RideCreateLabel>
                     <RideCreateLabel>*Arriving at:</RideCreateLabel>
-                    <RideCreateLabel>*Number of Luggages:</RideCreateLabel>
+                    {/* <RideCreateLabel>Add Custom Location:</RideCreateLabel> */}
+                    {/* <RideCreateLabel>*Number of Luggages:</RideCreateLabel> */}
                 </RideCreateInputDivText>
                         
                 <RideCreateInputDiv>
-                        <Select
-                        name="deptLoc"
-                        options={locations}
-                        onChange={(selected) => setInputs({...getInputs, deptLoc: selected.value })}
-                        styles={customStyles}
-                        isSearchable={false}
-                        value={locations.find(obj => obj.value === getInputs.deptLoc) ? locations.find(obj => obj.value === getInputs.deptLoc):null}
-                        />
+                        <StyledCheckbox>
+                            <Tooltip title="Enable custom departure location">
+                                <Checkbox
+                                    // checked={checked}
+                                    onChange={handleDeptChange}
+                                    color="primary"
+                                    style ={{
+                                        color: "#FFFFFF",
+                                    }}
+                                    inputProps={{ 'aria-label': 'primary checkbox' }}
+                                />
+                            </Tooltip>
+                            <Select
+                                name="deptLoc"
+                                options={locations}
+                                onChange={(selected) => setInputs({...getInputs, deptLoc: selected.value })}
+                                styles={customStyles}
+                                isSearchable={false}
+                                value={locations.find(obj => obj.value === getInputs.deptLoc) ? locations.find(obj => obj.value === getInputs.deptLoc):null}
+                                id="deptSelect"
+                                iconStyle={{fill: 'white'}}
+                            />
+                            <Autocomplete
+                                apiKey={'AIzaSyBOCL15Ohl-LcqazTFxXgoGAlB86N2miJE'}
+                                style={autocompleteStyle}
+                                fields={["name", "formatted_address"]}
+                                onPlaceSelected={(place) => {
+                                    console.log(place.name);
+                                    console.log(place.formatted_address);
+                                    setNewDeptLocation(place);
+                                    // setInputs({...getInputs, deptLoc: selected.value });
+                                    // return <CustomRide place={place}/>;
+                                }}
+                                types={['establishment']}
+                                id="customDept"
+                            />
+                        </StyledCheckbox>
                         
-                        <Select
-                        name="arrLoc"
-                        options={locations.filter(location => location.value != getInputs.deptLoc)}
-                        onChange={(selected) => setInputs({...getInputs, arrLoc: selected.value })}    
-                        isDisabled={getInputs.hasOwnProperty("deptLoc") ? false : true }                               
-                        styles={customStyles}
-                        isSearchable={false}
-                        value={locations.find(obj => obj.value === getInputs.arrLoc) ? locations.find(obj => obj.value === getInputs.arrLoc) : null}
-                        />
+                        <StyledCheckbox>
+                            <Tooltip title="Enable custom arrival location">
+                                <Checkbox
+                                    // checked={checked}
+                                    onChange={handleArrChange}
+                                    color="primary"
+                                    style ={{
+                                        color: "#FFFFFF",
+                                    }}
+                                    inputProps={{ 'aria-label': 'primary checkbox' }}
+                                />
+                            </Tooltip>
+                            <Select
+                                name="arrLoc"
+                                id="arrSelect"
+                                options={locations.filter(location => location.value != getInputs.deptLoc)}
+                                onChange={(selected) => setInputs({...getInputs, arrLoc: selected.value })}    
+                                //isDisabled={getInputs.hasOwnProperty("deptLoc") ? false : true }                               
+                                styles={customStyles}
+                                isSearchable={false}
+                                value={locations.find(obj => obj.value === getInputs.arrLoc) ? locations.find(obj => obj.value === getInputs.arrLoc) : null}
+                            />
+                            <Autocomplete
+                                apiKey={'AIzaSyBOCL15Ohl-LcqazTFxXgoGAlB86N2miJE'}
+                                style={autocompleteStyle}
+                                fields={["name", "formatted_address"]}
+                                onPlaceSelected={(place) => {
+                                    console.log(place.name);
+                                    console.log(place.formatted_address);
+                                    setNewArrLocation(place); 
+                                    // return <CustomRide place={place}/>;
+                                }}
+                                types={['establishment']}
+                                id="customArr"
+                            />
+                        </StyledCheckbox>
                 
-                        <Select
+                        {/* <Select
                         name="luggage"
                         options={Luggageoptions}  
                         onChange={(selected) => setInputs({...getInputs, luggage: selected.value })}                 
                         styles={customStyles}
                         isSearchable={false}
                         value={Luggageoptions.find(obj => obj.value === getInputs.luggage) ? Luggageoptions.find(obj => obj.value === getInputs.luggage) : null}
-                        />
+                        /> */}
                 </RideCreateInputDiv>
 
                 <RideCreateInputDivText>
