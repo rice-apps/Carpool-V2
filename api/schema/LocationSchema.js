@@ -13,7 +13,7 @@ const LocationQuery = {
 
 const LocationMutation = {
     locationCreateOne: LocationTC.getResolver('createOne'),
-    // locationUpdateOne: LocationTC.getResolver('updateOne')
+    locationUpdateOne: LocationTC.getResolver('updateOne')
 };
 
 async function authMiddleware(resolve, source, args, context, info) {
