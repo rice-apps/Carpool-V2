@@ -39,8 +39,7 @@ const Button = styled.div`
     text-align: center;
 `
 
-<<<<<<< HEAD
-=======
+
 const Logout = styled.div`
     background-color: black;
     color: #E8CA5A;
@@ -59,7 +58,7 @@ const RideCardList = styled.div`
     flex-direction: column;
     align-items: center;
 `
->>>>>>> ccd2dc9fb611ac7e749225c63d103485ae589b3f
+
 
 
 // Card sides
@@ -104,17 +103,7 @@ const GET_RIDES = gql`
     }
 `
 
-const DELETE_RIDE = gql`
-    mutation DeleteRide($_id: MongoID!) {
-        rideDeleteOne(_id: $_id) {
-            recordId
-            record {
-                _id
-                __typename
-            }
-        }
-    }
-`
+
 
 /**
 * This simply fetches from our cache whether a recent update has occurred
@@ -347,21 +336,6 @@ const RideCard1 = ({ ride }) => {
     let { arrivalLocation, departureDate, departureLocation, spots, _id } = ride;
     let departureMoment = moment(departureDate);
 
-    const [deleteRide, { data, loading, error }] = useMutation(
-        DELETE_RIDE,
-    );  
-
-    
-    const handleDelete = () => {
-        console.log("ride", ride)
-        deleteRide({
-            variables: {_id: ride._id}
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-    };
-
     return (
         <RideBox>
             <Time>
@@ -387,20 +361,7 @@ const RideCard1 = ({ ride }) => {
 const RideCard2 = ({ ride }) => {
     let { arrivalLocation, departureDate, departureLocation, spots, _id } = ride;
     let departureMoment = moment(departureDate);
-
-    const [deleteRide, { data, loading, error }] = useMutation(
-        DELETE_RIDE,
-    );  
-        
-    const handleDelete = () => {
-        console.log("ride", ride)
-        deleteRide({
-            variables: {_id: ride._id}
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-    };
+    
 
     return (
         <RideBox>
@@ -416,12 +377,6 @@ const RideCard2 = ({ ride }) => {
                     <a>{departureLocation.title}</a>
                     <a>{arrivalLocation.title}</a>
                 </RideLocations>
-                <StyledIcon2>
-                    <FontAwesomeIcon 
-                    icon={faTrash}
-                    onClick={()=>handleDelete()}
-                    />
-                </StyledIcon2>
             </IllusColumn>
         </RideBox>
     );
@@ -451,6 +406,7 @@ const Profile = ({}) => {
     // const { rideMany: rides } = data2;
 
     console.log(user._id);
+    console.log(user);
     const [fetchRides, { called, loading: rideLoading, data: rideData }] = useLazyQuery(GET_RIDES);
 
     useEffect(() => {
@@ -473,8 +429,8 @@ const Profile = ({}) => {
     if (!rideData) return <p>No data...</p>;
 
     const rides = rideData["userOne"]["rides"];
-    console.log("rides");
-    console.log(rides);
+    // console.log("rides");
+    // console.log(rides);
 
     const previousrides = rides.filter(ride => moment(ride.departureDate) < new Date())
     previousrides.sort((a, b) => moment(b.departureDate) - moment(a.departureDate))
@@ -525,7 +481,7 @@ const Profile = ({}) => {
             <BottomContainerDiv>
                 <RideDiv>
                     <RideHeader>Upcoming Rides</RideHeader>
-                    {upcomingrides.map(ride => <RideCard1 ride={ride} />)}
+                    {upcomingrides.map(ride => <StyledLink to={`/rides/${ride._id}`}><RideCard1 ride={ride} /></StyledLink>)}
                 </RideDiv>
                 <RideDiv2>
                     <RideHeader>Previous Rides</RideHeader>

@@ -11,6 +11,7 @@ import Profile from '../Pages/Profile';
 import About from '../Pages/About';
 import NewRide from '../Pages/NewRides';
 import LandingPage from '../Pages/LandingPage';
+import RideCardInfo from '../Pages/Profile/RideCardInfo'
 
 /**
  * Requests to verify the user's token on the backend
@@ -89,21 +90,12 @@ const PrivateRoute = ({ component, ...rest }) => {
         <Route {...rest} component={component} />
     );
 }
-const RideCard = () => {
-    // We can use the `useParams` hook here to access
-    // the dynamic pieces of the URL.
-    let { id } = useParams();
-    return (
-      <div>
-        <h3>ID: {id}</h3>
-      </div>
-    );
-  }
+
 
 const routesArray = [
     {
         path: "/rides/:id",
-        component: RideCard,
+        component: RideCardInfo,
         privateRoute: true
     },
     {
