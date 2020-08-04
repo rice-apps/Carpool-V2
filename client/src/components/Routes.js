@@ -1,6 +1,6 @@
 import React, { Component, useEffect } from "react"
 import styled from "styled-components";
-import { Switch, Route, Redirect } from 'react-router'
+import { Switch, Route, Redirect,useParams } from 'react-router'
 import { gql, useQuery, useApolloClient } from '@apollo/client';
 import App from '../App';
 import Login from '../Pages/Login';
@@ -88,8 +88,23 @@ const PrivateRoute = ({ component, ...rest }) => {
         <Route {...rest} component={component} />
     );
 }
+const RideCard = () => {
+    // We can use the `useParams` hook here to access
+    // the dynamic pieces of the URL.
+    let { id } = useParams();
+    return (
+      <div>
+        <h3>ID: {id}</h3>
+      </div>
+    );
+  }
 
 const routesArray = [
+    {
+        path: "/rides/:id",
+        component: RideCard,
+        privateRoute: true
+    },
     {
         path: "/login",
         component: Login,
@@ -131,6 +146,7 @@ const routesArray = [
         privateRoute: false
     },
 ];
+
 
 /**
  * Defines all the routes for our system.

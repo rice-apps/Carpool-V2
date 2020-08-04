@@ -15,6 +15,7 @@ const LocationMutation = {
     locationCreateOne: LocationTC.getResolver('createOne'),
     locationDeleteOne: LocationTC.getResolver('removeById'),
     // locationUpdateOne: LocationTC.getResolver('updateOne')
+    
 };
 
 async function authMiddleware(resolve, source, args, context, info) {

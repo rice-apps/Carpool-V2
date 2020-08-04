@@ -1,9 +1,15 @@
 import styled, { css } from "styled-components";
 import React, { useState, useEffect } from "react";
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link,
+    useParams
+  } from "react-router-dom";
 import { gql, useQuery, useMutation, useLazyQuery } from "@apollo/client";
 import moment from "moment";
 import Modal from "react-modal";
-import Linkage from "../../assets/destination_linkage_vertical.svg"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { 
     faLongArrowAltDown,
@@ -63,17 +69,27 @@ const GET_RIDES = gql`
                 }
                 spots
                 _id
+                owner{
+                    netid
+                    _id
+                }
+                riders{
+                    firstName
+                    lastName
+                    phone
+                }
             }
         }
     }
 `
 
 const DELETE_RIDE = gql`
-    mutation DeleteRide($_id: MongoID) {
+    mutation DeleteRide($_id: MongoID!) {
         rideDeleteOne(_id: $_id) {
             recordId
             record {
                 _id
+                __typename
             }
         }
     }
@@ -109,22 +125,22 @@ const GET_LOCATIONS = gql`
 * @param {*} userID 
 * @param {*} ride 
 */
-const checkJoined = (userID, ride) => {
-    if (userID == ride.owner._id) return true; // saves us some computational power from executing the next line
-    if (ride.riders.map(rider => rider._id).includes(userID)) return true;
-    return false;
-}
+// const checkJoined = (userID, ride) => {
+//     if (userID == ride.owner._id) return true; // saves us some computational power from executing the next line
+//     if (ride.riders.map(rider => rider._id).includes(userID)) return true;
+//     return false;
+// }
 
-/**
-* Checks whether the ride is full
-* @param {*} ride 
-*/
-const checkFull = (ride) => {
-    if (ride.riders.length == ride.spots) {
-        return true;
-    }
-    return false;
-}
+// /**
+// * Checks whether the ride is full
+// * @param {*} ride 
+// */
+// const checkFull = (ride) => {
+//     if (ride.riders.length == ride.spots) {
+//         return true;
+//     }
+//     return false;
+// }
 
 
 
@@ -223,13 +239,13 @@ const RideBox = styled.div`
     border-width: 1.5px;
     border-color: #223244;
     margin-top: 5vh;
-    padding: 1vh 2vw;
+    padding: 1vh 1vw;
     width: 20vw;
     line-height: 3.5vh;
 `;
 
 const RideLocations = styled.div`
-    grid-column: 2 / 10;
+    grid-column: 2 / 9;
     display: flex;
     flex-direction: column;
 `
@@ -251,6 +267,9 @@ const StyledIcon2 = styled.div`
     margin-left: 1.7vw;
     margin-top: 3vh;
     font-size: 1em;
+    &:hover {
+        font-size: 1.3em;
+    }
 `
 
 
@@ -264,14 +283,28 @@ const RideHeader = styled.div`
     letter-spacing:0.08vh;
     margin-bottom:-2vh;
 `
-const VerticalLine = styled.div `
-    border-left: 0.6vh solid #E8CA5A;
-    position: absolute;
-    left: 50.5%;
-    top: 47%;
-    bottom:0;
-    
+const RideJoinButton = styled.button`
+    grid-column: 9 / 12;
+    text-align: center;
+    font-size: 2vh;
+    color: white;
+    background-color: #142538;
+    color: #FFFFFF4D;
+    text-decoration: none;
+    border-style: solid;
+    border-color: #FFFFFF4D;
+    border-radius: 10px;
+    display: inline-block;
+    cursor: pointer;
+    height:5vh;
 `
+
+const StyledLink = styled(Link)`
+        color: white;
+        &:focus, &:hover, &:visited, &:link, &:active {
+            text-decoration: none;
+        }
+    `
 
 /**
  * TODO: MOVE TO FRAGMENTS FOLDER; this is the SAME call we make in Routes.js because that call is cached...
@@ -289,7 +322,7 @@ const GET_USER_INFO = gql`
 `
 
 
-const RideCard = ({ ride }) => {
+const RideCard1 = ({ ride }) => {
     let { arrivalLocation, departureDate, departureLocation, spots, _id } = ride;
     let departureMoment = moment(departureDate);
 
@@ -297,12 +330,6 @@ const RideCard = ({ ride }) => {
         DELETE_RIDE,
     );  
 
-    // useEffect(() => {
-    //     if (error) {
-    //         console.log("There's an error");
-    //     } 
-    // }, [error]);
-    
     
     const handleDelete = () => {
         console.log("ride", ride)
@@ -310,7 +337,47 @@ const RideCard = ({ ride }) => {
             variables: {_id: ride._id}
         })
         .catch((error) => {
-            console.log("Oh no.");
+            console.log(error);
+        });
+    };
+
+    return (
+        <RideBox>
+            <Time>
+                {departureMoment.format("DD").toString()} {departureMoment.format("MMM").toString()} {departureMoment.format("YYYY").toString()}, {departureMoment.format("hh:mm a")}
+            </Time>
+            <a> # of spots: {spots}</a>
+            <IllusColumn>
+                <StyledIcon>
+                    <FontAwesomeIcon icon={faLongArrowAltDown}/>
+                </StyledIcon>
+                <RideLocations>
+                    <a>{departureLocation.title}</a>
+                    <a>{arrivalLocation.title}</a>
+                </RideLocations>
+                <RideJoinButton>
+                    {"Leave ride"}
+                </RideJoinButton>
+            </IllusColumn>
+        </RideBox>
+    );
+}
+
+const RideCard2 = ({ ride }) => {
+    let { arrivalLocation, departureDate, departureLocation, spots, _id } = ride;
+    let departureMoment = moment(departureDate);
+
+    const [deleteRide, { data, loading, error }] = useMutation(
+        DELETE_RIDE,
+    );  
+        
+    const handleDelete = () => {
+        console.log("ride", ride)
+        deleteRide({
+            variables: {_id: ride._id}
+        })
+        .catch((error) => {
+            console.log(error);
         });
     };
 
@@ -384,10 +451,9 @@ const Profile = ({}) => {
     if (called && rideLoading) return <p>Loading ...</p>
     if (!rideData) return <p>No data...</p>;
 
-    // const { userOne: rides } = rideData;
     const rides = rideData["userOne"]["rides"];
-    // console.log("rides");
-    // console.log(rides);
+    console.log("rides");
+    console.log(rides);
 
     const previousrides = rides.filter(ride => moment(ride.departureDate) < new Date())
     previousrides.sort((a, b) => moment(b.departureDate) - moment(a.departureDate))
@@ -430,11 +496,11 @@ const Profile = ({}) => {
             <BottomContainerDiv>
                 <RideDiv>
                     <RideHeader>Upcoming Rides</RideHeader>
-                    {upcomingrides.map(ride => <RideCard ride={ride} />)}
+                    {upcomingrides.map(ride => <RideCard1 ride={ride} />)}
                 </RideDiv>
                 <RideDiv2>
                     <RideHeader>Previous Rides</RideHeader>
-                    {previousrides.map(ride => <RideCard ride={ride} />)}
+                    {previousrides.map(ride => <StyledLink to={`/rides/${ride._id}`}><RideCard2 ride={ride} /></StyledLink>)}
                 </RideDiv2>
             </BottomContainerDiv>
             
