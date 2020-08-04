@@ -30,17 +30,17 @@ const MainForm = styled.form`
     display:grid;
     grid-template-rows:repeat(20,5%);
     grid-template-columns:repeat(20,5%);
-    width: 100vw;
-    height: 100vh;
+    width: 95vw;
+    height: auto;
 `
 
 const IllustrationDiv = styled.div`
-    grid-area: 11 / 3 / 19/ 8;
+    grid-area: 11 / 3 / 19/ 9;
     color: white;
 `
 
 const RideCreateDiv = styled.div`
-    grid-area:4/3/10/18;
+    grid-area:4/3/10/20;
     display: flex;
     align-items: space-between;
     justify-content: space-between;
@@ -49,7 +49,7 @@ const RideCreateDiv = styled.div`
     z-index:1;
 `
 const ExtraNotes = styled.textarea`
-    grid-area:11/13/20/18;
+    grid-area:11/15/20/18;
     font-size:2.5vh;
     font-family: inherit;
     letter-spacing: 0.03vw;
@@ -94,7 +94,7 @@ const RideCreateInputDivLast = styled.div`
 const RideCreateLabel = styled.label`
 `
 const ExtraNotesLabel = styled.label`
-    grid-area:11/10/12/14;
+    grid-area:11/11/12/14;
     font-size:2.8vh;
     letter-spacing: 0.1vw;
     color:white;
@@ -134,7 +134,7 @@ const Slogan = styled.div `
     text-decoration: underline;
     text-decoration-color: #E8CA5A;
     color:white;
-    grid-area: 1/7/3/13; 
+    grid-area: 1/7/3/16; 
 `;
 
 const StyledLinkDiv = styled.div`
@@ -315,11 +315,11 @@ const RideCreate = ({locations}) => {
         CREATE_LOCATION
     );
 
-    useEffect(() => {
-        if (error) {
-            addToast("Sorry, an error occurred processing your new ride. Please try again later.", { appearance: 'error' });
-        } 
-    }, [error]);
+    // useEffect(() => {
+    //     if (error) {
+    //         addToast("Sorry, an error occurred processing your new ride. Please try again later.", { appearance: 'error' });
+    //     } 
+    // }, [error]);
 
     // const { data: checkData } = useQuery(CHECK_LOCATION, {
     //     variables: {address: newDeptLocation},
@@ -327,11 +327,12 @@ const RideCreate = ({locations}) => {
     // });
 
     function addCreateCustomRide() {
+        console.log("Ride Create", getInputs);
         createRide({
             variables: getInputs
         })
         .catch((error) => {
-            console.log("Oh no.");
+            addToast("Sorry, an error occurred processing your new ride. Please try again later.", { appearance: 'error' });
         });
         addToast("Congratulations! Your custom ride has been successfully created.", { appearance: 'success'});
     }
@@ -345,13 +346,23 @@ const RideCreate = ({locations}) => {
             // fetchCheck(
             //     { variables: {address: newDeptLocation.formatted_address}}
             // )
-            if (checkData) {
+            if (checkData !== undefined && checkData["locationOne"] !== null) {
                 getInputs["deptLoc"] = checkData["locationOne"]["_id"];
-                if (checkArrData) {
+                if (checkArrData !== undefined && checkArrData["locationOne"] !== null) {
                     console.log("checkArrData", checkArrData);
                     getInputs["arrLoc"] = checkArrData["locationOne"]["_id"];
                     addCreateCustomRide();
                     return;
+                } else if (newArrLocation) {
+                    createLocation({
+                        variables: {title: newArrLocation.name, address: newArrLocation.formatted_address}
+                    }).then(({ data }) => {
+                        const recordId = data["locationCreateOne"]["recordId"];
+                        setInputs({...getInputs, arrLoc: recordId });
+                        getInputs["arrLoc"] = recordId;
+                        addCreateCustomRide();
+                        return;
+                    });
                 }
             } else {
                 console.log("checkData", checkData);
@@ -362,7 +373,7 @@ const RideCreate = ({locations}) => {
                     setInputs({...getInputs, deptLoc: recordId });
                     getInputs["deptLoc"] = recordId;
                     if (newArrLocation) {
-                        if (checkArrData) {
+                        if (checkArrData !== undefined  && checkArrData["locationOne"] !== null) {
                             console.log("checkArrData", checkArrData);
                             getInputs["arrLoc"] = checkArrData["locationOne"]["_id"];
                             addCreateCustomRide();
@@ -375,6 +386,7 @@ const RideCreate = ({locations}) => {
                                 setInputs({...getInputs, arrLoc: recordId });
                                 getInputs["arrLoc"] = recordId;
                                 addCreateCustomRide();
+                                return;
                             });
                         }
                     } else {
@@ -384,7 +396,7 @@ const RideCreate = ({locations}) => {
                 })
             }
         } else if (newArrLocation) {
-            if (checkArrData) {
+            if (checkArrData !== undefined && checkArrData["locationOne"] !== null) {
                 getInputs["arrLoc"] = checkArrData["locationOne"]["_id"];
                 addCreateCustomRide();
                 return;
@@ -646,7 +658,7 @@ const styles = {
                                 iconStyle={{fill: 'white'}}
                             />
                             <Autocomplete
-                                apiKey={'AIzaSyBOCL15Ohl-LcqazTFxXgoGAlB86N2miJE'}
+                                // apiKey={'AIzaSyBOCL15Ohl-LcqazTFxXgoGAlB86N2miJE'}
                                 style={autocompleteStyle}
                                 fields={["name", "formatted_address"]}
                                 onPlaceSelected={(place) => {
@@ -684,7 +696,7 @@ const styles = {
                                 value={locations.find(obj => obj.value === getInputs.arrLoc) ? locations.find(obj => obj.value === getInputs.arrLoc) : null}
                             />
                             <Autocomplete
-                                apiKey={'AIzaSyBOCL15Ohl-LcqazTFxXgoGAlB86N2miJE'}
+                                // apiKey={'AIzaSyBOCL15Ohl-LcqazTFxXgoGAlB86N2miJE'}
                                 style={autocompleteStyle}
                                 fields={["name", "formatted_address"]}
                                 onPlaceSelected={(place) => {

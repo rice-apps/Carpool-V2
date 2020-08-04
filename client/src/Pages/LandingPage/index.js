@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import IllusLanding from "../../assets/illus_landing_page.svg"
-import { useQuery, gql } from "@apollo/client";
+import { Link } from "react-router-dom";
 import { SERVICE_URL } from '../../config';
 
 const casLoginURL = "https://idp.rice.edu/idp/profile/cas/login";
@@ -19,31 +19,31 @@ const ContainerDiv = styled.div `
 const TextDiv = styled.div `
     grid-column: 1 / 4;
     min-width: 0;
-    font-family: Avenir;
+    font-family: acari-sans.light;
     color: white;
 `;
 
-const StepText = styled.div`
-    font-size: 3vh;
-    font-weight: bold;
+const Slogan = styled.div `
+    font-size: 5vw;
+    padding-top: 5vh;
+    margin-left: 6vw;
+    margin-right: auto;
+    text-align: left;
+    text-decoration: underline;
+    text-decoration-color: #E8CA5A;
+`;
+
+const DetailText = styled.div`
+    font-size: 1.5vw;
     padding-top: 5vh;
     margin-left: 6vw;
     margin-right: auto;
     text-align: left;
     max-width: 24vw;
-    line-height: 1.5;
+    line-height: 2;
 `
 
-const DetailText = styled.div`
-    font-size: 2.5vh;
-    margin-left: 6vw;
-    margin-right: auto;
-    text-align: left;
-    max-width: 24vw;
-    line-height: 1.5;
-`
-
-const LoginButton = styled.a`
+const Login = styled.div`
     background-color: black;
     margin-left: 19vw;
     margin-right: auto;
@@ -54,11 +54,11 @@ const LoginButton = styled.a`
     text-decoration: none;
     border-style: solid;
     border-color: #E8CA5A;
-    border-radius: 1.2vh;
+    border-radius: 10px;
     display: inline-block;
-    font-size: 3vh;
-    cursor: pointer;
+    font-size: 25px;
 `
+
 const Illus = styled.img`
     width: 100%;
     height: 85vh;
@@ -75,7 +75,7 @@ const GraphicDiv = styled.div `
 //     }
 // `;
 
-const Login = () => {
+const LandingPage = ({}) => {
     // Fetch service from cache since it depends on where this app is deployed
     // const { data } = useQuery(GET_SERVICE_LOCAL);
 
@@ -84,31 +84,19 @@ const Login = () => {
         // Redirects user to the CAS login page
         let redirectURL = casLoginURL + "?service=" + SERVICE_URL;
         window.open(redirectURL, "_self");
-        window.location.reload(true);
     }
-
     return (
         <ContainerDiv>
             <TextDiv>
-                <StepText>
-                    Step 1
-                </StepText>
+                <Slogan>
+                    HIT the ROAD with ONE click
+                </Slogan>
                 <DetailText>
-                    Sign up with your Rice ID and head to your profile to set up your name and phone number.
+                    Getting ready for a trip? Make this amazing journey with your friends &amp; <strong>Rice Carpool</strong>
                 </DetailText>
-                <StepText>
-                    Step 2
-                </StepText>
-                <DetailText>
-                    Make or join a ride using the links at the top of the page. Search for rides on certain dates or to certain places.
-                </DetailText>
-                <StepText>
-                    Step 3
-                </StepText>
-                <DetailText>
-                    Watch your email for updates on your ride. Attend rides with fellow Rice students to save money!
-                </DetailText>
-                <LoginButton onClick={() => handleClick()}>Login</LoginButton>
+                <Link onClick={handleClick}>
+                    <Login>Login</Login>
+                </Link>
             </TextDiv>
             <GraphicDiv>
                 <Illus src={IllusLanding} alt="Landing Page"/>
@@ -117,4 +105,4 @@ const Login = () => {
     )
 }
 
-export default Login;
+export default LandingPage;

@@ -10,6 +10,7 @@ import Rides from '../Pages/Rides';
 import Profile from '../Pages/Profile';
 import About from '../Pages/About';
 import NewRide from '../Pages/NewRides';
+import LandingPage from '../Pages/LandingPage';
 
 /**
  * Requests to verify the user's token on the backend
@@ -142,7 +143,7 @@ const routesArray = [
     },
     {
         path: "/",
-        component: About,
+        component: LandingPage,
         privateRoute: false
     },
 ];
