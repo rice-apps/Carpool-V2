@@ -211,7 +211,7 @@ const checkJoined = (userID, ride) => {
 * @param {*} ride 
 */
 const checkFull = (ride) => {
-    if (ride.riders.length == ride.spots) {
+    if (ride.riders.length+1 == ride.spots) {
         return true;
     }
     return false;
@@ -222,23 +222,13 @@ const RideCard = ({ ride }) => {
     let { owner, riders, departureDate, departureLocation, arrivalLocation, spots } = ride;
     // Get UserID from our local state management in apollo
     const userData = useQuery(GET_USER_INFO);
-    // const [fetchUserID, { data: userID}] = useLazyQuery(GET_USER_INFO);
-    
-    console.log(userData);
-    console.log(userData.data.user._id);
     const userNetID = userData.data.user.netid;
     
-
-
     // Transform departure date object into a moment object so we can use it easily
     let departureMoment = moment(departureDate);
 
     // Check if the current user is already part of this ride
     let joined = checkJoined(userNetID, ride);
-    // let joined = fetchUserID().then(({userID}) => {
-    //     console.log(userID);
-    //     checkJoined(userID, ride)
-    // });
     
 
     const [addRider, { data, loading, error }] = useMutation(
@@ -268,6 +258,7 @@ const RideCard = ({ ride }) => {
                 console.log("Oh no.");
             });
         }
+        window.location.reload(true);
     }
 
     // If the ride is full, disable ability to join
@@ -283,7 +274,7 @@ const RideCard = ({ ride }) => {
                 <RideCardText>
                     <p>{departureLocation.title} -> {arrivalLocation.title}</p>
                     <p>{departureMoment.format("hh:mm a")}</p>
-                    <p>{spots - riders.length} spots</p>
+                    <p>{spots - riders.length - 1} spot(s) left</p>
                 </RideCardText>
                     { rideFull ? "Sorry, this ride is full." : 
                     <RideJoinButton 
@@ -313,10 +304,44 @@ const LocationFilterDiv = styled.div`
     max-width: 100%;
 `
 
-const styles = {
+const customStyles = {
     helper: {
          color: '#FFFFFF',
-    }
+    },
+    control: (base) => ({
+        ...base,
+        width: '13vw',
+        height:'4.5vh',
+        background:'#FFFFFF2B',
+        borderRadius: '2vh',
+        border: 'none',
+        boxShadow: 'none',
+        cursor:'pointer'
+    }),
+    indicatorSeparator: (provided) => ({
+        ...provided,
+        display:'none',
+      }),
+    option: (base) => ({
+        ...base,
+        color:'#142538',
+        cursor:'pointer',
+        fontSize:'2.5vh',
+        letterSpacing:'0.03vw'
+    }),
+    singleValue: (provided) => ({
+        ...provided,
+        paddingBottom:'0.4vh',
+        paddingLeft:'1vh',
+        display: 'flex',
+        color:'#FFFFFF',
+        fontSize:'2.5vh',
+        letterSpacing:'0.03vw'
+      }),
+    placeholder:(provided) => ({
+        ...provided,
+        display:'none',
+    }),
     
 }
 
@@ -326,14 +351,13 @@ const DateFilter = ({ label, getDate, setDate }) => {
             {label}
             <DatePicker
                 name="deptDate"
-                OpenPickerButtonProps={{ style: styles.helper }}
+                styles={customStyles}
+                OpenPickerButtonProps={{ style: customStyles.helper }}
                 renderInput={props => 
                     <TextField 
+                        styles={customStyles}
                         variant="outlined" {...props} 
-                        FormHelperTextProps={{ style: styles.helper }} 
-                        color="secondary"
-                        // inputProps={color="white"}
-                        // <input type="color"/>
+                        FormHelperTextProps={{ style: customStyles.helper }} 
                     />}
                 disablePast
                 clearable

@@ -32,6 +32,19 @@ const Button = styled.div`
     text-align: center;
 `
 
+const Logout = styled.div`
+    background-color: black;
+    color: #E8CA5A;
+    text-align: center;
+    text-decoration: none;
+    border-style: solid;
+    border-color: #E8CA5A;
+    border-radius: 10px;
+    display: inline-block;
+    font-size: 3.5vh;
+    cursor: pointer;
+`
+
 const RideCardList = styled.div`
     display: flex;
     flex-direction: column;
@@ -479,6 +492,11 @@ const Profile = ({}) => {
     // console.log('upcomingrides')
     // console.log(upcomingrides)
 
+    const handleSubmit = () => {
+        localStorage.clear();
+        window.location.reload(true);
+    }
+
     return (
         <ContainerDiv>
             <ProfileDiv>
@@ -494,6 +512,9 @@ const Profile = ({}) => {
                                 </Button>
                             </ProfileCardEdit>
                         </ProfileContactDiv>
+                        <Logout onClick={()=>handleSubmit()}>
+                            Logout
+                        </Logout>
                     </PageDiv>
                 </ProfileCardDiv>
                 
