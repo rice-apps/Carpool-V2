@@ -11,10 +11,6 @@ import Profile from '../Pages/Profile';
 import About from '../Pages/About';
 import NewRide from '../Pages/NewRides';
 
-const ContainerDiv = styled.div `
-    ${props => `background: #142538;`}
-`;
-
 /**
  * Requests to verify the user's token on the backend
  */
@@ -128,6 +124,11 @@ const routesArray = [
         path: "/newride",
         component: NewRide,
         privateRoute: true
+    },
+    {
+        path: "/",
+        component: About,
+        privateRoute: false
     },
 ];
 

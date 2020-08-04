@@ -1,68 +1,51 @@
 import React, { useState, createContext, useEffect, useContext } from "react";
 import styled, { css } from "styled-components";
-import { gql, useQuery, useMutation } from "@apollo/client";
+import { gql, useQuery, useLazyQuery, useMutation } from "@apollo/client";
 import moment from "moment";
 import MomentUtils from '@material-ui/pickers/adapter/moment';
 import { MuiPickersUtilsProvider, DateTimePicker, LocalizationProvider, DatePicker,  } from "@material-ui/pickers";
 import Select from "react-select";
 import { transformToRSOptions, getSelectionDummy } from "../../utils/RideUtils";
 import { Button, TextField } from "@material-ui/core";
+import {Link} from "react-router-dom";
 
 const RideCardList = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
     color: white;
+    font-family: Avenir;
 `
 
 const RideCardItem = styled.div`
     position: relative;
     height: 10em;
-    width: 30em;
+    width: 40em;
     overflow: hidden; /* need this to ensure no weird text transform effect */
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.2s;
+    box-shadow: 0 6px 12px 0 rgba(0,0,0,0.2);
 
-    :hover {
-        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    // :hover {
+    //     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
 
-        & > div:first-of-type { // frontside of the card
-            height: 0px;
-            transform: perspective(1000px) rotateX(-180deg);
-        }
+    //     & > div:first-of-type { // frontside of the card
+    //         height: 0px;
+    //         transform: perspective(1000px) rotateX(-180deg);
+    //     }
 
-        & > div:last-of-type { // backside of the card
-            transform: perspective(1000px) rotateX(0deg);
-        }
-    }
+    //     & > div:last-of-type { // backside of the card
+    //         transform: perspective(1000px) rotateX(0deg);
+    //     }
+    // }
 `
 
-// Card sides
-const CardSide = css`
+const RideCardFront = styled.div`
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
     width: 100%;
     height: 100%;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-    transition: all .2s ease;
-`
-
-const RideCardFront = styled.div`
-    ${CardSide}
-`
-
-const RideCardBack = styled.div`
-    ${CardSide}
-    transform: rotateX(-180deg);
-    background-color: ${props => props.joined ? "red" : "green"};
-`
-
-const RideJoinButton = styled(Button)`
-    height: 100%;
-    width: 100%;
+    color: white;
 `
 
 const RideCardDate = styled.div`
@@ -95,11 +78,45 @@ const Year = styled.p`
     margin-top: 0px;
 `
 
+const StyledLink = styled(Link)`
+    // display: flex;
+    text-align: center;
+    font-size:3.5vh;
+    color: white;
+    background-color: black;
+    color: #E8CA5A;
+    text-decoration: none;
+    border-style: solid;
+    border-color: #E8CA5A;
+    border-radius: 10px;
+    display: inline-block;
+    margin-top: 4vh;
+    padding-left: 2vh;
+    padding-right: 2vh;
+`
+
+const RideJoinButton = styled.button`
+    text-align: center;
+    font-size: 2.4vh;
+    color: white;
+    background-color: black;
+    color: #E8CA5A;
+    text-decoration: none;
+    border-style: solid;
+    border-color: #E8CA5A;
+    border-radius: 10px;
+    display: inline-block;
+    cursor: pointer;
+`
+
+const SelectDiv = styled(Select)`
+    color: black;
+`
+
 const GET_RIDES = gql`
-    query GetRides($deptDate:Date, $deptLoc:MongoID, $arrLoc:MongoID) {
+    query GetRides($deptLoc:MongoID, $arrLoc:MongoID) {
         rideMany( 
         filter:{
-            departureDate:$deptDate, 
             departureLocation:$deptLoc, 
             arrivalLocation:$arrLoc
         }) {
@@ -126,10 +143,22 @@ const GET_RIDES = gql`
 * This simply fetches from our cache whether a recent update has occurred
 * TODO: MOVE TO FRAGMENT FOLDER; THIS IS ALSO IN ROUTES.JS
 */
+// const GET_USER_INFO = gql`
+//     query GetUserInfo {
+//         recentUpdate @client
+//         userID @client
+//     }
+// `
+
 const GET_USER_INFO = gql`
     query GetUserInfo {
-        recentUpdate @client
-        userID @client
+        user {
+            _id
+            firstName
+            lastName
+            netid
+            phone
+        }
     }
 `
 
@@ -138,6 +167,22 @@ const GET_LOCATIONS = gql`
         locationMany {
             _id
             title
+        }
+    }
+`
+
+const ADD_RIDER = gql`
+    mutation AddRider($_id: ID!) {
+        addRider(rideID: $_id) {
+            _id
+        }
+    }
+`
+
+const REMOVE_RIDER = gql`
+    mutation RemoveRider($_id: ID!) {
+        removeRider(rideID: $_id) {
+            _id
         }
     }
 `
@@ -152,8 +197,12 @@ const GET_LOCATIONS = gql`
 * @param {*} ride 
 */
 const checkJoined = (userID, ride) => {
-    if (userID == ride.owner._id) return true; // saves us some computational power from executing the next line
-    if (ride.riders.map(rider => rider._id).includes(userID)) return true;
+    console.log(userID);
+    console.log(ride);
+    console.log(ride.owner._id);
+    console.log(ride.riders.map(rider => rider._id));
+    if (userID == ride.owner.netid) return true; // saves us some computational power from executing the next line
+    if (ride.riders.map(rider => rider.netid).includes(userID)) return true;
     return false;
 }
 
@@ -172,13 +221,54 @@ const RideCard = ({ ride }) => {
     // Get properties from ride object
     let { owner, riders, departureDate, departureLocation, arrivalLocation, spots } = ride;
     // Get UserID from our local state management in apollo
-    let { userID } = useQuery(GET_USER_INFO);
+    const userData = useQuery(GET_USER_INFO);
+    // const [fetchUserID, { data: userID}] = useLazyQuery(GET_USER_INFO);
+    
+    console.log(userData);
+    console.log(userData.data.user._id);
+    const userNetID = userData.data.user.netid;
+    
+
 
     // Transform departure date object into a moment object so we can use it easily
     let departureMoment = moment(departureDate);
 
     // Check if the current user is already part of this ride
-    let joined = checkJoined(userID, ride);
+    let joined = checkJoined(userNetID, ride);
+    // let joined = fetchUserID().then(({userID}) => {
+    //     console.log(userID);
+    //     checkJoined(userID, ride)
+    // });
+    
+
+    const [addRider, { data, loading, error }] = useMutation(
+        ADD_RIDER
+    );  
+
+    const [removeRider, { data2, loading2, error2 }] = useMutation(
+        REMOVE_RIDER
+    );  
+
+    const handleJoin = () => {
+        console.log("HANDLE JOIN");
+        console.log(ride);
+        console.log(ride._id);
+        if (joined) {
+            console.log("joined");
+            removeRider({
+                variables: {_id: ride._id}
+            }).catch((error) => {
+                console.log("Oh no.");
+            });
+        } else {
+            console.log("not joined");
+            addRider({
+                variables: {_id: ride._id}
+            }).catch((error) => {
+                console.log("Oh no.");
+            });
+        }
+    }
 
     // If the ride is full, disable ability to join
     let rideFull = checkFull(ride);
@@ -195,27 +285,25 @@ const RideCard = ({ ride }) => {
                     <p>{departureMoment.format("hh:mm a")}</p>
                     <p>{spots - riders.length} spots</p>
                 </RideCardText>
+                    { rideFull ? "Sorry, this ride is full." : 
+                    <RideJoinButton 
+                        joined={joined}
+                        disabled={rideFull}
+                        onClick={()=>handleJoin()}
+                    >
+                        {joined ? "Leave this ride" : "Join this ride" }
+                    </RideJoinButton>
+                    }
             </RideCardFront>
-            <RideCardBack 
-            joined={joined}
-            >
-            { rideFull ? "Sorry, this ride is full." : 
-                <RideJoinButton 
-                outlined 
-                disabled={rideFull}
-                >
-                    {joined ? "Leave this ride." : "Join this ride!" }
-                </RideJoinButton>
-            }
-            </RideCardBack>
         </RideCardItem>
+        
     )
 }
 
 const FilterDiv = styled.div`
     display: flex;
     flex-direction: column;
-    width: 15vw;
+    width: 25vw;
 `
 
 const LocationFilterDiv = styled.div`
@@ -225,17 +313,33 @@ const LocationFilterDiv = styled.div`
     max-width: 100%;
 `
 
+const styles = {
+    helper: {
+         color: '#FFFFFF',
+    }
+    
+}
+
 const DateFilter = ({ label, getDate, setDate }) => {
     return (
         <LocalizationProvider dateAdapter={MomentUtils}>
             {label}
             <DatePicker
-            renderInput={props => <TextField variant="outlined" {...props} />}
-            disablePast
-            clearable
-            autoOk
-            value={getDate}
-            onChange={setDate}
+                name="deptDate"
+                OpenPickerButtonProps={{ style: styles.helper }}
+                renderInput={props => 
+                    <TextField 
+                        variant="outlined" {...props} 
+                        FormHelperTextProps={{ style: styles.helper }} 
+                        color="secondary"
+                        // inputProps={color="white"}
+                        // <input type="color"/>
+                    />}
+                disablePast
+                clearable
+                autoOk
+                value={getDate}
+                onChange={setDate}
             />
         </LocalizationProvider>
     )
@@ -251,7 +355,7 @@ const LocationFilter = ({ label, options, getSelection, setSelection }) => {
     return (
         <LocationFilterDiv>
             <p>{label}</p>
-            <Select
+            <SelectDiv
             name={label}
             options={options}
             value={getSelection}
@@ -279,7 +383,6 @@ const FilterOptions = ({ getVariables, setVariables }) => {
         // Check that at least one filter is active
         if (getDepartureSelection.value != selectionDummy.value) {
             newVariables.deptLoc = getDepartureSelection.value;
-            // Reset
             setDepartureSelection(getSelectionDummy());
         }
         if (getArrivalSelection.value != selectionDummy.value) {
@@ -288,7 +391,7 @@ const FilterOptions = ({ getVariables, setVariables }) => {
         }
         if (getDate != null) {
             newVariables.deptDate = getDate;
-            setDate(null);
+            // setDate(null);
         }
         setVariables({...newVariables});
     }
@@ -296,7 +399,7 @@ const FilterOptions = ({ getVariables, setVariables }) => {
     return (
         <FilterDiv>
             <LocationFilter 
-            label="Departing To" 
+            label="Departing From" 
             options={transformToRSOptions(locations)} 
             getSelection={getDepartureSelection}
             setSelection={setDepartureSelection}
@@ -312,7 +415,7 @@ const FilterOptions = ({ getVariables, setVariables }) => {
             getDate={getDate}
             setDate={setDate}
             />
-            <Button variant="outlined" title="Search" onClick={handleSearch}>Search</Button>
+            <StyledLink type="submit" onClick={() => handleSearch()} >Search</StyledLink>
         </FilterDiv>
     )
 }
@@ -331,10 +434,23 @@ const RidesList = ({ }) => {
 
     const { rideMany: rides } = data;
 
+    const upcomingRides = rides.filter(ride => moment(ride.departureDate) >= new Date())
+    upcomingRides.sort((a, b) => moment(b.departureDate) - moment(a.departureDate))
+
+    const updateSearch = (upcomingRides) => {
+        console.log("GETDATE");
+        console.log(getVariables.deptDate);
+        if (getVariables.deptDate) {
+            return upcomingRides.filter(ride => moment(ride.departureDate).isSame(getVariables.deptDate, 'day'));
+        }
+        return upcomingRides;
+    }
+
     return (
         <RideCardList>
             <FilterOptions getVariables={getVariables} setVariables={setVariables} />
-            {rides.map(ride => <RideCard ride={ride} />)}
+            <br/>
+            {updateSearch(upcomingRides).map(ride => <RideCard ride={ride} />)}
         </RideCardList>
     )
 }
