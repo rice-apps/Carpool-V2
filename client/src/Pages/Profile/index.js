@@ -10,12 +10,6 @@ import {
 import { gql, useQuery, useMutation, useLazyQuery } from "@apollo/client";
 import moment from "moment";
 import Modal from "react-modal";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { 
-    faLongArrowAltDown,
-    faTrash
-} from '@fortawesome/free-solid-svg-icons'
-
 import EditProfile from "./EditProfile";
 
 import '@availity/yup';

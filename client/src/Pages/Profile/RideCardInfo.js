@@ -296,31 +296,31 @@ const RideCardInfo = ({ }) => {
         });
     };
 
-    const pathredirect = () => {
-        confirmAlert({
-            customUI: ({ onClose }) => {
-              return (
-                <div className='custom-ui'>
-                  <h1>Are you sure?</h1>
-                  <p>You want to delete this Ride?</p>
-                  <button onClick={onClose}>No</button>
-                  <Router>
-                    <Redirect
-                            to='/profile'
-                            // onClick={() => {
-                            //     // handleDelete();
-                            //   onClose();
-                            // }}
-                        >
-                            Yes, Delete it!
-                    </Redirect>
+    // const pathredirect = () => {
+    //     confirmAlert({
+    //         customUI: ({ onClose }) => {
+    //           return (
+    //             <div className='custom-ui'>
+    //               <h1>Are you sure?</h1>
+    //               <p>You want to delete this Ride?</p>
+    //               <button onClick={onClose}>No</button>
+    //               <Router>
+    //                 <Redirect
+    //                         to='/profile'
+    //                         // onClick={() => {
+    //                         //     // handleDelete();
+    //                         //   onClose();
+    //                         // }}
+    //                     >
+    //                         Yes, Delete it!
+    //                 </Redirect>
                     
-                  </Router>
-                </div>
-              );
-            }
-          });
-    }
+    //               </Router>
+    //             </div>
+    //           );
+    //         }
+    //       });
+    // }
 
     const [removeRider, { data3, loading3, error3 }] = useMutation(
         REMOVE_RIDER
@@ -383,8 +383,7 @@ const RideCardInfo = ({ }) => {
             <NoteBox>
                 Note: {note}
             </NoteBox>
-            
-            {!past && !isOwner ? <RideLeaveButton onClick={()=>handleLeave()}><StyledLink to="/profile">Leave this Ride</StyledLink></RideLeaveButton> :<RideDeleteButton onClick={()=>pathredirect()}>Delete this Ride</RideDeleteButton>}
+            {!past && !isOwner ? <RideLeaveButton onClick={()=>handleLeave()}><StyledLink to="/profile">Leave this Ride</StyledLink></RideLeaveButton> :<RideDeleteButton onClick={()=>handleDelete()}><StyledLink to="/profile">Delete this Ride</StyledLink></RideDeleteButton>}
             <ProfileCard person={owner}></ProfileCard>
             {riders.map(rider => <ProfileCard person={rider}/>)}
         </RideDiv>
