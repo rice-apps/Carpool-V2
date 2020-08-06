@@ -21,6 +21,7 @@ import EditProfile from "./EditProfile";
 import '@availity/yup';
 import 'react-phone-input-2/lib/style.css';
 import { formatPhoneNumber } from 'react-phone-number-input'
+import Logo from "../../assets/destination_linkage_vertical.svg"
 
 
 Modal.setAppElement("#app");
@@ -182,7 +183,7 @@ const ProfileContactDiv = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: space-around;
     height: 19vh;
     font-size: 3vh;
     font-family: acari-sans.light;
@@ -249,7 +250,8 @@ const RideBox = styled.div`
     border-width: 1.5px;
     border-color: #223244;
     margin-top: 5vh;
-    padding: 1vh 1vw;
+    padding: 1vh 2vw;
+    padding-right:0;
     width: 20vw;
     line-height: 3.5vh;
 `;
@@ -258,6 +260,7 @@ const RideLocations = styled.div`
     grid-column: 2 / 9;
     display: flex;
     flex-direction: column;
+    margin-left:-0.5vw;
 `
 
 const IllusColumn = styled.div`
@@ -267,19 +270,10 @@ const IllusColumn = styled.div`
 
 const StyledIcon = styled.div`
     grid-column: 1 / 2;
-    margin-right: .5vw;
+    margin-left: -.8vw;
     margin-top: 1.25vh;
     font-size: 2em;
-`
-const StyledIcon2 = styled.div`
-    grid-column: 10 / 11;
-    margin-right: .5vw;
-    margin-left: 1.7vw;
-    margin-top: 3vh;
-    font-size: 1em;
-    &:hover {
-        font-size: 1.3em;
-    }
+    opacity:30%;
 `
 
 
@@ -293,21 +287,7 @@ const RideHeader = styled.div`
     letter-spacing:0.08vh;
     margin-bottom:-2vh;
 `
-const RideJoinButton = styled.button`
-    grid-column: 9 / 12;
-    text-align: center;
-    font-size: 2vh;
-    color: white;
-    background-color: #142538;
-    color: #FFFFFF4D;
-    text-decoration: none;
-    border-style: solid;
-    border-color: #FFFFFF4D;
-    border-radius: 10px;
-    display: inline-block;
-    cursor: pointer;
-    height:5vh;
-`
+
 
 const StyledLink = styled(Link)`
         color: white;
@@ -316,12 +296,9 @@ const StyledLink = styled(Link)`
         }
     `
 
-/**
- * TODO: MOVE TO FRAGMENTS FOLDER; this is the SAME call we make in Routes.js because that call is cached...
- */
 const GET_USER_INFO = gql`
     query GetUserInfo {
-        user @client {
+        user {
             _id
             firstName
             lastName
@@ -332,7 +309,7 @@ const GET_USER_INFO = gql`
 `
 
 
-const RideCard1 = ({ ride }) => {
+const RideCard = ({ ride }) => {
     let { arrivalLocation, departureDate, departureLocation, spots, _id } = ride;
     let departureMoment = moment(departureDate);
 
@@ -344,34 +321,7 @@ const RideCard1 = ({ ride }) => {
             <a> # of spots: {spots}</a>
             <IllusColumn>
                 <StyledIcon>
-                    <FontAwesomeIcon icon={faLongArrowAltDown}/>
-                </StyledIcon>
-                <RideLocations>
-                    <a>{departureLocation.title}</a>
-                    <a>{arrivalLocation.title}</a>
-                </RideLocations>
-                <RideJoinButton>
-                    {"Leave ride"}
-                </RideJoinButton>
-            </IllusColumn>
-        </RideBox>
-    );
-}
-
-const RideCard2 = ({ ride }) => {
-    let { arrivalLocation, departureDate, departureLocation, spots, _id } = ride;
-    let departureMoment = moment(departureDate);
-    
-
-    return (
-        <RideBox>
-            <Time>
-                {departureMoment.format("DD").toString()} {departureMoment.format("MMM").toString()} {departureMoment.format("YYYY").toString()}, {departureMoment.format("hh:mm a")}
-            </Time>
-            <a> # of spots: {spots}</a>
-            <IllusColumn>
-                <StyledIcon>
-                    <FontAwesomeIcon icon={faLongArrowAltDown}/>
+                    <img src={Logo} width="40vw" height="40vh"/>
                 </StyledIcon>
                 <RideLocations>
                     <a>{departureLocation.title}</a>
@@ -381,6 +331,8 @@ const RideCard2 = ({ ride }) => {
         </RideBox>
     );
 }
+
+
 
 
 
@@ -481,11 +433,11 @@ const Profile = ({}) => {
             <BottomContainerDiv>
                 <RideDiv>
                     <RideHeader>Upcoming Rides</RideHeader>
-                    {upcomingrides.map(ride => <StyledLink to={`/rides/${ride._id}`}><RideCard1 ride={ride} /></StyledLink>)}
+                    {upcomingrides.map(ride => <StyledLink to={`/rides/${ride._id}`}><RideCard ride={ride} /></StyledLink>)}
                 </RideDiv>
                 <RideDiv2>
                     <RideHeader>Previous Rides</RideHeader>
-                    {previousrides.map(ride => <StyledLink to={`/rides/${ride._id}`}><RideCard2 ride={ride} /></StyledLink>)}
+                    {previousrides.map(ride => <StyledLink to={`/rides/${ride._id}`}><RideCard ride={ride} /></StyledLink>)}
                 </RideDiv2>
             </BottomContainerDiv>
             

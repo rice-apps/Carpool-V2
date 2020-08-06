@@ -1,6 +1,7 @@
 import React, { Component, useEffect } from "react"
 import styled from "styled-components";
 import { Switch, Route, Redirect,useParams } from 'react-router'
+import { BrowserRouter} from 'react-router-dom';
 import { gql, useQuery, useApolloClient } from '@apollo/client';
 import App from '../App';
 import Login from '../Pages/Login';
@@ -166,6 +167,7 @@ export const Routes = ({ }) => {
 
 
     return (
+        
         <Switch>
             {/* <Route path={"/login"}>
                 <Login />
@@ -188,5 +190,6 @@ export const Routes = ({ }) => {
                 }
             })}
         </Switch>
+        
     )
 }
