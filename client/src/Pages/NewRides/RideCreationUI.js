@@ -71,14 +71,14 @@ const RideCreateInputDiv = styled.div`
     flex-direction: column;
     justify-content: space-around;
     align-items: flex-start;
-    color : white;
+    color: white;
 `
 const RideCreateInputDivText = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: space-around;
     align-items: flex-start;
-    color : white;
+    color: white;
     margin-top:-0.2vh;
     margin-bottom:0.3vh;
 `
@@ -94,12 +94,15 @@ const RideCreateInputDivLast = styled.div`
 const RideCreateLabel = styled.label`
 `
 const ExtraNotesLabel = styled.label`
-    grid-area:11/11/12/14;
+    grid-area:12/11/12/14;
     font-size:2.8vh;
     letter-spacing: 0.1vw;
     color:white;
-    padding-left:1.7vw;
+    padding-left: 2.4vw;
     padding-top:1.7vw;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
 `
 
 const RideCreateInput = styled.input`
@@ -115,7 +118,7 @@ const RideCreateInput = styled.input`
     outline: none;
     padding-left: 2vh;
     padding-right: 2vh;
-    padding-bottom:0.5vh;
+    padding-bottom:0.7vh;
     padding-top: 0;
     text-align:left;
     ::placeholder { 
@@ -281,7 +284,6 @@ const RideCreate = ({locations}) => {
 
     // Transform locations into options for react-select
     locations = transformToRSOptions(locations);
-    console.log('locations', locations);
 
     // We also need to get the user info
     const { data: userData } = useQuery(GET_USER_INFO);
@@ -332,9 +334,11 @@ const RideCreate = ({locations}) => {
             variables: getInputs
         })
         .catch((error) => {
+            console.log("error", error);
             addToast("Sorry, an error occurred processing your new ride. Please try again later.", { appearance: 'error' });
         });
-        addToast("Congratulations! Your custom ride has been successfully created.", { appearance: 'success'});
+        addToast("Congratulations! Your ride has been successfully created.", { appearance: 'success'});
+        console.log("success!");
     }
 
     const handleSubmit = () => {
@@ -352,6 +356,7 @@ const RideCreate = ({locations}) => {
                     console.log("checkArrData", checkArrData);
                     getInputs["arrLoc"] = checkArrData["locationOne"]["_id"];
                     addCreateCustomRide();
+                    console.log("test one");
                     return;
                 } else if (newArrLocation) {
                     createLocation({
@@ -361,6 +366,7 @@ const RideCreate = ({locations}) => {
                         setInputs({...getInputs, arrLoc: recordId });
                         getInputs["arrLoc"] = recordId;
                         addCreateCustomRide();
+                        console.log("test two");
                         return;
                     });
                 }
@@ -377,6 +383,7 @@ const RideCreate = ({locations}) => {
                             console.log("checkArrData", checkArrData);
                             getInputs["arrLoc"] = checkArrData["locationOne"]["_id"];
                             addCreateCustomRide();
+                            console.log("test three");
                             return;
                         } else {
                             createLocation({
@@ -386,11 +393,13 @@ const RideCreate = ({locations}) => {
                                 setInputs({...getInputs, arrLoc: recordId });
                                 getInputs["arrLoc"] = recordId;
                                 addCreateCustomRide();
+                                console.log("test four");
                                 return;
                             });
                         }
                     } else {
                         addCreateCustomRide();
+                        console.log("test five");
                         return;
                     }
                 })
@@ -399,6 +408,7 @@ const RideCreate = ({locations}) => {
             if (checkArrData !== undefined && checkArrData["locationOne"] !== null) {
                 getInputs["arrLoc"] = checkArrData["locationOne"]["_id"];
                 addCreateCustomRide();
+                console.log("test six");
                 return;
             } else {
                 createLocation({
@@ -408,11 +418,13 @@ const RideCreate = ({locations}) => {
                     setInputs({...getInputs, arrLoc: recordId });
                     getInputs["arrLoc"] = recordId;
                     addCreateCustomRide();
+                    console.log("test seven");
                     return;
                 });
             }
+        } else {
+            addCreateCustomRide();
         }
-        addCreateCustomRide();
         // if (newArrLocation) {
         //     createLocation({
         //         variables: {title: newArrLocation.name, address: newArrLocation.formatted_address}
@@ -624,7 +636,7 @@ const styles = {
     return (
         <MainForm>
             <Slogan>
-                Initiate A Ride
+                Create A Ride
             </Slogan>
             <RideCreateDiv>
                 <RideCreateInputDivText>    
@@ -721,7 +733,7 @@ const styles = {
                 </RideCreateInputDiv>
 
                 <RideCreateInputDivText>
-                    <RideCreateLabel>*Max number of Riders:</RideCreateLabel>
+                    <RideCreateLabel>*Riders (including yourself):</RideCreateLabel>
                     <RideCreateLabel>*Departure Date & Time:</RideCreateLabel>
                     <RideCreateLabel>Invite Others:</RideCreateLabel>
                 </RideCreateInputDivText>
@@ -730,10 +742,10 @@ const styles = {
                     <Select
                     name="rider"
                     options={Rideroptions} 
-                    onChange={(selected) => setInputs({...getInputs, rider: selected.value })}                
+                    onChange={(selected) => setInputs({...getInputs, riders: selected.value })}                
                     styles={customStyles}
                     isSearchable={false}
-                    value={Rideroptions.find(obj => obj.value === getInputs.rider) ? Rideroptions.find(obj => obj.value === getInputs.rider) : null}
+                    value={Rideroptions.find(obj => obj.value === getInputs.riders) ? Rideroptions.find(obj => obj.value === getInputs.riders) : null}
                     />
                     
                     {/* Please find a better date & time picker */}
@@ -764,7 +776,7 @@ const styles = {
             <ExtraNotesLabel>
                 Extra Notes:
             </ExtraNotesLabel>
-            <ExtraNotes type="text" rows="10" onChange={handleFormChange} name = 'notes'>
+            <ExtraNotes type="text" rows="10" onChange={handleFormChange} name = 'note'>
             </ExtraNotes>
             <StyledLinkDiv>
                 <StyledLink onClick = {handleClear}>Clear Form </StyledLink>
