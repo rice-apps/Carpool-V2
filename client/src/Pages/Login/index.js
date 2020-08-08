@@ -84,7 +84,7 @@ const Login = () => {
         // Redirects user to the CAS login page
         let redirectURL = casLoginURL + "?service=" + SERVICE_URL;
         window.open(redirectURL, "_self");
-        window.location.reload(true);
+        // window.location.reload(true);
     }
 
     return (

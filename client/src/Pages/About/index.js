@@ -3,6 +3,8 @@ import styled from "styled-components";
 import IllusLanding from "../../assets/illus_landing_page.svg"
 import { Link } from "react-router-dom";
 import { SERVICE_URL } from '../../config';
+import Accordion from './Accordion';
+
 
 const casLoginURL = "https://idp.rice.edu/idp/profile/cas/login";
 
@@ -70,49 +72,28 @@ const About = ({}) => {
                 <DetailText>
                     Frequently Asked Questions:
                 </DetailText>
-                <Question>
-                    Who can use Carpool?
-                </Question>
-                <Answer>
+                <Accordion title="Who can use Carpool?">
                     Carpool was created for the Rice University Community. A Net ID is required.
-                </Answer>
-                <Question>
-                    Do I need to download Carpool on my phone?
-                </Question>
-                <Answer>
+                </Accordion>
+                <Accordion title="Do I need to download Carpool on my phone?">
                     No, Carpool is not a mobile device app. It was created as website to be accessible through all devices including desktop computers.
-                </Answer>
-                <Question>
-                    How do I sign up for Carpool?
-                </Question>
-                <Answer>
+                </Accordion>
+                <Accordion title="How do I sign up for Carpool?">
                     No sign up is necessary! All you need is your Rice Net ID to log onto the site: carpool.riceapps.org
-                </Answer>
-                <Question>
-                    I’ve signed in for the first time, now what?
-                </Question>
-                <Answer>
+                </Accordion>
+                <Accordion title="I’ve signed in for the first time, now what?">
                     Fill out your profile page with your first name, last name, and phone number.
                     Now you can join and create rides!
-                </Answer>
-                <Question>
-                    How do I see my past and future rides?
-                </Question>
-                <Answer>
+                </Accordion>
+                <Accordion title="How do I see my past and future rides?">
                     You can find the rides you’ve taken in the past and the rides you’ve scheduled listed on your profile.
-                </Answer>
-                <Question>
-                    If I leave a ride, will the ride disappear?
-                </Question>
-                <Answer>
+                </Accordion>
+                <Accordion title="If I leave a ride, will the ride disappear?">
                     If you created a ride and were the only one on the ride, the ride will be deleted. If you joined a ride with other existing riders, the ride will exist but you will not be listed as a rider.
-                </Answer>
-                <Question>
-                    Is my information shared with outside parties?
-                </Question>
-                <Answer>
+                </Accordion>
+                <Accordion title="Is my information shared with outside parties?">
                     No, your information is not shared outside the application. It is only used for coordinating rides with your fellow Rice Owls.
-                </Answer>
+                </Accordion>
 
 
             </TextDiv>
