@@ -18,7 +18,7 @@ import {
 import Logo from "../../assets/destination_linkage_vertical.svg"
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css' // Import css
-import Profile from "./index"
+
 
 
 const RideDiv = styled.div`
@@ -50,9 +50,10 @@ const NoteBox = styled.div`
     border-top:0px;
     border-color: #223244;
     padding: 1vh 2vw;
-    padding-right:0;
-    line-height: 3.5vh;
+    padding-right:1vw;
+    line-height: 2.5vh;
     color:white;
+    word-wrap: break-word
 `;
 
 const NameCard = styled.div`
@@ -125,7 +126,8 @@ const RideDeleteButton = styled.button`
     display: inline-block;
     cursor: pointer;
     height:4vh;
-    &:hover {
+    outline:none;
+    &:focus, &:hover, &:visited, &:link, &:active {
         background-color: #FFFFFF4D;
     }
     margin-left:9vw;
@@ -147,7 +149,8 @@ const RideLeaveButton = styled.button`
     display: inline-block;
     cursor: pointer;
     height:4vh;
-    &:hover {
+    outline:none;
+    &:focus, &:hover, &:visited, &:link, &:active {
         background-color: #FFFFFF4D;
     }
     margin-left:9vw;
@@ -155,12 +158,48 @@ const RideLeaveButton = styled.button`
     margin-top:3vh;
 `
 
-const StyledLink = styled(Link)`
-    color: #FFFFFF4D;
-    &:focus, &:hover, &:visited, &:link, &:active {
-        text-decoration: none;
-    }
+const Button = styled.button`
+text-align: center;
+font-size: 2vh;
+color: white;
+background-color: #142538;
+color: white;
+text-decoration: none;
+border-style: solid;
+border-color: white;
+border-radius: 10px;
+border-width: 0.1vh;
+display: inline-block;
+cursor: pointer;
+height:4vh;
+width:10vw;
+outline:none;
+&:focus, &:hover, &:visited, &:link, &:active {
+    background-color: #FFFFFF4D;
+}
     `
+
+const Popupdiv = styled.div `
+    display:flex;
+    flex-direction:column;
+    justify-content:space-around;
+    background-color:white;
+    width:25vw;
+    height:20vh;
+    border-radius:2vh;
+    text-align:center;
+    padding-bottom:5vh;
+    background-color:#142538;
+    color:white;
+`
+const Buttondiv = styled.div `
+    display:flex;
+    justify-content:space-evenly;
+`
+
+const P = styled.p`
+    margin-bottom:4vh;
+`
 
 
 const GET_RIDE = gql`
@@ -290,37 +329,36 @@ const RideCardInfo = ({ }) => {
         deleteRide({
             variables: {_id: rideID}
         })
-        .then(alert("This ride has been deleted"))
+
         .catch((error2) => {
             console.log(error2);
         });
     };
 
-    // const pathredirect = () => {
-    //     confirmAlert({
-    //         customUI: ({ onClose }) => {
-    //           return (
-    //             <div className='custom-ui'>
-    //               <h1>Are you sure?</h1>
-    //               <p>You want to delete this Ride?</p>
-    //               <button onClick={onClose}>No</button>
-    //               <Router>
-    //                 <Redirect
-    //                         to='/profile'
-    //                         // onClick={() => {
-    //                         //     // handleDelete();
-    //                         //   onClose();
-    //                         // }}
-    //                     >
-    //                         Yes, Delete it!
-    //                 </Redirect>
-                    
-    //               </Router>
-    //             </div>
-    //           );
-    //         }
-    //       });
-    // }
+    const handleDeleteButton = () => {
+        confirmAlert({
+            customUI: ({ onClose }) => {
+              return (
+                <Popupdiv>
+                    <h1>Are you sure?</h1>
+                    <P>You want to delete this Ride?</P>
+                    <Buttondiv>
+                    <Button onClick={onClose}>No, Keep it!</Button>
+                        <Button
+                            onClick={() => {
+                                handleDelete();
+                                onClose();
+                                window.location="../profile";
+                            }}
+                            >
+                                Yes, Delete it!
+                        </Button>
+                    </Buttondiv>
+                </Popupdiv>
+              );
+            }
+          });
+    }
 
     const [removeRider, { data3, loading3, error3 }] = useMutation(
         REMOVE_RIDER
@@ -330,10 +368,34 @@ const RideCardInfo = ({ }) => {
             removeRider({
                 variables: {_id: rideID}
             })
-            .then(alert("You have been removed from this ride"))
             .catch((error3) => {
                 console.log("Oh no.");
             });
+    }
+
+    const handleLeaveButton = () => {
+        confirmAlert({
+            customUI: ({ onClose }) => {
+              return (
+                <Popupdiv>
+                    <h1>Are you sure?</h1>
+                    <P>You want to leave this Ride?</P>
+                    <Buttondiv>
+                    <Button onClick={onClose}>No, Keep it!</Button>
+                    <Button
+                        onClick={() => {
+                            handleLeave();
+                            onClose();
+                            window.location="../profile";
+                        }}
+                        >
+                            Yes, Leave this ride!
+                    </Button>
+                    </Buttondiv>
+                </Popupdiv>
+              );
+            }
+          });
     }
 
     // Get UserID from our local state management in apollo
@@ -383,7 +445,7 @@ const RideCardInfo = ({ }) => {
             <NoteBox>
                 Note: {note}
             </NoteBox>
-            {!past && !isOwner ? <RideLeaveButton onClick={()=>handleLeave()}><StyledLink to="/profile">Leave this Ride</StyledLink></RideLeaveButton> :<RideDeleteButton onClick={()=>handleDelete()}><StyledLink to="/profile">Delete this Ride</StyledLink></RideDeleteButton>}
+            {!past && !isOwner ? <RideLeaveButton onClick={()=>handleLeaveButton()}>Leave this Ride</RideLeaveButton> :<RideDeleteButton onClick={()=>handleDeleteButton()}>Delete this Ride</RideDeleteButton>}
             <ProfileCard person={owner}></ProfileCard>
             {riders.map(rider => <ProfileCard person={rider}/>)}
         </RideDiv>

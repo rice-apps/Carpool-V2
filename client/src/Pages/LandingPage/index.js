@@ -83,7 +83,7 @@ const LandingPage = ({}) => {
     const handleClick = () => {
         // Redirects user to the CAS login page
         let redirectURL = casLoginURL + "?service=" + SERVICE_URL;
-        window.open(redirectURL, "_self");
+        window.open(redirectURL, "_self").then(window.location = "./profile");
     }
     return (
         <ContainerDiv>

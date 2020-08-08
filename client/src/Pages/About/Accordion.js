@@ -10,7 +10,7 @@ const Box = styled.div `
 
 const Title = styled.div `
     padding: 1vw;
-    font-weight: bold;
+    font-weight: 500;
     &:hover {
         cursor: pointer;
         color: #E8CA5A;
@@ -34,11 +34,14 @@ const Accordion = ({ children, title, isExpand = false }) => {
     return (
       <Box>
         <div onClick={() => setExpand(expand => !expand)}>
-          <Title>{title}</Title>
-          <span className="icon"><i className={`fa fa-play-circle${!expand ? ' down' : ''}`}></i></span>
+            {expand ? 
+            <Title style={{color: "#E8CA5A"}}>{title}</Title>
+            : <Title >{title}</Title>
+            }
+            <span className="icon"><i className={`fa fa-play-circle${!expand ? ' down' : ''}`}></i></span>
         <div className="clearfix"></div>
         </div>
-         {expand && <Content>{children}</Content>} 
+            {expand && <Content>{children}</Content>} 
       </Box>
     )
   }
