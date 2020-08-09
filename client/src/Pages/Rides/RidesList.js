@@ -8,6 +8,9 @@ import Select from "react-select";
 import { transformToRSOptions, getSelectionDummy } from "../../utils/RideUtils";
 import { Button, TextField } from "@material-ui/core";
 import {Link} from "react-router-dom";
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css' // Import css
+import { useToasts } from "react-toast-notifications";
 
 const RideCardList = styled.div`
     display: flex;
@@ -78,10 +81,17 @@ const Year = styled.p`
     margin-top: 0px;
 `
 
+const Buttons = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+`
+
 const StyledLink = styled(Link)`
-    // display: flex;
+    display: inline-block;
     text-align: center;
-    font-size:3.5vh;
+    font-size:3vh;
     color: white;
     background-color: black;
     color: #E8CA5A;
@@ -89,10 +99,10 @@ const StyledLink = styled(Link)`
     border-style: solid;
     border-color: #E8CA5A;
     border-radius: 10px;
-    display: inline-block;
     margin-top: 4vh;
     padding-left: 2vh;
     padding-right: 2vh;
+    width: 10 vw;
 `
 
 const RideJoinButton = styled.button`
@@ -109,8 +119,65 @@ const RideJoinButton = styled.button`
     cursor: pointer;
 `
 
+const RideLeaveButton = styled.button`
+    text-align: center;
+    font-size: 2.4vh;
+    color: white;
+    background-color: #142538;
+    color: #FFFFFF4D;
+    text-decoration: none;
+    border-style: solid;
+    border-color: #FFFFFF4D;
+    border-radius: 10px;
+    display: inline-block;
+    cursor: pointer;
+`
+
 const SelectDiv = styled(Select)`
     color: black;
+`
+
+const Popupdiv = styled.div `
+    display:flex;
+    flex-direction:column;
+    justify-content:space-around;
+    background-color:white;
+    width:25vw;
+    height:20vh;
+    border-radius:2vh;
+    text-align:center;
+    padding-bottom:5vh;
+    background-color:#142538;
+    color:white;
+`
+const Buttondiv = styled.div `
+    display:flex;
+    justify-content:space-evenly;
+`
+
+const ConfirmButton = styled.button`
+    text-align: center;
+    font-size: 2vh;
+    color: white;
+    background-color: #142538;
+    color: white;
+    text-decoration: none;
+    border-style: solid;
+    border-color: white;
+    border-radius: 10px;
+    border-width: 0.1vh;
+    display: inline-block;
+    cursor: pointer;
+    height:4vh;
+    width:10vw;
+    outline:none;
+    &:focus, &:hover, &:visited, &:link, &:active {
+        background-color: #FFFFFF4D;
+    }
+`
+
+const P = styled.p`
+    margin-bottom:4vh;
 `
 
 const GET_RIDES = gql`
@@ -218,6 +285,7 @@ const checkFull = (ride) => {
 }
 
 const RideCard = ({ ride }) => {
+    const { addToast } = useToasts();
     // Get properties from ride object
     let { owner, riders, departureDate, departureLocation, arrivalLocation, spots } = ride;
     // Get UserID from our local state management in apollo
@@ -229,7 +297,7 @@ const RideCard = ({ ride }) => {
 
     // Check if the current user is already part of this ride
     let joined = checkJoined(userNetID, ride);
-    
+    let isOwner = ride.owner.netid == userNetID;
 
     const [addRider, { data, loading, error }] = useMutation(
         ADD_RIDER
@@ -239,27 +307,50 @@ const RideCard = ({ ride }) => {
         REMOVE_RIDER
     );  
 
-    const handleJoin = () => {
-        console.log("HANDLE JOIN");
-        console.log(ride);
-        console.log(ride._id);
-        if (joined) {
-            console.log("joined");
-            removeRider({
-                variables: {_id: ride._id}
-            }).catch((error) => {
-                console.log("Oh no.");
-            });
-        } else {
-            console.log("not joined");
-            addRider({
-                variables: {_id: ride._id}
-            }).catch((error) => {
-                console.log("Oh no.");
-            });
-        }
+    const handleLeave = () => {
+        removeRider({
+            variables: {_id: ride._id}
+        })
+        .catch((error) => {
+            console.log("Oh no.");
+        });
         window.location.reload(true);
-    }
+    };
+
+    const handleLeaveButton = () => {
+        {isOwner ? addToast("You cannot leave this ride because you are the owner. To delete a ride, go to Profile", { appearance: 'error' }) :
+        confirmAlert({
+            customUI: ({ onClose }) => {
+              return (
+                <Popupdiv>
+                    <h1>Are you sure?</h1>
+                    <P>Do you want to leave this Ride?</P>
+                    <Buttondiv>
+                    <ConfirmButton onClick={onClose}>No, Keep it!</ConfirmButton>
+                    <ConfirmButton
+                        onClick={() => {
+                            handleLeave();
+                            onClose();
+                        }}
+                        >
+                            Yes, Leave this ride!
+                    </ConfirmButton>
+                    </Buttondiv>
+                </Popupdiv>
+              );
+            }
+          });
+        }
+    };
+
+    const handleJoin = () => {
+        addRider({
+            variables: {_id: ride._id}
+        }).catch((error) => {
+            console.log("Oh no.");
+        });
+        window.location.reload(true);
+    };
 
     // If the ride is full, disable ability to join
     let rideFull = checkFull(ride);
@@ -275,15 +366,25 @@ const RideCard = ({ ride }) => {
                     <p>{departureLocation.title} -> {arrivalLocation.title}</p>
                     <p>{departureMoment.format("hh:mm a")}</p>
                     <p>{spots - riders.length - 1} spot(s) left</p>
-                </RideCardText>
-                    { rideFull ? "Sorry, this ride is full." : 
-                    <RideJoinButton 
-                        joined={joined}
-                        disabled={rideFull}
-                        onClick={()=>handleJoin()}
-                    >
-                        {joined ? "Leave this ride" : "Join this ride" }
-                    </RideJoinButton>
+                </RideCardText>            
+                    { rideFull ? "This ride is full." : 
+                        <div>
+                        { joined ? 
+                            <RideLeaveButton 
+                                joined={joined} 
+                                onClick={()=>handleLeaveButton()}
+                            >
+                                Leave this Ride
+                            </RideLeaveButton>
+                            : <RideJoinButton 
+                                joined={joined} 
+                                disabled={rideFull}
+                                onClick={()=> handleJoin()}
+                            >
+                                Join this Ride
+                            </RideJoinButton>
+                        }
+                        </div>
                     }
             </RideCardFront>
         </RideCardItem>
@@ -439,7 +540,10 @@ const FilterOptions = ({ getVariables, setVariables }) => {
             getDate={getDate}
             setDate={setDate}
             />
-            <StyledLink type="submit" onClick={() => handleSearch()} >Search</StyledLink>
+            <Buttons>
+                <StyledLink type="submit" onClick={() => handleSearch()} >Search</StyledLink>
+                <StyledLink onClick={() => window.location.reload(true)} >Show All Rides</StyledLink>
+            </Buttons>
         </FilterDiv>
     )
 }

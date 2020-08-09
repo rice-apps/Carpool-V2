@@ -144,7 +144,7 @@ export const Header = () => {
         <div>
             <MainHeader>
                 <div>
-                    <H2Link to="/about">
+                    <H2Link to="/">
                         <img src={Icon} alt="Carpool Logo" width="30" height="50"/>
                         &nbsp;
                         <p>
