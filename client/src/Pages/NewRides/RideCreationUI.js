@@ -39,17 +39,28 @@ const IllustrationDiv = styled.div`
     color: white;
 `
 
-const RideCreateDiv = styled.div`
-    grid-area:4/3/10/20;
+const RideCreateDivLeft = styled.div`
+    grid-area:4/3/10/10;
     display: flex;
     align-items: space-between;
     justify-content: space-between;
     font-size:2.8vh;
     letter-spacing: 0.1vw;
     z-index:1;
+    margin-top:2vh;
+`
+
+const RideCreateDivRight = styled.div`
+    grid-area:4/11/13/19;
+    display: flex;
+    align-items: space-between;
+    justify-content: space-between;
+    font-size:2.8vh;
+    letter-spacing: 0.1vw;
+    z-index:1;
+    margin-top:2vh;
 `
 const ExtraNotes = styled.textarea`
-    grid-area:11/15/20/18;
     font-size:2.5vh;
     font-family: inherit;
     letter-spacing: 0.03vw;
@@ -57,11 +68,12 @@ const ExtraNotes = styled.textarea`
     border-radius: 2vh;
     color:white;
     border: none;
-    width: 22.8vw;
+    width: 16vw;
     height:16vh;
     outline: none;
-    padding-left:2vh;
-    padding-right:2vh;
+    margin-bottom:-13.5vh;
+    padding-left:1vw;
+    padding-right:1vw;
     text-align:left;
     resize: none;
 `
@@ -73,14 +85,21 @@ const RideCreateInputDiv = styled.div`
     align-items: flex-start;
     color: white;
 `
-const RideCreateInputDivText = styled.div`
+const RideCreateInputDivTextLeft = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: space-around;
     align-items: flex-start;
     color: white;
-    margin-top:-0.2vh;
-    margin-bottom:0.3vh;
+`
+
+const RideCreateInputDivTextRight = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: flex-start;
+    color: white;
+    padding-bottom:2vh;
 `
 
 const RideCreateInputDivLast = styled.div`
@@ -93,40 +112,11 @@ const RideCreateInputDivLast = styled.div`
 
 const RideCreateLabel = styled.label`
 `
-const ExtraNotesLabel = styled.label`
-    grid-area:12/11/12/14;
-    font-size:2.8vh;
-    letter-spacing: 0.1vw;
-    color:white;
-    padding-left: 2.4vw;
-    padding-top:1.7vw;
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
-`
 
-const RideCreateInput = styled.input`
-    font-size:2.5vh;
-    font-family: inherit;
-    letter-spacing: 0.03vw;
-    background-color:#FFFFFF2B;
-    border-radius: 2vh;
-    color:white;
-    border: none;
-    width: 15vw;
-    height: 4.5vh;
-    outline: none;
-    padding-left: 2vh;
-    padding-right: 2vh;
-    padding-bottom:0.7vh;
-    padding-top: 0;
-    text-align:left;
-    ::placeholder { 
-    }
-`
 
 const Illus = styled.img`
-    
+width: 100%;
+height: auto;
 `;
 
 const Slogan = styled.div `
@@ -141,7 +131,7 @@ const Slogan = styled.div `
 `;
 
 const StyledLinkDiv = styled.div`
-    grid-area:15/13/18/18;
+    grid-area:19/13/20/18;
     display: flex;
     align-items: center;
     justify-content: space-around;
@@ -468,7 +458,7 @@ const RideCreate = ({locations}) => {
 
     const handleClear = () => {
         document.getElementById("res").click();
-        let { luggage: propertyToRemove1, deptLoc: propertyToRemove2, arrLoc: propertyToRemove3,rider: propertyToRemove4, deptDate:propertyToRemove5,  ...rest } = getInputs; 
+        let { luggage: propertyToRemove1, deptLoc: propertyToRemove2, arrLoc: propertyToRemove3,riders: propertyToRemove4, deptDate:propertyToRemove5,  ...rest } = getInputs; 
         setInputs(rest);
         // setInputs({...getInputs, luggage: null, deptLoc:null, arrLoc:null,rider:null,deptDate:new Date()})
     }
@@ -506,14 +496,6 @@ const RideCreate = ({locations}) => {
   ];
 
   
-//   const Luggageoptions = [
-//     { value: '1', label: '1' },
-//     { value: '2', label: '2' },
-//     { value: '3', label: '3' },
-//     { value: '4', label: '4' },
-//     { value: '5', label: '5' }
-//   ];
-
 const customStyles = {
     control: (base) => ({
         ...base,
@@ -638,13 +620,13 @@ const styles = {
             <Slogan>
                 Create A Ride
             </Slogan>
-            <RideCreateDiv>
-                <RideCreateInputDivText>    
+            <RideCreateDivLeft>
+                <RideCreateInputDivTextLeft>    
                     <RideCreateLabel>*Departing from:</RideCreateLabel>
                     <RideCreateLabel>*Arriving at:</RideCreateLabel>
                     {/* <RideCreateLabel>Add Custom Location:</RideCreateLabel> */}
                     {/* <RideCreateLabel>*Number of Luggages:</RideCreateLabel> */}
-                </RideCreateInputDivText>
+                </RideCreateInputDivTextLeft>
                         
                 <RideCreateInputDiv>
                         <StyledCheckbox>
@@ -731,12 +713,14 @@ const styles = {
                         value={Luggageoptions.find(obj => obj.value === getInputs.luggage) ? Luggageoptions.find(obj => obj.value === getInputs.luggage) : null}
                         /> */}
                 </RideCreateInputDiv>
-
-                <RideCreateInputDivText>
+            </RideCreateDivLeft>
+            
+            <RideCreateDivRight>
+                <RideCreateInputDivTextRight>
                     <RideCreateLabel>*Riders (including yourself):</RideCreateLabel>
                     <RideCreateLabel>*Departure Date & Time:</RideCreateLabel>
-                    <RideCreateLabel>Invite Others:</RideCreateLabel>
-                </RideCreateInputDivText>
+                    <RideCreateLabel>Extra Notes:</RideCreateLabel>
+                </RideCreateInputDivTextRight>
 
                 <RideCreateInputDivLast>   
                     <Select
@@ -764,20 +748,17 @@ const styles = {
                         </ThemeProvider>
                     </LocalizationProvider>
 
-                    <RideCreateInput onChange={handleFormChange} type="email" name="invite" placeholder='Email Address'/>
+                    <ExtraNotes type="text" rows="10" onChange={handleFormChange} name = 'note'>
+                    </ExtraNotes>
                     {/* <RideCreateInput onChange={handleFormChange} type="paragraph" name="note" /> */}
         
                     {/* <RideCreateInput onChange={event => setInputs({...getInputs, ownerDriving: event.target.checked })} type="checkbox" name="ownerDriving" /> */}
                 </RideCreateInputDivLast>
-            </RideCreateDiv>
+            </RideCreateDivRight>
             <IllustrationDiv>
                 <Illus src={Illustration}/>
             </IllustrationDiv>
-            <ExtraNotesLabel>
-                Extra Notes:
-            </ExtraNotesLabel>
-            <ExtraNotes type="text" rows="10" onChange={handleFormChange} name = 'note'>
-            </ExtraNotes>
+            
             <StyledLinkDiv>
                 <StyledLink onClick = {handleClear}>Clear Form </StyledLink>
                 <StyledLink
