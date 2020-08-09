@@ -11,7 +11,7 @@ import Illustration from '../../assets/illus_new_ride_page.svg';
 import {Link} from "react-router-dom";
 
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
-import { yellow } from "@material-ui/core/colors";
+import { yellow, red } from "@material-ui/core/colors";
 
 import Autocomplete from 'react-google-autocomplete';
 import { Redirect } from "react-router";
@@ -51,7 +51,7 @@ const RideCreateDivLeft = styled.div`
 `
 
 const RideCreateDivRight = styled.div`
-    grid-area:4/11/13/19;
+    grid-area:4/11/13/20;
     display: flex;
     align-items: space-between;
     justify-content: space-between;
@@ -71,7 +71,7 @@ const ExtraNotes = styled.textarea`
     width: 16vw;
     height:16vh;
     outline: none;
-    margin-bottom:-13.5vh;
+    margin-bottom:-11vh;
     padding-left:1vw;
     padding-right:1vw;
     text-align:left;
@@ -739,7 +739,7 @@ const styles = {
                             name="deptDate"
                             OpenPickerButtonProps={{ style: styles.helper }}
                             renderInput={props => 
-                            <TextField {...props} variant="outlined" FormHelperTextProps={{ style: styles.helper }} onFocus={{}}
+                            <TextField {...props} variant="outlined" FormHelperTextProps={{ style: styles.helper }} onFocus={{}} helperText=''
                             />
                             }
                             onChange={value => setInputs({ ...getInputs, deptDate: value })}
