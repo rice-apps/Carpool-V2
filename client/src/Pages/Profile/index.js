@@ -16,7 +16,8 @@ import '@availity/yup';
 import 'react-phone-input-2/lib/style.css';
 import { formatPhoneNumber } from 'react-phone-number-input'
 import Logo from "../../assets/destination_linkage_vertical.svg"
-
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css' // Import css
 
 Modal.setAppElement("#app");
 
@@ -70,6 +71,48 @@ const CardSide = css`
 `
 
 
+const Popupdiv = styled.div `
+    display:flex;
+    flex-direction:column;
+    justify-content:space-around;
+    background-color:white;
+    width:25vw;
+    height:20vh;
+    border-radius:2vh;
+    text-align:center;
+    padding-bottom:5vh;
+    background-color:#142538;
+    color:white;
+`
+const Buttondiv = styled.div `
+    display:flex;
+    justify-content:space-evenly;
+`
+
+const ConfirmButton = styled.button`
+    text-align: center;
+    font-size: 2vh;
+    color: white;
+    background-color: #142538;
+    color: white;
+    text-decoration: none;
+    border-style: solid;
+    border-color: white;
+    border-radius: 10px;
+    border-width: 0.1vh;
+    display: inline-block;
+    cursor: pointer;
+    height:4vh;
+    width:10vw;
+    outline:none;
+    &:focus, &:hover, &:visited, &:link, &:active {
+        background-color: #FFFFFF4D;
+    }
+`
+
+const P = styled.p`
+    margin-bottom:4vh;
+`
 
 const GET_RIDES = gql`
     query GetRides($_id: MongoID) {
@@ -387,9 +430,28 @@ const Profile = ({}) => {
     // console.log('upcomingrides')
     // console.log(upcomingrides)
 
-    const handleSubmit = () => {
-        localStorage.clear();
-        window.location.reload(true);
+    const handleLogout = () => {
+        confirmAlert({
+        customUI: ({ onClose }) => {
+            return (
+            <Popupdiv>
+                <h1>Are you sure?</h1>
+                <P>Do you want to logout?</P>
+                <Buttondiv>
+                <ConfirmButton onClick={onClose}>Keep me logged in!</ConfirmButton>
+                <ConfirmButton
+                    onClick={() => {
+                        localStorage.clear();
+                        window.location.reload(true);
+                    }}
+                    >
+                        Yes, logout!
+                </ConfirmButton>
+                </Buttondiv>
+            </Popupdiv>
+            );
+        }
+        });
     }
 
     return (
@@ -407,7 +469,7 @@ const Profile = ({}) => {
                                 </Button>
                             </ProfileCardEdit>
                         </ProfileContactDiv>
-                        <Logout onClick={()=>handleSubmit()}>
+                        <Logout onClick={()=>handleLogout()}>
                             Logout
                         </Logout>
                     </PageDiv>

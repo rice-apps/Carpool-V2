@@ -47,7 +47,7 @@ export const Header = () => {
         align-items: center;
         word-wrap: break-word;
         color: white;
-        font-size: 24px;
+        font-size: 1.6vw;
         font-family: Copperplate Gothic Light;
         text-decoration: none;
         width: 8em;
@@ -70,7 +70,7 @@ export const Header = () => {
         padding: .6vh 1vh .6vh 1vh;
         background-color: transparent;
         vertical-align: middle;
-        font-size: 18px;
+        font-size: 1.2vw;
         position: relative;
         display: flex;
         &:before {
