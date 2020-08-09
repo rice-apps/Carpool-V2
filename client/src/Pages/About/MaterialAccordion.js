@@ -12,17 +12,17 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: '6vw',
   },
   heading: {
-    fontSize: '1vw',
+    fontSize: '1.3vw',
     fontWeight: theme.typography.fontWeightRegular,
     color: 'white'
   },
   base: {
     background: '#142537',
-    borderBottom: '1px solid #E8CA5A',
+    borderBottom: '1.2px solid #E8CA5A',
   },
   details: {
     color: 'white',
-    borderTop: '1px solid #E8CA5A',
+    borderTop: '1.2px solid #E8CA5A',
     padding: '2.5vh'
   },
   detailText: {
