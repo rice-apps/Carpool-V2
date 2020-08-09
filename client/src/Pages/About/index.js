@@ -13,6 +13,8 @@ import Typography from '@material-ui/core/Typography';
 import SimpleAccordion from './MaterialAccordion.js';
 import wyao from '../../assets/wyao.jpg';
 import gjia from '../../assets/gjia.jpg';
+import wli from '../../assets/wli.png';
+import wmundy from '../../assets/wmundy.jpg'
 import { isNamedType } from "graphql";
 // import Accordion from 'react-bootstrap/Accordion';
 // import Button from 'react-bootstrap/Button'
@@ -90,7 +92,7 @@ const AboutCard = ({name, description, image}) => {
                 <CardMedia
                     component="img"
                     image={image}
-                    style = {{ height: '45vh'}}
+                    style = {{ height: '35vh'}}
                     title={name}
                 />
                 <CardContent>
@@ -106,6 +108,28 @@ const AboutCard = ({name, description, image}) => {
     )
 }
 
+const SecondaryAboutCard = ({name, description, image}) => {
+    return (
+        <Card style={{ width: '18vw', float: 'left', marginLeft: 'auto', marginRight: '2vw', marginTop:'2vw'}}>
+            <CardActionArea>
+                <CardMedia
+                    component="img"
+                    image={image}
+                    style = {{ height: '35vh'}}
+                    title={name}
+                />
+                <CardContent>
+                <Typography gutterBottom variant="h5" component="h2" align="center">
+                    {name}
+                </Typography>
+                <Typography variant="body2" color="textSecondary" component="p" align="center">
+                    {description}
+                </Typography>
+                </CardContent>
+            </CardActionArea>
+        </Card>
+    )
+}
 
 const About = ({}) => {
     // Fetch service from cache since it depends on where this app is deployed
@@ -151,8 +175,10 @@ const About = ({}) => {
                 <PictureText>
                     Meet The Team:
                 </PictureText>
-                <AboutCard name="William Yao" description="Junior - Will Rice College" image={wyao} />
-                <AboutCard style={{float: 'right'}} name="Guancong Jia" description="Sophomore - Brown College" image={gjia} />
+                <AboutCard name="Winnie Li" description="Senior - McMurtry College" image={wli} />
+                <AboutCard name="Will Mundy" description="Senior - Sid Richardson College" image={wmundy}/>
+                <SecondaryAboutCard name="William Yao" description="Junior - Will Rice College" image={wyao} />
+                <SecondaryAboutCard name="Guancong Jia" description="Sophomore - Brown College" image={gjia} />
             </PictureDiv>
         </ContainerDiv>
     )

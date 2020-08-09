@@ -42,7 +42,7 @@ const Accordion = ({ children, title, isExpand = false }) => {
             <Title style={{color: "#E8CA5A"}}>{title}</Title>
             : <Title >{title}</Title>
             }
-            {/* <span className="icon"><i className={`fa fa-play-circle${!expand ? ' down' : ''}`}></i></span> */}
+            <span className="icon"><i className={`fa fa-play-circle${!expand ? ' down' : ''}`}></i></span>
         <div className="clearfix"></div>
         </div>
             {expand && <Content open={isExpand}>{children}</Content>} 
