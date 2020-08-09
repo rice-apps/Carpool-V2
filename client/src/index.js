@@ -17,6 +17,7 @@ import { ToastProvider } from 'react-toast-notifications'
 import { client } from './apollo';
 import { ApolloProvider } from '@apollo/client'
 
+
 export const history = createBrowserHistory();
 
 render(

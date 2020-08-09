@@ -4,6 +4,20 @@ import IllusLanding from "../../assets/illus_landing_page.svg"
 import { Link } from "react-router-dom";
 import { SERVICE_URL } from '../../config';
 import Accordion from './Accordion';
+import Card from '@material-ui/core/Card';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import CardMedia from '@material-ui/core/CardMedia';
+import Typography from '@material-ui/core/Typography';
+import SimpleAccordion from './MaterialAccordion.js';
+import wyao from '../../assets/wyao.jpg';
+import gjia from '../../assets/gjia.jpg';
+import { isNamedType } from "graphql";
+// import Accordion from 'react-bootstrap/Accordion';
+// import Button from 'react-bootstrap/Button'
+// import 'bootstrap/dist/css/bootstrap.min.css';
+// import { Card } from 'reactstrap';
 
 
 const casLoginURL = "https://idp.rice.edu/idp/profile/cas/login";
@@ -25,15 +39,30 @@ const TextDiv = styled.div `
     color: white;
 `;
 
+const PictureDiv = styled.div `
+    grid-column: 5 / 8;
+    font-family: acari-sans.light;
+    color: white;
+`;
+
 
 const DetailText = styled.div`
     font-size: 2vw;
-    // padding-top: 2vh;
     margin-left: 6vw;
     margin-right: auto;
     text-align: left;
     line-height: 2;
 `
+
+const PictureText = styled.div`
+    font-size: 2vw;
+    /* margin-left: 6vw;
+    margin-right: auto; */
+    text-align: left;
+    line-height: 2;
+`
+
+
 const Question = styled.div`
     font-size: 1.2vw;
     padding-top: 1vh;
@@ -54,6 +83,28 @@ const Answer = styled.div`
     // line-height: 2;
 `
 
+const AboutCard = ({name, description, image}) => {
+    return (
+        <Card style={{ width: '18vw', float: 'left', marginRight: '2vw' }}>
+            <CardActionArea>
+                <CardMedia
+                    component="img"
+                    image={image}
+                    style = {{ height: '45vh'}}
+                    title={name}
+                />
+                <CardContent>
+                <Typography gutterBottom variant="h5" component="h2" align="center">
+                    {name}
+                </Typography>
+                <Typography variant="body2" color="textSecondary" component="p" align="center">
+                    {description}
+                </Typography>
+                </CardContent>
+            </CardActionArea>
+        </Card>
+    )
+}
 
 
 const About = ({}) => {
@@ -72,7 +123,7 @@ const About = ({}) => {
                 <DetailText>
                     Frequently Asked Questions:
                 </DetailText>
-                <Accordion title="Who can use Carpool?">
+                {/* <Accordion title="Who can use Carpool?">
                     Carpool was created for the Rice University Community. A Net ID is required.
                 </Accordion>
                 <Accordion title="Do I need to download Carpool on my phone?">
@@ -93,10 +144,16 @@ const About = ({}) => {
                 </Accordion>
                 <Accordion title="Is my information shared with outside parties?">
                     No, your information is not shared outside the application. It is only used for coordinating rides with your fellow Rice Owls.
-                </Accordion>
-
-
+                </Accordion> */}
+                <SimpleAccordion/>
             </TextDiv>
+            <PictureDiv>
+                <PictureText>
+                    Meet The Team:
+                </PictureText>
+                <AboutCard name="William Yao" description="Junior - Will Rice College" image={wyao} />
+                <AboutCard style={{float: 'right'}} name="Guancong Jia" description="Sophomore - Brown College" image={gjia} />
+            </PictureDiv>
         </ContainerDiv>
     )
 }
