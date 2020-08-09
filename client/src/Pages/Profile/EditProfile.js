@@ -110,7 +110,6 @@ const EditProfileField = ({ label, ...props }) => {
         <EditProfileFieldDiv>
             <EditProfileLabel>
                 {label}
-                
             </EditProfileLabel>
             <EditProfileInput {...field} {...props} />
             {meta.touched && meta.error ? meta.error : null}
@@ -131,7 +130,6 @@ const EditPhoneField = ({ label, ...props }) => {
         <EditProfileFieldDiv>
             <EditProfileLabel>
                 {label}
-                
             </EditProfileLabel>
             <PhoneInput
                     country={"us"}
@@ -191,7 +189,6 @@ const EditProfile = ({ user, closeModal }) => {
 
     console.log(initialValues);
     const formik = useFormik({
-        
         initialValues: {initialValues},
         onSubmit: (values) => {
             updateUser({ 
@@ -211,7 +208,7 @@ const EditProfile = ({ user, closeModal }) => {
 
     return (
         <Formik
-            // initialValues={initialValues}
+            initialValues={initialValues}
             validationSchema={EditProfileSchema}
         >
             <Form>

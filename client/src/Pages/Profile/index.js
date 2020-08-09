@@ -283,9 +283,7 @@ const RideDiv2 = styled.div `
 const RideBox = styled.div`
     display: flex;
     flex-direction: column;
-    border-style: solid;
-    border-width: 1.5px;
-    border-color: #223244;
+    box-shadow: 0 1vw 2vw 0 rgba(0,0,0,0.4);
     margin-top: 5vh;
     padding: 1vh 2vw;
     padding-right:0;
@@ -355,7 +353,8 @@ const RideCard = ({ ride }) => {
             <Time>
                 {departureMoment.format("DD").toString()} {departureMoment.format("MMM").toString()} {departureMoment.format("YYYY").toString()}, {departureMoment.format("hh:mm a")}
             </Time>
-            <a> # of spots: {spots}</a>
+            {/* <a> # of spots: {spots}</a> */}
+            Click me for more info!
             <IllusColumn>
                 <StyledIcon>
                     <img src={Logo} width="40vw" height="40vh"/>

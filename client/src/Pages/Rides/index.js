@@ -14,9 +14,7 @@ const GET_LOCATIONS = gql`
     }
 `
 
-
 const Rides = ({ }) => {
-    
     // Load it up here so we can use it in multiple places later
     const { data: locationData, 
         loading: locationLoading, 
@@ -29,7 +27,6 @@ const Rides = ({ }) => {
     // Gets the locationMany property from the query
     const { locationMany: locations } = locationData;
     
-
     return (
         <div>
             <RidesList />

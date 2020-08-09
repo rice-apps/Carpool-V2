@@ -6,7 +6,7 @@ import MomentUtils from '@material-ui/pickers/adapter/moment';
 import { MuiPickersUtilsProvider, DateTimePicker, LocalizationProvider, DatePicker,  } from "@material-ui/pickers";
 import Select from "react-select";
 import { transformToRSOptions, getSelectionDummy } from "../../utils/RideUtils";
-import { Button, TextField } from "@material-ui/core";
+import { Button, TextField, Input } from "@material-ui/core";
 import {Link} from "react-router-dom";
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css' // Import css
@@ -25,7 +25,7 @@ const RideCardItem = styled.div`
     height: 10em;
     width: 40em;
     overflow: hidden; /* need this to ensure no weird text transform effect */
-    box-shadow: 0 6px 12px 0 rgba(0,0,0,0.2);
+    box-shadow: 0 1vw 2vw 0 rgba(0,0,0,0.4);
 
     // :hover {
     //     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
@@ -401,19 +401,27 @@ const FilterDiv = styled.div`
 const LocationFilterDiv = styled.div`
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: space-evenly;
     max-width: 100%;
+    font-size: 1.2vw;
+`
+
+const DateDiv = styled.div`
+    margin-left: 4vw;
 `
 
 const customStyles = {
     helper: {
-         color: '#FFFFFF',
+        color: '#FFFFFF',
+    },
+    datefield: {
+        background:'#FFFFFF',
     },
     control: (base) => ({
         ...base,
         width: '13vw',
         height:'4.5vh',
-        background:'#FFFFFF2B',
+        background:'#FFFFFF',
         borderRadius: '2vh',
         border: 'none',
         boxShadow: 'none',
@@ -453,13 +461,19 @@ const DateFilter = ({ label, getDate, setDate }) => {
             <DatePicker
                 name="deptDate"
                 styles={customStyles}
-                OpenPickerButtonProps={{ style: customStyles.helper }}
+                // OpenPickerButtonProps={{ style: customStyles.helper }}
+                InputProps={{style: customStyles.datefield}}
                 renderInput={props => 
+                    <div>
                     <TextField 
-                        styles={customStyles}
+                        styles={customStyles.datefield}
                         variant="outlined" {...props} 
+                        TextFieldProps={{style: customStyles.datefield}}
                         FormHelperTextProps={{ style: customStyles.helper }} 
-                    />}
+                        variant="outlined"
+                        color="#FFFFFF"
+                    />
+                    </div>}
                 disablePast
                 clearable
                 autoOk
@@ -486,7 +500,7 @@ const LocationFilter = ({ label, options, getSelection, setSelection }) => {
             value={getSelection}
             isClearable={true}
             onChange={handleChange}
-            styles={{ container: (styles) => ({ ...styles, width: "150px" }) }}
+            styles={{ container: (styles) => ({ ...styles, width: "200px" }) }}
             />
         </LocationFilterDiv>
     )
@@ -524,22 +538,24 @@ const FilterOptions = ({ getVariables, setVariables }) => {
     return (
         <FilterDiv>
             <LocationFilter 
-            label="Departing From" 
+            label="Departing From:" 
             options={transformToRSOptions(locations)} 
             getSelection={getDepartureSelection}
             setSelection={setDepartureSelection}
             />
             <LocationFilter 
-            label="Arriving To" 
+            label="Arriving To:" 
             options={transformToRSOptions(locations)} 
             getSelection={getArrivalSelection}
             setSelection={setArrivalSelection}
             />
-            <DateFilter 
-            label="Departure Date" 
-            getDate={getDate}
-            setDate={setDate}
-            />
+            <DateDiv>
+                <DateFilter 
+                label="Departure Date" 
+                getDate={getDate}
+                setDate={setDate}
+                />
+            </DateDiv>
             <Buttons>
                 <StyledLink type="submit" onClick={() => handleSearch()} >Search</StyledLink>
                 <StyledLink onClick={() => window.location.reload(true)} >Show All Rides</StyledLink>

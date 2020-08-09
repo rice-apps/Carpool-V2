@@ -89,7 +89,7 @@ const LandingPage = ({}) => {
         <ContainerDiv>
             <TextDiv>
                 <Slogan>
-                    HIT the ROAD with ONE click
+                    Hit the Road with ONE click
                 </Slogan>
                 <DetailText>
                     Getting ready for a trip? Make this amazing journey with your friends &amp; <strong>Rice Carpool</strong>
