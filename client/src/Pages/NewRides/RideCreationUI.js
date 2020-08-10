@@ -291,10 +291,8 @@ const RideCreate = ({locations}) => {
         setInputs({
             owner: user._id,
             deptDate: new Date(),
-            spots: 4,
             ownerDriving: false,
-            note: "None",
-            luggage: null
+            note: "None"
         });
     }, []);
 

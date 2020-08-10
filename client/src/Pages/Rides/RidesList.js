@@ -133,6 +133,20 @@ const RideLeaveButton = styled.button`
     cursor: pointer;
 `
 
+const RideDeleteButton = styled.button`
+    text-align: center;
+    font-size: 2.4vh;
+    color: white;
+    background-color: #142538;
+    color: #FFFFFF4D;
+    text-decoration: none;
+    border-style: solid;
+    border-color: #FFFFFF4D;
+    border-radius: 10px;
+    display: inline-block;
+    cursor: pointer;
+`
+
 const SelectDiv = styled(Select)`
     color: black;
 `
@@ -254,6 +268,18 @@ const REMOVE_RIDER = gql`
     }
 `
 
+const DELETE_RIDE = gql`
+    mutation DeleteRide($_id: MongoID!) {
+        rideDeleteOne(_id: $_id) {
+            recordId
+            record {
+                _id
+                __typename
+            }
+        }
+    }
+`
+
 /**
 * Helper Functions
 */
@@ -307,6 +333,42 @@ const RideCard = ({ ride }) => {
         REMOVE_RIDER
     );  
 
+    const [deleteRide, { data3, loading3, error3 }] = useMutation(DELETE_RIDE);  
+
+    const handleDelete = () => {
+        deleteRide({
+            variables: {_id: ride._id}
+        })
+        .catch((error) => {
+            console.log("Oh no.");
+        });
+        window.location.reload(true);
+    };
+
+    const handleDeleteButton = () => {
+        confirmAlert({
+            customUI: ({ onClose }) => {
+              return (
+                <Popupdiv>
+                    <h1>Are you sure?</h1>
+                    <P>Do you want to delete this Ride?</P>
+                    <Buttondiv>
+                    <ConfirmButton onClick={onClose}>No, Keep it!</ConfirmButton>
+                    <ConfirmButton
+                        onClick={() => {
+                            handleDelete();
+                            onClose();
+                        }}
+                        >
+                            Yes, Delete this ride!
+                    </ConfirmButton>
+                    </Buttondiv>
+                </Popupdiv>
+              );
+            }
+          });
+    };
+
     const handleLeave = () => {
         removeRider({
             variables: {_id: ride._id}
@@ -318,7 +380,6 @@ const RideCard = ({ ride }) => {
     };
 
     const handleLeaveButton = () => {
-        {isOwner ? addToast("You cannot leave this ride because you are the owner. To delete a ride, go to Profile", { appearance: 'error' }) :
         confirmAlert({
             customUI: ({ onClose }) => {
               return (
@@ -340,7 +401,6 @@ const RideCard = ({ ride }) => {
               );
             }
           });
-        }
     };
 
     const handleJoin = () => {
@@ -352,10 +412,18 @@ const RideCard = ({ ride }) => {
         window.location.reload(true);
     };
 
+    const handleToast = () => {
+        if (joined) {
+            addToast("Go to your Profile to view ride details.", { appearance: 'info'});
+        } else {
+            addToast("Join a ride to view rider information.", { appearance: 'info'});
+        }
+    };
+
     // If the ride is full, disable ability to join
     let rideFull = checkFull(ride);
     return (
-        <RideCardItem>
+        <RideCardItem onClick={()=>handleToast()}>
             <RideCardFront>
                 <RideCardDate>
                     <Day>{departureMoment.format("DD").toString()}</Day>
@@ -369,20 +437,30 @@ const RideCard = ({ ride }) => {
                 </RideCardText>            
                     { rideFull ? "This ride is full." : 
                         <div>
-                        { joined ? 
-                            <RideLeaveButton 
+                        { isOwner ? 
+                            <RideDeleteButton 
                                 joined={joined} 
-                                onClick={()=>handleLeaveButton()}
+                                onClick={()=>handleDeleteButton()}
                             >
-                                Leave this Ride
-                            </RideLeaveButton>
-                            : <RideJoinButton 
-                                joined={joined} 
-                                disabled={rideFull}
-                                onClick={()=> handleJoin()}
-                            >
-                                Join this Ride
-                            </RideJoinButton>
+                                Delete this Ride
+                            </RideDeleteButton> 
+                            : <div>
+                            { joined ? 
+                                <RideLeaveButton 
+                                    joined={joined} 
+                                    onClick={()=>handleLeaveButton()}
+                                >
+                                    Leave this Ride
+                                </RideLeaveButton>
+                                : <RideJoinButton 
+                                    joined={joined} 
+                                    disabled={rideFull}
+                                    onClick={()=> handleJoin()}
+                                >
+                                    Join this Ride
+                                </RideJoinButton>
+                            }
+                            </div>
                         }
                         </div>
                     }
