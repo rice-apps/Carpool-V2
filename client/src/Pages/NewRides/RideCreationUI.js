@@ -601,6 +601,7 @@ const styles = {
         setChecked(event.target.checked);
         let select = document.getElementById("deptSelect");
         let custom = document.getElementById("customDept");
+        setNewDeptLocation(null);
         toggleVisible(select);
         toggleVisible(custom);
     };
@@ -609,6 +610,7 @@ const styles = {
         setChecked(event.target.checked);
         let select = document.getElementById("arrSelect");
         let custom = document.getElementById("customArr");
+        setNewArrLocation(null);
         toggleVisible(select);
         toggleVisible(custom);
     };
