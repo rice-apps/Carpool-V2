@@ -357,6 +357,10 @@ const RideCreate = ({locations}) => {
                         console.log("test two");
                         return;
                     });
+                } else {
+                    addCreateCustomRide();
+                    console.log("new test");
+                    return;
                 }
             } else {
                 console.log("checkData", checkData);
