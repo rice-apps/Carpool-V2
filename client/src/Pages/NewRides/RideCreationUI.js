@@ -292,7 +292,8 @@ const RideCreate = ({locations}) => {
             owner: user._id,
             deptDate: new Date(),
             ownerDriving: false,
-            note: "None"
+            note: "None",
+            spots: 2
         });
     }, []);
 
@@ -416,6 +417,7 @@ const RideCreate = ({locations}) => {
             }
         } else {
             addCreateCustomRide();
+            return;
         }
         // if (newArrLocation) {
         //     createLocation({
@@ -460,17 +462,17 @@ const RideCreate = ({locations}) => {
 
     const handleClear = () => {
         document.getElementById("res").click();
-        let { luggage: propertyToRemove1, deptLoc: propertyToRemove2, arrLoc: propertyToRemove3,riders: propertyToRemove4, deptDate:propertyToRemove5,  ...rest } = getInputs; 
+        let { luggage: propertyToRemove1, deptLoc: propertyToRemove2, arrLoc: propertyToRemove3, spots: propertyToRemove4, deptDate:propertyToRemove5,  ...rest } = getInputs; 
         setInputs(rest);
         // setInputs({...getInputs, luggage: null, deptLoc:null, arrLoc:null,rider:null,deptDate:new Date()})
     }
 
 
-    const handleToast = () => {
-        if (readyToSubmit){
-            addToast("Congratulations! Your ride has been successfully created.", { appearance: 'success'});
-        }
-    }
+    // const handleToast = () => {
+    //     if (readyToSubmit){
+    //         addToast("Congratulations! Your ride has been successfully created.", { appearance: 'success'});
+    //     }
+    // }
 
 
     /**
@@ -491,10 +493,10 @@ const RideCreate = ({locations}) => {
     
 
     const Rideroptions = [
-    { value: '1', label: '1' },
-    { value: '2', label: '2' },
-    { value: '3', label: '3' },
-    { value: '4', label: '4' } 
+    // { value: '1', label: '1' },
+    { value: 2, label: '2' },
+    { value: 3, label: '3' },
+    { value: 4, label: '4' } 
   ];
 
   
@@ -728,10 +730,10 @@ const styles = {
                     <Select
                     name="rider"
                     options={Rideroptions} 
-                    onChange={(selected) => setInputs({...getInputs, riders: selected.value })}                
+                    onChange={(selected) => setInputs({...getInputs, spots: selected.value })}                
                     styles={customStyles}
                     isSearchable={false}
-                    value={Rideroptions.find(obj => obj.value === getInputs.riders) ? Rideroptions.find(obj => obj.value === getInputs.riders) : null}
+                    value={Rideroptions.find(obj => obj.value === getInputs.spots) ? Rideroptions.find(obj => obj.value === getInputs.spots) : null}
                     />
                     
                     {/* Please find a better date & time picker */}
@@ -765,7 +767,7 @@ const styles = {
                 <StyledLink onClick = {handleClear}>Clear Form </StyledLink>
                 <StyledLink
                 type="submit" 
-                onClick={() => {handleSubmit(); handleClear();handleToast()}} 
+                onClick={() => {handleSubmit(); handleClear();}} 
                 >Submit</StyledLink>
             </StyledLinkDiv>
             <HiddenInput id="res" name="res" type="reset"/>
