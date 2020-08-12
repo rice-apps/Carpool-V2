@@ -84,8 +84,11 @@ const Login = () => {
         // Redirects user to the CAS login page
         let redirectURL = casLoginURL + "?service=" + SERVICE_URL;
         window.open(redirectURL, "_self");
-        // .then(window.location = "./profile");
-        // window.location.reload(true);
+        console.log("BOIIII");
+        if (localStorage.getItem('token')) {
+            console.log("BOIIII TOKEN");
+            window.location = "./profile"
+        } 
     }
 
     return (

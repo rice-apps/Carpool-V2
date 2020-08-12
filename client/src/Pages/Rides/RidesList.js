@@ -412,6 +412,29 @@ const RideCard = ({ ride }) => {
         window.location.reload(true);
     };
 
+    const handleJoinButton = () => {
+        confirmAlert({
+            customUI: ({ onClose }) => {
+              return (
+                <Popupdiv>
+                    <P>Will you wear a mask, sanitize hands, and follow all safety protocols from the Culture of Care Agreement?</P>
+                    <Buttondiv>
+                    <ConfirmButton onClick={onClose}>No</ConfirmButton>
+                    <ConfirmButton
+                        onClick={() => {
+                            handleJoin();
+                            onClose();
+                        }}
+                        >
+                            Yes, Join this ride!
+                    </ConfirmButton>
+                    </Buttondiv>
+                </Popupdiv>
+              );
+            }
+          });
+    };
+
     const handleToast = () => {
         if (joined) {
             addToast("Go to your Profile to view ride details.", { appearance: 'info'});
@@ -455,7 +478,7 @@ const RideCard = ({ ride }) => {
                                 : <RideJoinButton 
                                     joined={joined} 
                                     disabled={rideFull}
-                                    onClick={()=> handleJoin()}
+                                    onClick={()=> handleJoinButton()}
                                 >
                                     Join this Ride
                                 </RideJoinButton>

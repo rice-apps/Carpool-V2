@@ -326,7 +326,7 @@ const RideCreate = ({locations}) => {
             console.log("error", error);
             addToast("Sorry, an error occurred processing your new ride. Please try again later.", { appearance: 'error' });
         });
-        addToast("Congratulations! Your ride has been successfully created.", { appearance: 'success'});
+        addToast("Congratulations! Your ride has been successfully created. Make sure to wear a mask, sanitize hands, and follow all safety protocols from the Culture of Care Agreement.", { appearance: 'success'});
         console.log("success!");
     }
 
