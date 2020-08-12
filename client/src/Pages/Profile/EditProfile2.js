@@ -9,6 +9,7 @@ import '@availity/yup';
 import * as Yup from 'yup';
 import PhoneInput from "react-phone-input-2";
 import 'react-phone-input-2/lib/style.css';
+import { useToasts } from "react-toast-notifications";
 
 const customStyles = {
     content : {
@@ -130,13 +131,15 @@ const EditPhoneField = ({ label, ...props }) => {
                 // style={customStyles}
                 // defaultValue = {props.phone}
                 value = {props.defaultValue}
-                onChange={value => setPhoneState({...phoneState, defaultValue: value})}
+                onChange={(value, data) => setPhoneState({...phoneState, defaultValue: value, rawPhone: value.slice(data.dialCode.length)})}
             />
         </EditProfileFieldDiv>
     )
 }
 
 const EditProfile2 = ({ user, closeModal }) => {
+    const { addToast } = useToasts();
+
     // We want the initial values of form elements to be the current user values that are not _id, typename, token, recentUpdate, and netid
     let { _id, __typename, token, recentUpdate, netid, ...initialValues } = user;
     
@@ -156,8 +159,6 @@ const EditProfile2 = ({ user, closeModal }) => {
     const [updateUser, { data, loading }] = useMutation(UPDATE_USER);
 
     const handleFormChange = (event) => {
-        console.log("EVENT VAL?u??????????????e");
-        console.log(event.target.value);
         // If value is empty, remove from object
         if (event.target.value == "") {
             // Nice little syntactic sugar to remove property from object: https://codeburst.io/use-es2015-object-rest-operator-to-omit-properties-38a3ecffe90
@@ -172,6 +173,40 @@ const EditProfile2 = ({ user, closeModal }) => {
         // Use mutation
         console.log("GETINPUTSSSSS!!!!!");
         console.log(getInputs);
+        if (!getInputs.firstName) {
+            addToast("First name required.", { appearance: 'error' });
+            return;
+        }
+        if (!getInputs.lastName) {
+            addToast("Last name required.", { appearance: 'error' });
+            return;
+        }
+        if (getInputs.firstName.length < 2 || getInputs.lastName.length < 2) {
+            addToast("Too short!", { appearance: 'error' });
+            return;
+        }
+        if (getInputs.firstName.length > 30 || getInputs.lastName.length > 30) {
+            addToast("Too long!", { appearance: 'error' });
+            return;
+        }
+        
+        if (getInputs.phone.length < 11) {
+            addToast("Invalid phone number!", { appearance: 'error' });
+            return;
+        }
+        // if (!getInputs.rawPhone) {
+        //     addToast("Invalid phone number!", { appearance: 'error' });
+        //     return;
+        // }
+        // const dialCodeLength = getInputs.rawPhone.dialCode.length;
+        // const phoneLength = getInputs.phone.length;
+        // console.log("DIAL, PHONE , subtract");
+        // console.log(dialCodeLength);
+        // console.log(phoneLength);
+        // if (phoneLength-dialCodeLength < 7) {
+        //     addToast("Invalid phone number!", { appearance: 'error' });
+        //     return;
+        // }
         updateUser({ 
             variables: getInputs 
         })
@@ -222,7 +257,7 @@ const EditProfile2 = ({ user, closeModal }) => {
                     // style={customStyles}
                     // defaultValue = {initialValues["phone"]}
                     value = {initialValues["phone"]}
-                    onChange={value => setInputs({...getInputs, phone: value})}
+                    onChange={(phone, rawPhone) => setInputs({...getInputs, phone: phone, rawPhone: rawPhone})}
                 />
             </EditProfileFieldDiv>
             <EditProfileButton onClick={()=>handleSubmit()} type="submit" >Submit</EditProfileButton>
