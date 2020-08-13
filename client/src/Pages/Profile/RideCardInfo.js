@@ -323,6 +323,8 @@ const RideCardInfo = ({ }) => {
       });
     ;
 
+   
+
     const [deleteRide, { data2, loading2, error2 }] = useMutation(DELETE_RIDE);  
         
     const handleDelete = () => {
@@ -335,7 +337,7 @@ const RideCardInfo = ({ }) => {
         });
     };
 
-    const handleDeleteButton = () => {
+    const handleDeleteButton = (departureLocation,arrivalLocation,departureDate) => {
         confirmAlert({
             customUI: ({ onClose }) => {
               return (
@@ -347,6 +349,8 @@ const RideCardInfo = ({ }) => {
                         <Button
                             onClick={() => {
                                 handleDelete();
+                                fetch(`http://localhost:3000/send-text?departureLoc=${departureLocation.title}&arrivalLoc=${arrivalLocation.title}&departureDate=${departureDate}`)
+                                .catch(err => console.error(err))
                                 onClose();
                                 window.location="../profile";
                             }}
@@ -407,11 +411,11 @@ const RideCardInfo = ({ }) => {
     if (loading) return <p>loading...</p>;
     
 
-    
-
     let { rideOne: ride } = data;
 
     let { arrivalLocation, departureDate, departureLocation, spots, _id, note, owner,riders } = ride;
+    
+    
     // Transform departure date object into a moment object so we can use it easily
     let departureMoment = moment(departureDate);
 
@@ -423,7 +427,16 @@ const RideCardInfo = ({ }) => {
     let rideFull = checkFull(ride);
     let isOwner = ride.owner.netid == userNetID;
 
-   
+    let canleave = !past && !isOwner
+    let candelete = !past && isOwner
+
+    let CorrectButton
+
+    if (canleave) {
+        CorrectButton = <RideLeaveButton onClick={()=>handleLeaveButton()}>Leave this Ride</RideLeaveButton>
+    } else if (candelete) {
+        CorrectButton = <RideDeleteButton onClick={()=>handleDeleteButton(departureLocation,arrivalLocation,departureDate)}>Delete this Ride</RideDeleteButton>
+    }
 
     return (
         <RideDiv>
@@ -445,7 +458,7 @@ const RideCardInfo = ({ }) => {
             <NoteBox>
                 Note: {note}
             </NoteBox>
-            {!past && !isOwner ? <RideLeaveButton onClick={()=>handleLeaveButton()}>Leave this Ride</RideLeaveButton> :<RideDeleteButton onClick={()=>handleDeleteButton()}>Delete this Ride</RideDeleteButton>}
+            {CorrectButton}
             <ProfileCard person={owner}></ProfileCard>
             {riders.map(rider => <ProfileCard person={rider}/>)}
         </RideDiv>

@@ -7,6 +7,7 @@ const { ApolloServer } = require('apollo-server-express');
 var exjwt = require('express-jwt');
 var cors = require('cors')
 
+
 // Import hidden values from .env
 import { PORT, SECRET } from './config';
 
@@ -37,11 +38,31 @@ const server = new ApolloServer({
 // Initiate express
 var app = express();
 
+// Twilio requirements -- Texting API
+const accountSid = 'AC20fd8c76b429cb84c2d452ac24423ea5';
+const authToken = '376852d500044324abe09e0359d3ef77';
+const client = require('twilio')(accountSid, authToken);
+
 // Apply cors for dev purposes
 app.use(cors({
     // Set CORS options here
     // origin: "*"
 }))
+
+// Twilio Text
+app.get("/send-text",(req,res) => {
+  // Get variables, passed via query string
+  const { departureLoc, arrivalLoc, departureDate } = req.query
+
+  client.messages
+  .create({
+     body: 'Your ride from '+departureLoc+' to '+arrivalLoc+' at '+departureDate+' has been deleted.',
+    // body:'hahahaha',
+     from: '+15124301264',
+     to: '+15163840028'
+   })
+  .then(message => console.log(message.sid));
+})
 
 // Add JWT so that it is AVAILABLE; does NOT protect all routes (nor do we want it to)
 // Inspiration from: https://www.apollographql.com/blog/setting-up-authentication-and-authorization-with-apollo-federation
