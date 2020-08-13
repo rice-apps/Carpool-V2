@@ -1,4 +1,5 @@
 import React from "react";
+import FadeIn from 'react-fade-in';
 import styled from "styled-components";
 import IllusLanding from "../../assets/illus_landing_page.svg"
 import { Link } from "react-router-dom";
@@ -93,18 +94,22 @@ const LandingPage = ({}) => {
     return (
         <ContainerDiv>
             <TextDiv>
-                <Slogan>
-                    Hit the Road with ONE click
-                </Slogan>
-                <DetailText>
-                    Getting ready for a trip? Make this amazing journey with your friends &amp; <strong>Rice Carpool</strong>
-                </DetailText>
-                <Link onClick={handleClick}>
-                    <Login>Login</Login>
-                </Link>
+                <FadeIn transitionDuration='900'>
+                    <Slogan>
+                        Hit the Road with ONE click
+                    </Slogan>
+                    <DetailText>
+                        Getting ready for a trip? Make this amazing journey with your friends &amp; <strong>Rice Carpool</strong>
+                    </DetailText>
+                    <Link onClick={handleClick}>
+                        <Login>Login</Login>
+                    </Link>
+                </FadeIn>
             </TextDiv>
             <GraphicDiv>
-                <Illus src={IllusLanding} alt="Landing Page"/>
+                <FadeIn transitionDuration='900'>
+                    <Illus src={IllusLanding} alt="Landing Page"/>
+                </FadeIn>
             </GraphicDiv>
         </ContainerDiv>
     )

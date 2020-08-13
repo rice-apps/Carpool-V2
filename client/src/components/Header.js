@@ -7,7 +7,8 @@ import {
     faHome,
     faPencilAlt,
     faSearch,
-    faUser
+    faUser,
+    faCommentAlt
 } from '@fortawesome/free-solid-svg-icons'
 import {
     BrowserRouter as Router,
@@ -101,6 +102,16 @@ export const Header = () => {
         }
     `
 
+    const StyledA = styled.a` 
+        display: box;
+        text-decoration: none;
+        color: white;
+        padding-right: .75vh;
+        &:focus, &:hover, &:visited, &:link, &:active {
+            text-decoration: none;
+        }
+    `
+
     const StyledIcon = styled(Link)`
         text-decoration: none;
         color: white;
@@ -180,6 +191,18 @@ export const Header = () => {
                         <StyledIcon>
                             <FontAwesomeIcon icon={faUser} />
                         </StyledIcon>
+                    </LI>
+                    <LI>
+                        {/* <StyledLink to="https://forms.gle/RTo5zf4v6aVXBKAGA">Feedback</StyledLink>
+                        <StyledIcon to='https://forms.gle/RTo5zf4v6aVXBKAGA'>
+                            <FontAwesomeIcon icon={faCommentAlt} />
+                        </StyledIcon> */}
+                        <StyledA href='https://forms.gle/RTo5zf4v6aVXBKAGA'>
+                            Feedback &nbsp;
+                            <StyledIcon to='https://forms.gle/RTo5zf4v6aVXBKAGA'>
+                                <FontAwesomeIcon icon={faCommentAlt} />
+                            </StyledIcon>
+                        </StyledA>
                     </LI>
                 </UL>
             </MainHeader>
