@@ -15,6 +15,7 @@ import wyao from '../../assets/wyao.jpg';
 import gjia from '../../assets/gjia.jpg';
 import wli from '../../assets/wli.png';
 import wmundy from '../../assets/wmundy.jpg'
+import sgoyal from '../../assets/sgoyal.jpg'
 import { isNamedType } from "graphql";
 // import Accordion from 'react-bootstrap/Accordion';
 // import Button from 'react-bootstrap/Button'
@@ -166,6 +167,10 @@ const About = ({}) => {
                 <SimpleAccordion title="If I leave a ride, will the ride disappear?">
                     If you created a ride and were the only one on the ride, the ride will be deleted. If you joined a ride with other existing riders, the ride will exist but you will not be listed as a rider.
                 </SimpleAccordion>
+                <SimpleAccordion title="How can I delete a ride?">
+                    You can access the rides you have created your profile page. Clicking on the ride card brings you to a page where you can delete your ride via the
+                    "Delete this ride" button. Alternatively, you can see the rides you have created on the find ride page, and you can delete them from there.
+                </SimpleAccordion>
                 <SimpleAccordion title="Is my information shared with outside parties?">
                     No, your information is not shared outside the application. It is only used for coordinating rides with your fellow Rice Owls.
                 </SimpleAccordion>
@@ -176,6 +181,7 @@ const About = ({}) => {
                 </PictureText>
                 <AboutCard name="Winnie Li" description="Senior - McMurtry College" image={wli} />
                 <AboutCard name="Will Mundy" description="Senior - Sid Richardson College" image={wmundy}/>
+                <SecondaryAboutCard name="Shryans Goyal" description="Senior - Will Rice College" image={sgoyal} />
                 <SecondaryAboutCard name="William Yao" description="Junior - Will Rice College" image={wyao} />
                 <SecondaryAboutCard name="Guancong Jia" description="Sophomore - Brown College" image={gjia} />
             </PictureDiv>
