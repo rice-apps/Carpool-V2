@@ -10,7 +10,7 @@ import {
 import { gql, useQuery, useMutation, useLazyQuery } from "@apollo/client";
 import moment from "moment";
 import Modal from "react-modal";
-import EditProfile from "./EditProfile";
+import EditProfile from "./EditProfile2";
 
 import '@availity/yup';
 import 'react-phone-input-2/lib/style.css';
@@ -373,7 +373,7 @@ const RideCard = ({ ride }) => {
 
 
 const Profile = ({}) => {
-    console.log("HELLLOOOOO");
+    // console.log("HELLLOOOOO");
 
     // For the modal
     const [modalOpen, setModalOpen] = useState(false);
@@ -393,8 +393,8 @@ const Profile = ({}) => {
 
     // const { rideMany: rides } = data2;
 
-    console.log(user._id);
-    console.log(user);
+    // console.log(user._id);
+    // console.log(user);
     const [fetchRides, { called, loading: rideLoading, data: rideData }] = useLazyQuery(GET_RIDES);
 
     useEffect(() => {

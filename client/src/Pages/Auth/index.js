@@ -47,6 +47,8 @@ const Auth = ({}) => {
     // Set token in local storage
     localStorage.setItem('token', token);
 
+    console.log("local storage");
+    console.log(localStorage.getItem("token"));
     // Set recent update in client state
     return (
         <Redirect path={"/profile"} />

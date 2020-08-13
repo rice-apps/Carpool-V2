@@ -5,7 +5,7 @@ import moment from "moment";
 import MomentUtils from '@material-ui/pickers/adapter/moment';
 import { MuiPickersUtilsProvider, DateTimePicker, LocalizationProvider, DatePicker,  } from "@material-ui/pickers";
 import Select from "react-select";
-import { transformToRSOptions, getSelectionDummy } from "../../utils/RideUtils";
+import { getSelectionDummy } from "../../utils/RideUtils";
 import { Button, TextField, Input } from "@material-ui/core";
 import {Link} from "react-router-dom";
 import { confirmAlert } from 'react-confirm-alert'; // Import
@@ -412,6 +412,29 @@ const RideCard = ({ ride }) => {
         window.location.reload(true);
     };
 
+    const handleJoinButton = () => {
+        confirmAlert({
+            customUI: ({ onClose }) => {
+              return (
+                <Popupdiv>
+                    <P>Will you wear a mask, sanitize hands, and follow all safety protocols from the Culture of Care Agreement?</P>
+                    <Buttondiv>
+                    <ConfirmButton onClick={onClose}>No</ConfirmButton>
+                    <ConfirmButton
+                        onClick={() => {
+                            handleJoin();
+                            onClose();
+                        }}
+                        >
+                            Yes, Join this ride!
+                    </ConfirmButton>
+                    </Buttondiv>
+                </Popupdiv>
+              );
+            }
+          });
+    };
+
     const handleToast = () => {
         if (joined) {
             addToast("Go to your Profile to view ride details.", { appearance: 'info'});
@@ -455,7 +478,7 @@ const RideCard = ({ ride }) => {
                                 : <RideJoinButton 
                                     joined={joined} 
                                     disabled={rideFull}
-                                    onClick={()=> handleJoin()}
+                                    onClick={()=> handleJoinButton()}
                                 >
                                     Join this Ride
                                 </RideJoinButton>
@@ -582,6 +605,24 @@ const LocationFilter = ({ label, options, getSelection, setSelection }) => {
             />
         </LocationFilterDiv>
     )
+}
+
+const defaultLocations = [
+    "5eca36b008d82d5e82aaba10",
+    "5f0faaae8043fe8db20d7b2f",
+    "5f0fab90e021e829d49be5f7",
+    "5f104e94bd33f13b6c1b66d8",
+    "5f104ed2bd33f13b6c1b66d9",
+    "5f104f49bd33f13b6c1b66da"
+]
+
+const transformToRSOptions = (locations) => {
+    return locations
+        .filter(location1 => defaultLocations.includes(location1._id))
+            .map(location => {
+                return { label: location.title, value: location._id };
+            }
+        );
 }
 
 const FilterOptions = ({ getVariables, setVariables }) => {
