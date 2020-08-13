@@ -42,6 +42,11 @@ var app = express();
 const accountSid = 'AC20fd8c76b429cb84c2d452ac24423ea5';
 const authToken = '376852d500044324abe09e0359d3ef77';
 const client = require('twilio')(accountSid, authToken);
+// const cronJob = require('cron').CronJob;
+
+// var textJob = new cronJob( '20 16 * * *', function(){
+//   client.messages.create( { to:'+15163840028', from:'+15124301264', body:'Hello! Hope you’re having a good day!' }, function( err, data ) {});
+// },  null, true);
 
 // Apply cors for dev purposes
 app.use(cors({
@@ -49,8 +54,8 @@ app.use(cors({
     // origin: "*"
 }))
 
-// Twilio Text
-app.get("/send-text",(req,res) => {
+// Twilio Text 1
+app.get("/send-text1",(req,res) => {
   // Get variables, passed via query string
   const { departureLoc, arrivalLoc, departureDate } = req.query
 
