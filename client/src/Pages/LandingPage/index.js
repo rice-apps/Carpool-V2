@@ -85,9 +85,7 @@ const LandingPage = ({}) => {
         // Redirects user to the CAS login page
         let redirectURL = casLoginURL + "?service=" + SERVICE_URL;
         window.open(redirectURL, "_self");
-        console.log("BOIIII landing page ");
         if (localStorage.getItem('token')) {
-            console.log("BOIIII TOKEN landping page");
             window.location = "./profile"
         } 
     }

@@ -2,6 +2,8 @@ import React from 'react';
 import styled from "styled-components";
 import Header from '../src/components/Header';
 import { Routes } from '../src/components/Routes';
+import './assets/fonts/AvenirLTStd-Book.otf'
+import './assets/fonts/AvenirLTStd-Book.css'
 
 
 const ContainerDiv = styled.div `

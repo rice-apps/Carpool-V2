@@ -61,7 +61,7 @@ const EditProfileInput = styled.input`
     ::-webkit-input-placeholder { 
         font-size:15pt; 
         letter-spacing:1pt;
-        font-family: acari-sans.normal;
+        font-family: AvenirLTStd-Book;
     }
 `
 

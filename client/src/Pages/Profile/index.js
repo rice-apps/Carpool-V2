@@ -208,7 +208,7 @@ const ProfileCardDiv = styled.div`
     padding-bottom: 5vh;
     background: #223244;
     color: white;
-    font-family: Avenir;
+    font-family: AvenirLTStd-Book;
 `
 
 const ProfileCardName = styled.a`
@@ -223,7 +223,7 @@ const ProfileContactDiv = styled.div`
     justify-content: space-around;
     height: 19vh;
     font-size: 3vh;
-    font-family: acari-sans.light;
+    font-family: AvenirLTStd-Book;
 `
 
 const ProfileCardPhone = styled.a`
