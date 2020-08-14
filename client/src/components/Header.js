@@ -64,7 +64,7 @@ export const Header = () => {
         textDecoration: 'none';
         // padding: 0 1.4em 0 0;
         text-align: center;
-        font-family: acari-sans.light;
+        font-family: AvenirLTStd-Book;
     `
 
     const LI = styled.li`

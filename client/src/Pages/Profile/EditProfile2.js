@@ -25,7 +25,7 @@ const EditProfileDiv = styled.div`
     max-width: 100vw;
     height: 60vh;
     color: white;
-    font-family: Avenir;
+    font-family: AvenirLTStd-Book;
     font-size: 3vh;
 `
 const EditProfileHeader = styled.div`

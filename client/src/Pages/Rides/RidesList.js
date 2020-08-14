@@ -17,7 +17,7 @@ const RideCardList = styled.div`
     flex-direction: column;
     align-items: center;
     color: white;
-    font-family: Avenir;
+    font-family: AvenirLTStd-Book;
 `
 
 const RideCardItem = styled.div`

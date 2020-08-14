@@ -78,7 +78,7 @@ const ProfileContactDiv = styled.div`
     align-items: center;
     justify-content: space-between;
     font-size: 2vh;
-    font-family: acari-sans.light;
+    font-family: AvenirLTStd-Book;
 `
 
 const ProfileCardName = styled.a`

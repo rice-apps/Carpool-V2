@@ -261,7 +261,7 @@ const BottomContainerDiv = styled.div `
     justify-items: center;
     height: auto;
     padding-bottom: .5vh;
-    font-family: acari-sans.light;
+    font-family: AvenirLTStd-Book;
     color: white;
 `;
 

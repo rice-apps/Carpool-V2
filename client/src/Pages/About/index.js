@@ -38,13 +38,13 @@ const ContainerDiv = styled.div `
 const TextDiv = styled.div `
     grid-column: 1 / 4;
     min-width: 0;
-    font-family: acari-sans.light;
+    font-family: AvenirLTStd-Book;
     color: white;
 `;
 
 const PictureDiv = styled.div `
     grid-column: 5 / 8;
-    font-family: acari-sans.light;
+    font-family: AvenirLTStd-Book;
     color: white;
 `;
 

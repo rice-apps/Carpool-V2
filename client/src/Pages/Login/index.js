@@ -19,7 +19,7 @@ const ContainerDiv = styled.div `
 const TextDiv = styled.div `
     grid-column: 1 / 4;
     min-width: 0;
-    font-family: Avenir;
+    font-family: AvenirLTStd-Book;
     color: white;
 `;
 
