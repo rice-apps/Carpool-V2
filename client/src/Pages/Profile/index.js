@@ -49,28 +49,6 @@ const Logout = styled.div`
     cursor: pointer;
 `
 
-const RideCardList = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-`
-
-
-
-// Card sides
-const CardSide = css`
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-    transition: all .2s ease;
-`
-
-
 const Popupdiv = styled.div `
     display:flex;
     flex-direction:column;
@@ -167,28 +145,6 @@ const GET_LOCATIONS = gql`
 /**
 * Helper Functions
 */
-
-/**
-* Check whether a user is already part of the ride.
-* @param {*} userID 
-* @param {*} ride 
-*/
-// const checkJoined = (userID, ride) => {
-//     if (userID == ride.owner._id) return true; // saves us some computational power from executing the next line
-//     if (ride.riders.map(rider => rider._id).includes(userID)) return true;
-//     return false;
-// }
-
-// /**
-// * Checks whether the ride is full
-// * @param {*} ride 
-// */
-// const checkFull = (ride) => {
-//     if (ride.riders.length == ride.spots) {
-//         return true;
-//     }
-//     return false;
-// }
 
 
 
@@ -488,7 +444,7 @@ const Profile = ({}) => {
             <BottomContainerDiv>
                 <RideDiv>
                     <RideHeader>Upcoming Rides</RideHeader>
-                    {upcomingrides.map(ride => <StyledLink to={`/rides/${ride._id}`}><RideCard ride={ride} /></StyledLink>)}
+                    {upcomingrides.sort((a, b) => moment(a.departureDate) - moment(b.departureDate)).map(ride => <StyledLink to={`/rides/${ride._id}`}><RideCard ride={ride} /></StyledLink>)}
                 </RideDiv>
                 <RideDiv2>
                     <RideHeader>Past Rides</RideHeader>

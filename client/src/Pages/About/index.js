@@ -3,7 +3,6 @@ import styled from "styled-components";
 import IllusLanding from "../../assets/illus_landing_page.svg"
 import { Link } from "react-router-dom";
 import { SERVICE_URL } from '../../config';
-import Accordion from './Accordion';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';

@@ -4,18 +4,10 @@ import { gql, useMutation } from "@apollo/client";
 import '../../App.css'
 
 // Form imports
-import { Formik, Form, useField, useFormik, FormikConsumer } from "formik";
 import '@availity/yup';
-import * as Yup from 'yup';
 import PhoneInput from "react-phone-input-2";
 import 'react-phone-input-2/lib/style.css';
 import { useToasts } from "react-toast-notifications";
-
-const customStyles = {
-    content : {
-        background: '#223244',
-    }
-};
 
 const EditProfileDiv = styled.div`
     display: flex;
@@ -73,20 +65,6 @@ const EditProfileButton = styled.div`
     cursor: pointer;
 `
 
-const EditProfileSchema = Yup.object().shape({
-    firstName: Yup.string()
-        .min(2, "Too short!")
-        .max(30, "Too long!")
-        .required("Required"),
-    lastName: Yup.string()
-        .min(2, "Too short")
-        .max(30, "Too long!")
-        .required("Required"),
-    phone: Yup.string()
-        .phone("Not a phone number!")
-        .required("Required!"),
-});
-
 const UPDATE_USER = gql`
     mutation UpdateUser($firstName:String, $lastName:String, $phone:String) {
         userUpdateOne(record:{firstName:$firstName, lastName:$lastName, phone:$phone}) {
@@ -112,27 +90,6 @@ const EditProfileField = ({ label, ...props }) => {
                 {label}
             </EditProfileLabel>
             <EditProfileInput {...props} />
-        </EditProfileFieldDiv>
-    )
-}
-
-const EditPhoneField = ({ label, ...props }) => {
-    const [phoneState, setPhoneState] = useState(props);
-    console.log("PROPS");
-    console.log(phoneState);
-
-    return (
-        <EditProfileFieldDiv>
-            <EditProfileLabel>
-                {label}
-            </EditProfileLabel>
-            <PhoneInput
-                country={"us"}
-                // style={customStyles}
-                // defaultValue = {props.phone}
-                value = {props.defaultValue}
-                onChange={(value, data) => setPhoneState({...phoneState, defaultValue: value, rawPhone: value.slice(data.dialCode.length)})}
-            />
         </EditProfileFieldDiv>
     )
 }
@@ -194,19 +151,6 @@ const EditProfile2 = ({ user, closeModal }) => {
             addToast("Invalid phone number!", { appearance: 'error' });
             return;
         }
-        // if (!getInputs.rawPhone) {
-        //     addToast("Invalid phone number!", { appearance: 'error' });
-        //     return;
-        // }
-        // const dialCodeLength = getInputs.rawPhone.dialCode.length;
-        // const phoneLength = getInputs.phone.length;
-        // console.log("DIAL, PHONE , subtract");
-        // console.log(dialCodeLength);
-        // console.log(phoneLength);
-        // if (phoneLength-dialCodeLength < 7) {
-        //     addToast("Invalid phone number!", { appearance: 'error' });
-        //     return;
-        // }
         updateUser({ 
             variables: getInputs 
         })
@@ -241,13 +185,6 @@ const EditProfile2 = ({ user, closeModal }) => {
                 defaultValue={initialValues["lastName"]}
                 onChange={handleFormChange}
             />
-            {/* <EditPhoneField
-                name="phone"
-                type="tel"
-                label="Phone Number"
-                defaultValue={initialValues["phone"]}
-                onChange={value => setInputs({...getInputs, phone: value})}
-            /> */}
             <EditProfileFieldDiv>
                 <EditProfileLabel>
                     Phone Number
