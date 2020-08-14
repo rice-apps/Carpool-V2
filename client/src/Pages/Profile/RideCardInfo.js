@@ -435,7 +435,7 @@ const RideCardInfo = ({ }) => {
     if (canleave) {
         CorrectButton = <RideLeaveButton onClick={()=>handleLeaveButton()}>Leave this Ride</RideLeaveButton>
     } else if (candelete) {
-        CorrectButton = <RideDeleteButton onClick={()=>handleDeleteButton(departureLocation,arrivalLocation,departureDate)}>Delete this Ride</RideDeleteButton>
+        CorrectButton = <RideDeleteButton onClick={()=>handleDeleteButton(departureLocation,arrivalLocation,departureMoment)}>Delete this Ride</RideDeleteButton>
     }
 
     return (

@@ -39,8 +39,8 @@ const server = new ApolloServer({
 var app = express();
 
 // Twilio requirements -- Texting API
-const accountSid = 'AC20fd8c76b429cb84c2d452ac24423ea5';
-const authToken = '376852d500044324abe09e0359d3ef77';
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = require('twilio')(accountSid, authToken);
 // const cronJob = require('cron').CronJob;
 
@@ -55,7 +55,7 @@ app.use(cors({
 }))
 
 // Twilio Text 1
-app.get("/send-text1",(req,res) => {
+app.get("/send-text",(req,res) => {
   // Get variables, passed via query string
   const { departureLoc, arrivalLoc, departureDate } = req.query
 
@@ -63,7 +63,7 @@ app.get("/send-text1",(req,res) => {
   .create({
      body: 'Your ride from '+departureLoc+' to '+arrivalLoc+' at '+departureDate+' has been deleted.',
     // body:'hahahaha',
-     from: '+15124301264',
+     from: process.env.TWILIO_PHONE_NUMBER,
      to: '+15163840028'
    })
   .then(message => console.log(message.sid));
