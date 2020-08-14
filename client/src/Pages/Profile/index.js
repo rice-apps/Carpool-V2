@@ -491,7 +491,7 @@ const Profile = ({}) => {
                     {upcomingrides.map(ride => <StyledLink to={`/rides/${ride._id}`}><RideCard ride={ride} /></StyledLink>)}
                 </RideDiv>
                 <RideDiv2>
-                    <RideHeader>Previous Rides</RideHeader>
+                    <RideHeader>Past Rides</RideHeader>
                     {previousrides.map(ride => <StyledLink to={`/rides/${ride._id}`}><RideCard ride={ride} /></StyledLink>)}
                 </RideDiv2>
             </BottomContainerDiv>

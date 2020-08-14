@@ -7,6 +7,7 @@ const { ApolloServer } = require('apollo-server-express');
 var exjwt = require('express-jwt');
 var cors = require('cors')
 
+
 // Import hidden values from .env
 import { PORT, SECRET } from './config';
 
@@ -37,11 +38,36 @@ const server = new ApolloServer({
 // Initiate express
 var app = express();
 
+// Twilio requirements -- Texting API
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const client = require('twilio')(accountSid, authToken);
+// const cronJob = require('cron').CronJob;
+
+// var textJob = new cronJob( '20 16 * * *', function(){
+//   client.messages.create( { to:'+15163840028', from:'+15124301264', body:'Hello! Hope you’re having a good day!' }, function( err, data ) {});
+// },  null, true);
+
 // Apply cors for dev purposes
 app.use(cors({
     // Set CORS options here
     // origin: "*"
 }))
+
+// Twilio Text 1
+app.get("/send-text",(req,res) => {
+  // Get variables, passed via query string
+  const { departureLoc, arrivalLoc, departureDate } = req.query
+
+  client.messages
+  .create({
+     body: 'Your ride from '+departureLoc+' to '+arrivalLoc+' at '+departureDate+' has been deleted.',
+    // body:'hahahaha',
+     from: process.env.TWILIO_PHONE_NUMBER,
+     to: '+15163840028'
+   })
+  .then(message => console.log(message.sid));
+})
 
 // Add JWT so that it is AVAILABLE; does NOT protect all routes (nor do we want it to)
 // Inspiration from: https://www.apollographql.com/blog/setting-up-authentication-and-authorization-with-apollo-federation
