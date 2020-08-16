@@ -337,7 +337,7 @@ const RideCardInfo = ({ }) => {
         });
     };
 
-    const handleDeleteButton = (departureLocation,arrivalLocation,departureDate) => {
+    const handleDeleteButton = (departureLocation,arrivalLocation,departureDate,owner, ridersPhone) => {
         confirmAlert({
             customUI: ({ onClose }) => {
               return (
@@ -349,8 +349,10 @@ const RideCardInfo = ({ }) => {
                         <Button
                             onClick={() => {
                                 handleDelete();
-                                fetch(`http://localhost:3000/send-text?departureLoc=${departureLocation.title}&arrivalLoc=${arrivalLocation.title}&departureDate=${departureDate}`)
-                                .catch(err => console.error(err))
+                                // fetch(`http://localhost:3000/send-text?departureLoc=${departureLocation.title}&arrivalLoc=${arrivalLocation.title}&departureDate=${departureDate}&ownerPhone=${owner.phone}`);
+                                // for (let i=0;i<ridersPhone.length;i++) {
+                                //     fetch(`http://localhost:3000/send-text3?departureLoc=${departureLocation.title}&arrivalLoc=${arrivalLocation.title}&departureDate=${departureDate}&riderPhone=${ridersPhone[i]}`)
+                                // };
                                 onClose();
                                 window.location="../profile";
                             }}
@@ -427,6 +429,12 @@ const RideCardInfo = ({ }) => {
     let rideFull = checkFull(ride);
     let isOwner = ride.owner.netid == userNetID;
 
+    let ridersPhone = riders.map(rider => {
+        return rider.phone
+    });
+    // console.log(ridersPhone)
+    // console.log(riders)
+
     let canleave = !past && !isOwner
     let candelete = !past && isOwner
 
@@ -435,7 +443,7 @@ const RideCardInfo = ({ }) => {
     if (canleave) {
         CorrectButton = <RideLeaveButton onClick={()=>handleLeaveButton()}>Leave this Ride</RideLeaveButton>
     } else if (candelete) {
-        CorrectButton = <RideDeleteButton onClick={()=>handleDeleteButton(departureLocation,arrivalLocation,departureMoment)}>Delete this Ride</RideDeleteButton>
+        CorrectButton = <RideDeleteButton onClick={()=>handleDeleteButton(departureLocation,arrivalLocation,departureMoment, owner, ridersPhone)}>Delete this Ride</RideDeleteButton>
     }
 
     return (

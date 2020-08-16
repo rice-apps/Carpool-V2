@@ -17,6 +17,7 @@ import Autocomplete from 'react-google-autocomplete';
 import { Redirect } from "react-router";
 import Checkbox from '@material-ui/core/Checkbox';
 import Tooltip from '@material-ui/core/Tooltip';
+import moment from "moment";
 
 
 const HiddenInput = styled.input`
@@ -620,6 +621,7 @@ const styles = {
     // if (error2) return <p>Error...</p>;
     // if (loading2) return <p>Wait...</p>;
 
+    let notificationMoment = moment(getInputs.deptDate).subtract(1,'hours')
     
     return (
         <MainForm>
@@ -769,7 +771,9 @@ const styles = {
                 <StyledLink onClick = {handleClear}>Clear Form </StyledLink>
                 <StyledLink
                 type="submit" 
-                onClick={() => {handleSubmit(); handleClear();}} 
+                onClick={() => {handleSubmit(); handleClear();
+                    // fetch(`http://localhost:3000/send-text2?&Day_of_week=${notificationMoment.days()}&Hour=${notificationMoment.hours()}&Minute=${notificationMoment.minutes()}&Date_of_month=${notificationMoment.dates()}&Month=${notificationMoment.months()}`)
+                }} 
                 >Submit</StyledLink>
             </StyledLinkDiv>
             <HiddenInput id="res" name="res" type="reset"/>
