@@ -1,6 +1,7 @@
 var createError = require('http-errors');
 var express = require('express');
 const { ApolloServer } = require('apollo-server-express');
+const moment = require('moment');
 
 // var path = require('path');
 // var cookieParser = require('cookie-parser');
@@ -42,11 +43,7 @@ var app = express();
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = require('twilio')(accountSid, authToken);
-// const cronJob = require('cron').CronJob;
 
-// var textJob = new cronJob( '20 16 * * *', function(){
-//   client.messages.create( { to:'+15163840028', from:'+15124301264', body:'Hello! Hope you’re having a good day!' }, function( err, data ) {});
-// },  null, true);
 
 // Apply cors for dev purposes
 app.use(cors({
@@ -54,19 +51,53 @@ app.use(cors({
     // origin: "*"
 }))
 
-// Twilio Text 1
+// Twilio Text
 app.get("/send-text",(req,res) => {
   // Get variables, passed via query string
-  const { departureLoc, arrivalLoc, departureDate } = req.query
-
+  const { departureLoc, arrivalLoc, departureDate, ownerPhone} = req.query
+  
   client.messages
   .create({
      body: 'Your ride from '+departureLoc+' to '+arrivalLoc+' at '+departureDate+' has been deleted.',
     // body:'hahahaha',
      from: process.env.TWILIO_PHONE_NUMBER,
-     to: '+15163840028'
+     to: '+'+ownerPhone
    })
   .then(message => console.log(message.sid));
+})
+
+// Twilio Text
+app.get("/send-text3",(req,res) => {
+  // Get variables, passed via query string
+  const { departureLoc, arrivalLoc, departureDate, riderPhone} = req.query
+  
+  client.messages
+  .create({
+     body: 'Your ride from '+departureLoc+' to '+arrivalLoc+' at '+departureDate+' has been deleted.',
+    // body:'hahahaha',
+     from: process.env.TWILIO_PHONE_NUMBER,
+     to: '+'+riderPhone
+   })
+  .then(message => console.log(message.sid));
+})
+
+
+
+// const minute = 56
+// const cronJob = require('cron').CronJob;
+//   var textJob = new cronJob( `${minute.toString()} 17 * * *`, function(){
+//     client.messages.create( { to:'+15163840028', from: process.env.TWILIO_PHONE_NUMBER, body:'hahaha' }, function( err, data ) {});
+//   },  null, true);
+
+// Twilio Text
+app.get("/send-text2",(req,res) => {
+  const { Day_of_week, Hour, Minute, Date_of_month, Month} = req.query
+
+  const cronJob = require('cron').CronJob;
+  var textJob = new cronJob( `${Minute.toString()} ${Hour.toString()} ${Date_of_month.toString()} ${Month.toString()} ${Day_of_week.toString()}`, function(){
+    client.messages.create( { to:'+15163840028', from:process.env.TWILIO_PHONE_NUMBER, body:'Your carpool ride is about to leave in an hour!' }, function( err, data ) {});
+  },  null, true);
+  
 })
 
 // Add JWT so that it is AVAILABLE; does NOT protect all routes (nor do we want it to)
