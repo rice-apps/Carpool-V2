@@ -1,12 +1,12 @@
-import React, { useState, createContext, useEffect, useContext } from "react";
-import styled, { css } from "styled-components";
-import { gql, useQuery, useLazyQuery, useMutation } from "@apollo/client";
+import React, { useState } from "react";
+import styled from "styled-components";
+import { gql, useQuery, useMutation } from "@apollo/client";
 import moment from "moment";
 import MomentUtils from '@material-ui/pickers/adapter/moment';
-import { MuiPickersUtilsProvider, DateTimePicker, LocalizationProvider, DatePicker,  } from "@material-ui/pickers";
+import { LocalizationProvider, DatePicker } from "@material-ui/pickers";
 import Select from "react-select";
 import { getSelectionDummy } from "../../utils/RideUtils";
-import { Button, TextField, Input } from "@material-ui/core";
+import { TextField } from "@material-ui/core";
 import {Link} from "react-router-dom";
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css' // Import css
@@ -17,7 +17,7 @@ const RideCardList = styled.div`
     flex-direction: column;
     align-items: center;
     color: white;
-    font-family: Avenir;
+    font-family: AvenirLTStd-Book;
 `
 
 const RideCardItem = styled.div`
@@ -26,19 +26,6 @@ const RideCardItem = styled.div`
     width: 40em;
     overflow: hidden; /* need this to ensure no weird text transform effect */
     box-shadow: 0 1vw 2vw 0 rgba(0,0,0,0.4);
-
-    // :hover {
-    //     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-
-    //     & > div:first-of-type { // frontside of the card
-    //         height: 0px;
-    //         transform: perspective(1000px) rotateX(-180deg);
-    //     }
-
-    //     & > div:last-of-type { // backside of the card
-    //         transform: perspective(1000px) rotateX(0deg);
-    //     }
-    // }
 `
 
 const RideCardFront = styled.div`
@@ -290,10 +277,6 @@ const DELETE_RIDE = gql`
 * @param {*} ride 
 */
 const checkJoined = (userID, ride) => {
-    console.log(userID);
-    console.log(ride);
-    console.log(ride.owner._id);
-    console.log(ride.riders.map(rider => rider._id));
     if (userID == ride.owner.netid) return true; // saves us some computational power from executing the next line
     if (ride.riders.map(rider => rider.netid).includes(userID)) return true;
     return false;
@@ -698,7 +681,7 @@ const RidesList = ({ }) => {
     const { rideMany: rides } = data;
 
     const upcomingRides = rides.filter(ride => moment(ride.departureDate) >= new Date())
-    upcomingRides.sort((a, b) => moment(b.departureDate) - moment(a.departureDate))
+    upcomingRides.sort((a, b) => moment(a.departureDate) - moment(b.departureDate))
 
     const updateSearch = (upcomingRides) => {
         console.log("GETDATE");

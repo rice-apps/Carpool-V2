@@ -24,7 +24,7 @@ const EditProfileDiv = styled.div`
     max-width: 100vw;
     height: 60vh;
     color: white;
-    font-family: Avenir;
+    font-family: AvenirLTStd-Book;
     font-size: 3vh;
 `
 const EditProfileHeader = styled.div`
@@ -61,7 +61,7 @@ const EditProfileInput = styled.input`
     ::-webkit-input-placeholder { 
         font-size:15pt; 
         letter-spacing:1pt;
-        font-family: acari-sans.normal;
+        font-family: AvenirLTStd-Book;
     }
 `
 

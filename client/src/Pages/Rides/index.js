@@ -1,9 +1,6 @@
-import React, { useState } from "react";
-import styled from "styled-components";
+import React from "react";
 import { gql, useQuery } from "@apollo/client";
-import Modal from "react-modal";
 import RidesList from "./RidesList";
-import { Link } from "react-router-dom";
 
 const GET_LOCATIONS = gql`
     query GetLocations {

@@ -3,7 +3,6 @@ import styled from "styled-components";
 import IllusLanding from "../../assets/illus_landing_page.svg"
 import { Link } from "react-router-dom";
 import { SERVICE_URL } from '../../config';
-import Accordion from './Accordion';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
@@ -11,6 +10,8 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import SimpleAccordion from './MaterialAccordion.js';
+import ColorsTimeline from './Timeline.js'
+import FadeIn from 'react-fade-in';
 import wyao from '../../assets/wyao.jpg';
 import gjia from '../../assets/gjia.jpg';
 import wli from '../../assets/wli.png';
@@ -38,13 +39,13 @@ const ContainerDiv = styled.div `
 const TextDiv = styled.div `
     grid-column: 1 / 4;
     min-width: 0;
-    font-family: acari-sans.light;
+    font-family: AvenirLTStd-Book;
     color: white;
 `;
 
 const PictureDiv = styled.div `
     grid-column: 5 / 8;
-    font-family: acari-sans.light;
+    font-family: AvenirLTStd-Book;
     color: white;
 `;
 
@@ -63,6 +64,10 @@ const PictureText = styled.div`
     margin-right: auto; */
     text-align: left;
     line-height: 2;
+`
+
+const Gap = styled.div`
+    min-height: 5vh;
 `
 
 
@@ -145,6 +150,7 @@ const About = ({}) => {
     return (
         <ContainerDiv>
             <TextDiv>
+                <FadeIn>
                 <DetailText>
                     Frequently Asked Questions:
                 </DetailText>
@@ -174,8 +180,15 @@ const About = ({}) => {
                 <SimpleAccordion title="Is my information shared with outside parties?">
                     No, your information is not shared outside the application. It is only used for coordinating rides with your fellow Rice Owls.
                 </SimpleAccordion>
+                <Gap />
+                <DetailText>
+                    Our Product Roadmap:
+                </DetailText>
+                <ColorsTimeline />
+                </FadeIn>
             </TextDiv>
             <PictureDiv>
+                <FadeIn>
                 <PictureText>
                     Meet The Team:
                 </PictureText>
@@ -184,6 +197,7 @@ const About = ({}) => {
                 <SecondaryAboutCard name="Shryans Goyal" description="Senior - Will Rice College" image={sgoyal} />
                 <SecondaryAboutCard name="William Yao" description="Junior - Will Rice College" image={wyao} />
                 <SecondaryAboutCard name="Guancong Jia" description="Sophomore - Brown College" image={gjia} />
+                </FadeIn>
             </PictureDiv>
         </ContainerDiv>
     )

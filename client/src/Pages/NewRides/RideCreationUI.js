@@ -27,7 +27,7 @@ const HiddenInput = styled.input`
 
 
 const MainForm = styled.form`
-    font-family: acari-sans.light;
+    font-family: AvenirLTStd-Book;
     display:grid;
     grid-template-rows:repeat(20,5%);
     grid-template-columns:repeat(20,5%);

@@ -20,7 +20,7 @@ const ContainerDiv = styled.div `
 const TextDiv = styled.div `
     grid-column: 1 / 4;
     min-width: 0;
-    font-family: acari-sans.light;
+    font-family: AvenirLTStd-Book;
     color: white;
 `;
 
@@ -85,9 +85,7 @@ const LandingPage = ({}) => {
         // Redirects user to the CAS login page
         let redirectURL = casLoginURL + "?service=" + SERVICE_URL;
         window.open(redirectURL, "_self");
-        console.log("BOIIII landing page ");
         if (localStorage.getItem('token')) {
-            console.log("BOIIII TOKEN landping page");
             window.location = "./profile"
         } 
     }
