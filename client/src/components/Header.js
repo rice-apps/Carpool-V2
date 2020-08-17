@@ -8,7 +8,8 @@ import {
     faPencilAlt,
     faSearch,
     faUser,
-    faCommentAlt
+    faCommentAlt,
+    faGift
 } from '@fortawesome/free-solid-svg-icons'
 import {
     BrowserRouter as Router,
@@ -106,7 +107,7 @@ export const Header = () => {
         display: box;
         text-decoration: none;
         color: white;
-        padding-right: .75vh;
+        padding-right: .2vh;
         &:focus, &:hover, &:visited, &:link, &:active {
             text-decoration: none;
         }
@@ -145,10 +146,19 @@ export const Header = () => {
     );
 
     let btn;
+    let gift;
     if (!data || !data.verifyUser) {
         btn = <StyledLink to="/login">Login </StyledLink>
     } else {
         btn = <StyledLink to="/profile">Profile </StyledLink>
+        gift = <LI>
+                    <StyledA href='https://docs.google.com/forms/d/e/1FAIpQLScgTWnH6Opj5KlR1StDhQbRhPIZ7Om-UqFZjbS4K-XDr4ieYg/viewform'>
+                        Free Sticker &nbsp;
+                        <StyledIcon to='https://docs.google.com/forms/d/e/1FAIpQLScgTWnH6Opj5KlR1StDhQbRhPIZ7Om-UqFZjbS4K-XDr4ieYg/viewform'>
+                            <FontAwesomeIcon icon={faGift} />
+                        </StyledIcon>
+                    </StyledA>
+                </LI>;
     }
 
     return (
@@ -193,10 +203,6 @@ export const Header = () => {
                         </StyledIcon>
                     </LI>
                     <LI>
-                        {/* <StyledLink to="https://forms.gle/RTo5zf4v6aVXBKAGA">Feedback</StyledLink>
-                        <StyledIcon to='https://forms.gle/RTo5zf4v6aVXBKAGA'>
-                            <FontAwesomeIcon icon={faCommentAlt} />
-                        </StyledIcon> */}
                         <StyledA href='https://forms.gle/RTo5zf4v6aVXBKAGA'>
                             Feedback &nbsp;
                             <StyledIcon to='https://forms.gle/RTo5zf4v6aVXBKAGA'>
@@ -204,6 +210,7 @@ export const Header = () => {
                             </StyledIcon>
                         </StyledA>
                     </LI>
+                    {gift}
                 </UL>
             </MainHeader>
         </div>
