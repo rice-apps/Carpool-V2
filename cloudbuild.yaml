@@ -16,3 +16,19 @@ steps:
 - name: 'gcr.io/cloud-builders/gcloud'
   args: ['app', 'deploy', '--version=1']
   dir: 'client'
+- name: 'gcr.io/cloud-builders/npm'
+  args: [ 'install' ]
+  dir: 'api'
+- name: 'gcr.io/cloud-builders/npm'
+  args: ["run", "create-env"]
+  env:
+    - 'TWILIO_ACCOUNT_SID=${_TWILIO_ACCOUNT_SID}'
+    - 'TWILIO_AUTH_TOKEN=${_TWILIO_AUTH_TOKEN}'
+    - 'TWILIO_PHONE_NUMBER=${_TWILIO_PHONE_NUMBER}'
+  dir: 'api'
+- name: 'gcr.io/cloud-builders/npm'
+  args: [ 'run', 'build' ]
+  dir: 'api'
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['app', 'deploy', '--version=1']
+  dir: 'api'
