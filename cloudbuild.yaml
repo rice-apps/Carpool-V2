@@ -26,9 +26,6 @@ steps:
     - 'TWILIO_AUTH_TOKEN=${_TWILIO_AUTH_TOKEN}'
     - 'TWILIO_PHONE_NUMBER=${_TWILIO_PHONE_NUMBER}'
   dir: 'api'
-- name: 'gcr.io/cloud-builders/npm'
-  args: [ 'run', 'build' ]
-  dir: 'api'
 - name: 'gcr.io/cloud-builders/gcloud'
   args: ['app', 'deploy', '--version=1']
   dir: 'api'
