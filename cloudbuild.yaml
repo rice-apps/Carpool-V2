@@ -1,8 +1,9 @@
 steps:
 - name: 'gcr.io/cloud-builders/npm'
-  args: [ 'install --prefix client' ]
+  args: [ 'install' ]
+  dir: 'client'
 - name: 'gcr.io/cloud-builders/npm'
-  args: [ 'run --prefix client', 'build --prefix client' ]
+  args: [ 'run', 'build' ]
 - name: 'gcr.io/cloud-builders/gcloud'
   args: ['app', 'deploy', '--version=1']
   dir: 'client'
