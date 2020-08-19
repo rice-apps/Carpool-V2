@@ -131,6 +131,15 @@ const Slogan = styled.div `
     grid-area: 1/7/3/16; 
 `;
 
+const Tip = styled.div `
+    font-size: 1vw;
+    padding-top: .5vw;
+    text-align: center;
+    text-decoration: underline;
+    text-decoration-color: #142537;
+    color: white;
+`;
+
 const StyledLinkDiv = styled.div`
     grid-area:19/13/20/18;
     display: flex;
@@ -627,6 +636,9 @@ const styles = {
         <MainForm>
             <Slogan>
                 Create A Ride
+                <Tip>
+                    *Check the boxes to enable custom locations!
+                </Tip>
             </Slogan>
             <RideCreateDivLeft>
                 <RideCreateInputDivTextLeft>    

@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import IllusLanding from "../../assets/illus_landing_page.svg"
+import IllusLanding from "../../assets/illus_landing_page.svg";
 import { Link } from "react-router-dom";
 import { SERVICE_URL } from '../../config';
 import Card from '@material-ui/core/Card';
@@ -10,13 +10,15 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import SimpleAccordion from './MaterialAccordion.js';
-import ColorsTimeline from './Timeline.js'
+import ColorsTimeline from './Timeline.js';
 import FadeIn from 'react-fade-in';
 import wyao from '../../assets/wyao.jpg';
 import gjia from '../../assets/gjia.jpg';
 import wli from '../../assets/wli.png';
-import wmundy from '../../assets/wmundy.jpg'
-import sgoyal from '../../assets/sgoyal.jpg'
+import hhu from '../../assets/hhu.jpg';
+import wmundy from '../../assets/wmundy.jpg';
+import sgoyal from '../../assets/sgoyal.jpg';
+import ccai from '../../assets/ccai.jpg';
 import { isNamedType } from "graphql";
 // import Accordion from 'react-bootstrap/Accordion';
 // import Button from 'react-bootstrap/Button'
@@ -192,11 +194,13 @@ const About = ({}) => {
                 <PictureText>
                     Meet The Team:
                 </PictureText>
-                <AboutCard name="Winnie Li" description="Senior - McMurtry College" image={wli} />
-                <AboutCard name="Will Mundy" description="Senior - Sid Richardson College" image={wmundy}/>
-                <SecondaryAboutCard name="Shryans Goyal" description="Senior - Will Rice College" image={sgoyal} />
-                <SecondaryAboutCard name="William Yao" description="Junior - Will Rice College" image={wyao} />
-                <SecondaryAboutCard name="Guancong Jia" description="Sophomore - Brown College" image={gjia} />
+                <AboutCard name="Winnie Li" description="Team Lead - McMurtry College" image={wli} />
+                <AboutCard name="Will Mundy" description="Mentor - Sid Richardson College" image={wmundy}/>
+                <SecondaryAboutCard name="Guancong Jia" description="Developer - Brown College" image={gjia} />
+                <SecondaryAboutCard name="William Yao" description="Developer - Will Rice College" image={wyao} />
+                <SecondaryAboutCard name="Shryans Goyal" description="Mentor - Will Rice College" image={sgoyal} />
+                <SecondaryAboutCard name="Helena Hu" description="Designer - Jones College" image={hhu} />
+                <SecondaryAboutCard name="Cloris Cai" description="Designer - Will Rice College" image={ccai} />
                 </FadeIn>
             </PictureDiv>
         </ContainerDiv>
