@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { gql, useQuery, useMutation } from "@apollo/client";
+import { gql, useQuery, useMutation, useLazyQuery } from "@apollo/client";
 import moment from "moment";
 import MomentUtils from '@material-ui/pickers/adapter/moment';
 import { LocalizationProvider, DatePicker } from "@material-ui/pickers";
@@ -10,7 +10,10 @@ import { TextField } from "@material-ui/core";
 import {Link} from "react-router-dom";
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css' // Import css
-import { useToasts } from "react-toast-notifications";
+import { useToasts } from "react-toast-notifications"
+import Autocomplete from 'react-google-autocomplete';
+import Checkbox from '@material-ui/core/Checkbox';
+import Tooltip from '@material-ui/core/Tooltip';
 
 const RideCardList = styled.div`
     display: flex;
@@ -267,6 +270,16 @@ const DELETE_RIDE = gql`
     }
 `
 
+const CHECK_LOCATION = gql`
+    query CheckLocation($address: String) {
+        locationOne (filter: {address: $address}) {
+            title
+            address
+            _id
+        }
+    }
+`
+
 /**
 * Helper Functions
 */
@@ -482,16 +495,36 @@ const FilterDiv = styled.div`
     width: 25vw;
 `
 
+const InputDiv = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+`
+
 const LocationFilterDiv = styled.div`
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
+    min-width: 27vw;
+    max-width: 100%;
+    font-size: 1.2vw;
+`
+
+const CustomLocationFilterDiv = styled.div`
+    display: none;
+    flex-direction: row;
+    justify-content: space-evenly;
+    min-width: 27vw;
     max-width: 100%;
     font-size: 1.2vw;
 `
 
 const DateDiv = styled.div`
     margin-left: 4vw;
+`
+
+const Label = styled.div`
+    margin-bottom: .1vh;
 `
 
 const customStyles = {
@@ -577,14 +610,14 @@ const LocationFilter = ({ label, options, getSelection, setSelection }) => {
     }
     return (
         <LocationFilterDiv>
-            <p>{label}</p>
+            <Label>{label}</Label>
             <SelectDiv
             name={label}
             options={options}
             value={getSelection}
             isClearable={true}
             onChange={handleChange}
-            styles={{ container: (styles) => ({ ...styles, width: "200px" }) }}
+            styles={{ container: (styles) => ({ ...styles, width: "200px", marginBottom: '2vh'}) }}
             />
         </LocationFilterDiv>
     )
@@ -608,26 +641,111 @@ const transformToRSOptions = (locations) => {
         );
 }
 
+
 const FilterOptions = ({ getVariables, setVariables }) => {
     // Manages filters
+    const { addToast } = useToasts();
     const [getDepartureSelection, setDepartureSelection] = useState(getSelectionDummy());
     const [getArrivalSelection, setArrivalSelection] = useState(getSelectionDummy());
     const [getDate, setDate] = useState(null);
+    const [getInit, setInit] = useState(null);
+    const [getArrInit, setArrInit] = useState(null);
+    const [newDeptLocation, setNewDeptLocation] = useState(null);
+    const [newArrLocation, setNewArrLocation] = useState(null);
+
+
+    const [fetchCheck, {data: checkData }] = useLazyQuery(CHECK_LOCATION);
+    useEffect(() => {
+        if (newDeptLocation !== null) {
+            fetchCheck(
+                { variables: {address: newDeptLocation.formatted_address}}
+            )
+        }
+    }, [checkData, newDeptLocation]);
+
+    const [fetchArrCheck, {data: checkArrData }] = useLazyQuery(CHECK_LOCATION);
+    useEffect(() => {
+        if (newArrLocation !== null) {
+            fetchArrCheck(
+                { variables: {address: newArrLocation.formatted_address}}
+            )
+        }
+    }, [checkArrData, newArrLocation]);
 
     const { data, loading, error } = useQuery(GET_LOCATIONS);
     if (error || loading) return <p>Waiting...</p>;
     let { locationMany: locations } = data;
 
+    const autocompleteStyle = {
+        fontSize: "2.8vh",
+        fontFamily: "inherit",
+        letterSpacing: "0.03vw",
+        backgroundColor: "#FFFFFF2B",
+        borderRadius: "2vh",
+        color: "white",
+        border: "none",
+        width: "11.1vw",
+        height: "4.5vh",
+        outline: "none",
+        paddingLeft: "2vh",
+        paddingRight: "2vh",
+        marginBottom: "3vh",
+        textAlign: "left"
+    };
+
     const handleSearch = () => {
         let selectionDummy = getSelectionDummy();
         let newVariables = {};
+        let deptId;
+        let arrId;
+        console.log('departure loc', newDeptLocation);
+        console.log('checkData', checkData);
+
+        if (newDeptLocation) {
+            if (checkData !== undefined && checkData["locationOne"] !== null) {
+                // Location exists
+                deptId = checkData["locationOne"]["_id"];
+                console.log(newDeptLocation.name);
+                console.log(deptId);
+                // setDepartureSelection(prev => {
+                //     prev.label = newDeptLocation.name;
+                //     prev.value = deptId;
+                // });
+                newVariables.deptLoc = deptId;
+                console.log('departure selection', getDepartureSelection);
+            } else {
+                // Location does not exist on the database
+                addToast("No rides have been created with this location, please enter a different location.", { appearance: 'info'});
+            }
+        }
+
+        if (newArrLocation) {
+            if (checkArrData !== undefined && checkArrData["locationOne"] !== null) {
+                // Location exists
+                arrId = checkArrData["locationOne"]["_id"];
+                console.log(newArrLocation.name);
+                console.log(arrId);
+                newVariables.arrLoc = arrId;
+                console.log('arrival selection', getArrivalSelection);
+            } else {
+                // Location does not exist on the database
+                addToast("No rides have been created with this location, please enter a different location.", { appearance: 'info'});
+            }
+        }
+
+        console.log('departure selection 2', getDepartureSelection);
         // Check that at least one filter is active
         if (getDepartureSelection.value != selectionDummy.value) {
-            newVariables.deptLoc = getDepartureSelection.value;
+            if (!newVariables.deptLoc) {
+                newVariables.deptLoc = getDepartureSelection.value;
+            }
+            console.log('newVariables', newVariables.deptLoc);
             setDepartureSelection(getSelectionDummy());
         }
         if (getArrivalSelection.value != selectionDummy.value) {
-            newVariables.arrLoc = getArrivalSelection.value;
+            if (!newVariables.arrLoc) {
+                newVariables.arrLoc = getArrivalSelection.value;
+            }
             setArrivalSelection(getSelectionDummy());
         }
         if (getDate != null) {
@@ -637,20 +755,124 @@ const FilterOptions = ({ getVariables, setVariables }) => {
         setVariables({...newVariables});
     }
 
+    const toggleVisible = function(item){
+        if (item.style.display === 'none'){
+            return item.style.display = 'flex';
+        } else {
+            return item.style.display = 'none';
+        }
+    };
+
+    const handleDeptChange = (event) => {
+        // setChecked(event.target.checked);
+        let select = document.getElementById("deptSelect");
+        let custom = document.getElementById("customDept");
+        if (!getInit) {
+            select.style.display = 'flex';
+            custom.style.display = 'none';
+            setInit(true);
+        }
+        // if (select.style.display !== 'none') {
+        //     select.style.display = 'flex'
+        //     custom.style.display = 'none';
+        // } else {
+        //     select.style.display = 'flex';
+        //     custom.style.display = 'none';
+        // }
+        // setNewDeptLocation(null);
+        toggleVisible(select);
+        toggleVisible(custom);
+    };
+
+    const handleArrChange = (event) => {
+        // setChecked(event.target.checked);
+        let select = document.getElementById("arrSelect");
+        let custom = document.getElementById("customArr");
+        if(!getArrInit) {
+            select.style.display = 'flex';
+            custom.style.display = 'none';
+            setArrInit(true);
+        }
+        // setNewArrLocation(null);
+        toggleVisible(select);
+        toggleVisible(custom);
+    };
+
     return (
         <FilterDiv>
-            <LocationFilter 
-            label="Departing From:" 
-            options={transformToRSOptions(locations)} 
-            getSelection={getDepartureSelection}
-            setSelection={setDepartureSelection}
-            />
-            <LocationFilter 
-            label="Arriving To:" 
-            options={transformToRSOptions(locations)} 
-            getSelection={getArrivalSelection}
-            setSelection={setArrivalSelection}
-            />
+            <InputDiv>
+                <Tooltip title="Search for a custom departure location">
+                        <Checkbox
+                            // checked={checked}
+                            onChange={handleDeptChange}
+                            color="primary"
+                            style ={{
+                                color: "#FFFFFF",
+                                marginBottom: '2vh'
+                            }}
+                            inputProps={{ 'aria-label': 'primary checkbox' }}
+                        />
+                </Tooltip>
+                <CustomLocationFilterDiv id="customDept">
+                    <a>Departing From:</a>
+                    <Autocomplete
+                        style={autocompleteStyle}
+                        fields={["name", "formatted_address"]}
+                        onPlaceSelected={(place) => {
+                            console.log(place.name);
+                            console.log(place.formatted_address);
+                            setNewDeptLocation(place);
+                            // setDepartureSelection({label: place.name, value: ""});
+                        }}
+                        types={['establishment']}
+                    />
+                </CustomLocationFilterDiv>
+                <div id='deptSelect'>
+                    
+                    <LocationFilter 
+                    label="Departing From:" 
+                    options={transformToRSOptions(locations)} 
+                    getSelection={getDepartureSelection}
+                    setSelection={setDepartureSelection}
+                    />
+                </div>
+            </InputDiv>
+            <InputDiv>
+                <Tooltip title="Search for a custom arrival location">
+                        <Checkbox
+                            // checked={checked}
+                            onChange={handleArrChange}
+                            color="primary"
+                            style ={{
+                                color: "#FFFFFF",
+                                marginBottom: '2vh'
+                            }}
+                            inputProps={{ 'aria-label': 'primary checkbox' }}
+                        />
+                </Tooltip>
+                <CustomLocationFilterDiv id="customArr">
+                    <a>Arriving To:</a>
+                    <Autocomplete
+                        style={autocompleteStyle}
+                        fields={["name", "formatted_address"]}
+                        onPlaceSelected={(place) => {
+                            console.log(place.name);
+                            console.log(place.formatted_address);
+                            setNewArrLocation(place);
+                            // setDepartureSelection({label: place.name, value: ""});
+                        }}
+                        types={['establishment']}
+                    />
+                </CustomLocationFilterDiv>
+                <div id="arrSelect">
+                    <LocationFilter 
+                        label="Arriving To:" 
+                        options={transformToRSOptions(locations)} 
+                        getSelection={getArrivalSelection}
+                        setSelection={setArrivalSelection}
+                    />
+                </div>
+            </InputDiv>
             <DateDiv>
                 <DateFilter 
                 label="Departure Date" 
