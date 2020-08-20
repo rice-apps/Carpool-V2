@@ -200,7 +200,7 @@ const About = ({}) => {
                 <SecondaryAboutCard name="William Yao" description="Developer - Will Rice College" image={wyao} />
                 <SecondaryAboutCard name="Shryans Goyal" description="Mentor - Will Rice College" image={sgoyal} />
                 <SecondaryAboutCard name="Helena Hu" description="Designer - Jones College" image={hhu} />
-                <SecondaryAboutCard name="Cloris Cai" description="Designer - Will Rice College" image={ccai} />
+                <SecondaryAboutCard name="Cloris Cai" description="Designer - Duncan College" image={ccai} />
                 </FadeIn>
             </PictureDiv>
         </ContainerDiv>
