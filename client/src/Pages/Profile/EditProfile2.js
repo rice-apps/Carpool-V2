@@ -33,9 +33,9 @@ const EditProfileFieldDiv = styled.div`
 
 const EditProfileLabel = styled.label`
     padding: .5rem 1rem;
-    background-color: rgba(0,0,0,.03);
     border: 1px solid rgba(0,0,0,.125);
     width: 300px;
+    border:none;
 `
 
 const EditProfileInput = styled.input`

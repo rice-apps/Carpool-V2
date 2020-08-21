@@ -43,6 +43,7 @@ var app = express();
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = require('twilio')(accountSid, authToken);
+const notifyServiceSid = process.env.NOTIFY_SERVICE_SID;
 
 
 // Apply cors for dev purposes
@@ -52,34 +53,38 @@ app.use(cors({
 }))
 
 // Twilio Text
-app.get("/send-text",(req,res) => {
-  // Get variables, passed via query string
-  const { departureLoc, arrivalLoc, departureDate, ownerPhone} = req.query
-  
-  client.messages
-  .create({
-     body: 'Your ride from '+departureLoc+' to '+arrivalLoc+' at '+departureDate+' has been deleted.',
-    // body:'hahahaha',
-     from: process.env.TWILIO_PHONE_NUMBER,
-     to: '+'+ownerPhone
-   })
-  .then(message => console.log(message.sid));
-})
+// app.get("/send-text",(req, res) => {
+//   // Get variables, passed via query string
+//   const { departureLoc, arrivalLoc, departureDate, ownerPhone} = req.query
+//   console.log("dep: " + departureLoc + " arrival "+ arrivalLoc + "phone" + ownerPhone);
 
-// Twilio Text
-app.get("/send-text3",(req,res) => {
-  // Get variables, passed via query string
-  const { departureLoc, arrivalLoc, departureDate, riderPhone} = req.query
   
-  client.messages
-  .create({
-     body: 'Your ride from '+departureLoc+' to '+arrivalLoc+' at '+departureDate+' has been deleted.',
-    // body:'hahahaha',
-     from: process.env.TWILIO_PHONE_NUMBER,
-     to: '+'+riderPhone
-   })
-  .then(message => console.log(message.sid));
-})
+//   client.notify.services(notifyServiceSid)
+//   .notifications.create({
+//     toBinding:JSON.stringify({
+//       binding_type:'sms', address:'+18328788443',
+//       binding_type:'sms', address:'+'+ownerPhone
+//     }),
+//     body: 'Your ride from '+departureLoc+' to '+arrivalLoc+' at '+ departureDate +' has been deleted.',
+//    })
+//   .then(notification => console.log(notification.sid))
+//   .catch(error => console.log(error));
+// })
+
+// // Twilio Text
+// app.get("/send-text3",(req,res) => {
+//   // Get variables, passed via query string
+//   const { departureLoc, arrivalLoc, departureDate, riderPhone} = req.query
+  
+//   client.messages
+//   .create({
+//      body: 'Your ride from '+departureLoc+' to '+arrivalLoc+' at '+departureDate+' has been deleted.',
+//     // body:'hahahaha',
+//      from: process.env.TWILIO_PHONE_NUMBER,
+//      to: '+'+riderPhone
+//    })
+//   .then(message => console.log(message.sid));
+// })
 
 
 
@@ -90,15 +95,15 @@ app.get("/send-text3",(req,res) => {
 //   },  null, true);
 
 // Twilio Text
-app.get("/send-text2",(req,res) => {
-  const { Day_of_week, Hour, Minute, Date_of_month, Month} = req.query
+// app.get("/send-text2",(req,res) => {
+//   const { Day_of_week, Hour, Minute, Date_of_month, Month} = req.query
 
-  const cronJob = require('cron').CronJob;
-  var textJob = new cronJob( `${Minute.toString()} ${Hour.toString()} ${Date_of_month.toString()} ${Month.toString()} ${Day_of_week.toString()}`, function(){
-    client.messages.create( { to:'+15163840028', from:process.env.TWILIO_PHONE_NUMBER, body:'Your carpool ride is about to leave in an hour!' }, function( err, data ) {});
-  },  null, true);
+//   const cronJob = require('cron').CronJob;
+//   var textJob = new cronJob( `${Minute.toString()} ${Hour.toString()} ${Date_of_month.toString()} ${Month.toString()} ${Day_of_week.toString()}`, function(){
+//     client.messages.create( { to:'+15163840028', from:process.env.TWILIO_PHONE_NUMBER, body:'Your carpool ride is about to leave in an hour!' }, function( err, data ) {});
+//   },  null, true);
   
-})
+// })
 
 // Add JWT so that it is AVAILABLE; does NOT protect all routes (nor do we want it to)
 // Inspiration from: https://www.apollographql.com/blog/setting-up-authentication-and-authorization-with-apollo-federation
