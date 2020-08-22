@@ -237,11 +237,13 @@ const RideDiv = styled.div `
     border-right: 0.3vh solid #E8CA5A;
     padding-left:11.5vw;
     padding-right:11.5vw;
+    width:22vw;
     margin-bottom:4vh;
 `
 
 const RideDiv2 = styled.div `
     margin-bottom:4vh;
+    width:22vw;
 `;
 
 
