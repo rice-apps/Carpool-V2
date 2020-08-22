@@ -590,11 +590,11 @@ const styles = {
         color: "white",
         border: "none",
         width: "11.1vw",
-        height: "4.5vh",
+        height: "4.3vh",
         outline: "none",
         paddingLeft: "2vh",
         paddingRight: "2vh",
-        paddingBottom: "0.5vh",
+        // paddingBottom: "0.5vh",
         display: "none",
         textAlign: "left"
     };
