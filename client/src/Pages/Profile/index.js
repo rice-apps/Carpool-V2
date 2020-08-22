@@ -207,6 +207,18 @@ const ProfileDiv = styled.div`
     flex-direction: column;
     align-items: center;
 `
+const HeaderDiv = styled.div `
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin:5vh 5vw;
+    margin-bottom:0;
+    width: 90vw;
+    justify-items: center;
+    height: 3vh;
+    padding-bottom: .5vh;
+    font-family: AvenirLTStd-Book;
+    color: white;
+`
 
 const BottomContainerDiv = styled.div `
     display: grid;
@@ -223,14 +235,12 @@ const BottomContainerDiv = styled.div `
 
 const RideDiv = styled.div `
     border-right: 0.3vh solid #E8CA5A;
-    padding-left:9.5vw;
-    padding-right:9.5vw;
-    margin-top:4vh;
+    padding-left:11.5vw;
+    padding-right:11.5vw;
     margin-bottom:4vh;
 `
 
 const RideDiv2 = styled.div `
-    margin-top:4vh;
     margin-bottom:4vh;
 `;
 
@@ -270,8 +280,7 @@ const StyledIcon = styled.div`
 
 
 const RideHeader = styled.div`
-    padding-left: 1vh;
-    text-align: left;
+    text-align: center;
     color: white;
     font-size: 3vh;
     font-weight: bold;
@@ -441,13 +450,15 @@ const Profile = ({}) => {
                     />
                 </Modal>
             </ProfileDiv>
+            <HeaderDiv>
+                <RideHeader>Upcoming Rides</RideHeader>
+                <RideHeader>Past Rides</RideHeader>
+            </HeaderDiv>
             <BottomContainerDiv>
                 <RideDiv>
-                    <RideHeader>Upcoming Rides</RideHeader>
                     {upcomingrides.sort((a, b) => moment(a.departureDate) - moment(b.departureDate)).map(ride => <StyledLink to={`/rides/${ride._id}`}><RideCard ride={ride} /></StyledLink>)}
                 </RideDiv>
                 <RideDiv2>
-                    <RideHeader>Past Rides</RideHeader>
                     {previousrides.map(ride => <StyledLink to={`/rides/${ride._id}`}><RideCard ride={ride} /></StyledLink>)}
                 </RideDiv2>
             </BottomContainerDiv>
