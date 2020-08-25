@@ -339,32 +339,15 @@ const RideCardInfo = ({ }) => {
 
     
 
-    // async function handleNotifications(owner,ridersPhone) {
-    //     // fetch(`http://localhost:3000/send-text3?departureLoc=${departureLocation.title}&arrivalLoc=${arrivalLocation.title}&departureDate=${departureDate}&riderPhone=${'18329389374'}`);
-    //     // fetch(`http://localhost:3000/send-text?departureLoc=${departureLocation.title}&arrivalLoc=${arrivalLocation.title}&departureDate=${departureDate}&ownerPhone=${owner.phone}`);
-    //     const urls = [
-    //         `http://localhost:3000/send-text3?departureLoc=${departureLocation.title}&arrivalLoc=${arrivalLocation.title}&departureDate=${departureDate}&riderPhone=${'14137689449'}`,
-    //         `http://localhost:3000/send-text?departureLoc=${departureLocation.title}&arrivalLoc=${arrivalLocation.title}&departureDate=${departureDate}&ownerPhone=${owner.phone}`
-    //     ];
-    //     // let url;
-    //     // for await (url of urls) { 
-    //     //     console.log(url);
-    //     //     let data = null;
-    //     //     try { 
-    //     //       let data = await fetch(url); 
-    //     //       let message = await data.text();
-    //     //       console.log(message);
-    //     //     } catch (e) {
-    //     //       console.log(e);
-    //     //     }
-    //     //     console.log(data);
-    //     //   } ;
-    //     //   return;
-    //     return await urls.forEach(async url => await fetch(url) )
-    //     };
+    
 
 
-    const handleDeleteButton = (departureLocation,arrivalLocation,departureDate,owner, ridersPhone) => {
+    const handleDeleteButton = (departureLocation,arrivalLocation,departureMoment,owner, ridersPhone) => {
+        const options ={
+            method:'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({departureLoc:departureLocation.title,arrivalLoc:arrivalLocation.title,departureDate:departureMoment,ownerPhone:owner.phone,ridersPhone:ridersPhone})
+        }
         confirmAlert({
             customUI: ({ onClose }) => {
               return (
@@ -376,8 +359,7 @@ const RideCardInfo = ({ }) => {
                         <Button
                             onClick={() => {
                                 handleDelete();
-                                // await handleNotifications(owner,ridersPhone);
-                                // fetch(`http://localhost:3000/send-text?departureLoc=${departureLocation.title}&arrivalLoc=${arrivalLocation.title}&departureDate=${departureDate}&ownerPhone=${owner.phone}`)
+                                fetch(`http://localhost:3000/send-text`,options);
                                 onClose();
                                 window.location="../profile";
                             }}
@@ -457,6 +439,9 @@ const RideCardInfo = ({ }) => {
     let ridersPhone = riders.map(rider => {
         return rider.phone
     });
+
+    
+    
     // console.log(ridersPhone)
     // console.log(riders)
 

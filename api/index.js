@@ -38,6 +38,11 @@ const server = new ApolloServer({
 
 // Initiate express
 var app = express();
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 
 // Twilio requirements -- Texting API
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -53,37 +58,38 @@ app.use(cors({
 }))
 
 // Twilio Text
-// app.get("/send-text",(req, res) => {
-//   // Get variables, passed via query string
-//   const { departureLoc, arrivalLoc, departureDate, ownerPhone} = req.query
-//   console.log("dep: " + departureLoc + " arrival "+ arrivalLoc + "phone" + ownerPhone);
-
+app.post('/send-text',(req, res) => {
+  // Get variables, passed via query string
+  let { departureLoc, arrivalLoc, departureDate, ownerPhone, ridersPhone } = req.body;
+  ridersPhone.push(ownerPhone)
+  // console.log(ridersPhone)
+  const phones = ridersPhone.map(riderPhone => JSON.stringify({ binding_type: 'sms', address: '+'+riderPhone }))
   
-//   client.notify.services(notifyServiceSid)
-//   .notifications.create({
-//     toBinding:JSON.stringify({
-//       binding_type:'sms', address:'+18328788443',
-//       binding_type:'sms', address:'+'+ownerPhone
-//     }),
-//     body: 'Your ride from '+departureLoc+' to '+arrivalLoc+' at '+ departureDate +' has been deleted.',
-//    })
-//   .then(notification => console.log(notification.sid))
-//   .catch(error => console.log(error));
-// })
+client.notify.services(notifyServiceSid)
+  .notifications.create({
+    toBinding:
+    phones,
+    body: 'Your ride from '+departureLoc+' to '+arrivalLoc+' at '+moment(departureDate).toString()+' has been deleted.',
+   })
+  .then(notification => console.log(notification.sid))
+  .catch(error => console.log(error));
+});
 
-// // Twilio Text
+
+
+// Twilio Text
 // app.get("/send-text3",(req,res) => {
 //   // Get variables, passed via query string
 //   const { departureLoc, arrivalLoc, departureDate, riderPhone} = req.query
   
-//   client.messages
-//   .create({
-//      body: 'Your ride from '+departureLoc+' to '+arrivalLoc+' at '+departureDate+' has been deleted.',
-//     // body:'hahahaha',
-//      from: process.env.TWILIO_PHONE_NUMBER,
-//      to: '+'+riderPhone
+//   client.notify.services(notifyServiceSid)
+//   .notifications.create({
+//     toBinding:
+//     [ JSON.stringify({ binding_type: 'sms', address: '+'+riderPhone })],
+//     body: 'Your ride from '+departureLoc+' to '+arrivalLoc+' at '+departureDate+' has been deleted.',
 //    })
-//   .then(message => console.log(message.sid));
+//   .then(notification => console.log(notification.sid))
+//   .catch(error => console.log(error));
 // })
 
 
@@ -104,6 +110,7 @@ app.use(cors({
 //   },  null, true);
   
 // })
+
 
 // Add JWT so that it is AVAILABLE; does NOT protect all routes (nor do we want it to)
 // Inspiration from: https://www.apollographql.com/blog/setting-up-authentication-and-authorization-with-apollo-federation
