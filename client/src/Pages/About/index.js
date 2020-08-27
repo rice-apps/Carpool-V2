@@ -9,6 +9,11 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import SimpleAccordion from './MaterialAccordion.js';
 import ColorsTimeline from './Timeline.js';
 import FadeIn from 'react-fade-in';
@@ -58,6 +63,19 @@ const DetailText = styled.div`
     margin-right: auto;
     text-align: left;
     line-height: 2;
+`
+
+const AcknowledgementText = styled.div`
+    font-size: 1.5vw;
+    margin-left: 6vw;
+    margin-right: auto;
+    text-align: left;
+    line-height: 2;
+`
+
+const AckDiv = styled.div`
+    display: flex;
+    flex-direciton: row;
 `
 
 const PictureText = styled.div`
@@ -187,6 +205,81 @@ const About = ({}) => {
                     Our Product Roadmap:
                 </DetailText>
                 <ColorsTimeline />
+                <DetailText>
+                    Acknowledgements:
+                </DetailText>
+                <AcknowledgementText>
+                    Previous Rice Carpool Team:
+                </AcknowledgementText>
+                <AckDiv>
+                    <List 
+                        component="nav" 
+                        aria-label="contacts" 
+                        style={{
+                            marginLeft: '5vw',
+                            marginRight: 'auto',
+                            fontSize: '1vw'
+                        }}
+                    >
+                        <ListItem button>
+                            <ListItemIcon style={{color: '#E8CA5A'}}>
+                                <FiberManualRecordIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Diksha Gupta" />
+                        </ListItem>
+                        <ListItem button>
+                            <ListItemIcon style={{color: '#E8CA5A'}}>
+                                <FiberManualRecordIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Myra Ramdenbourg" />
+                        </ListItem>
+                        <ListItem button>
+                            <ListItemIcon style={{color: '#E8CA5A'}}>
+                                <FiberManualRecordIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Katherine Ngo" />
+                        </ListItem>
+                        <ListItem button>
+                            <ListItemIcon style={{color: '#E8CA5A'}}>
+                                <FiberManualRecordIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Angela Hwang" />
+                        </ListItem>
+                    </List>
+                    <List 
+                        component="nav" 
+                        aria-label="contacts" 
+                        style={{
+                            marginLeft: '5vw',
+                            marginRight: 'auto',
+                        }}
+                    >
+                        <ListItem button>
+                            <ListItemIcon style={{color: '#E8CA5A'}}>
+                                <FiberManualRecordIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Emmett Bertram" />
+                        </ListItem>
+                        <ListItem button>
+                            <ListItemIcon style={{color: '#E8CA5A'}}>
+                                <FiberManualRecordIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Gerald Wang" />
+                        </ListItem>
+                        <ListItem button>
+                            <ListItemIcon style={{color: '#E8CA5A'}}>
+                                <FiberManualRecordIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Josie Garza" />
+                        </ListItem>
+                        <ListItem button>
+                            <ListItemIcon style={{color: '#E8CA5A'}}>
+                                <FiberManualRecordIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Lingyin Wu" />
+                        </ListItem>
+                    </List>
+                </AckDiv>
                 </FadeIn>
             </TextDiv>
             <PictureDiv>
